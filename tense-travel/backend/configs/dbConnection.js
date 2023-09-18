@@ -2,8 +2,7 @@ const mongoose = require("mongoose");
 const isEmpty = require("lodash.isempty");
 require("dotenv").config();
 const modelLists = mongoose.models;
-const resumeBuildRuleJson = require("../utils/constants/resumeBuildRule");
-const { buildResumeRuleModel, eraTenseModel } = require("../models/index");
+const { eraTenseModel } = require("../models/index");
 const tenseJson = require("../utils/constants/tenseEra");
 
 const env = process.env.NODE_ENV;
@@ -56,16 +55,7 @@ const connectToDb = async () => {
     })
     .then(async (data) => {
       try {
-        const checkExists = await buildResumeRuleModel.find({});
-        if (isEmpty(checkExists)) {
-          const buildResumeRule = new buildResumeRuleModel({
-            welcome: resumeBuildRuleJson.start,
-            steps: resumeBuildRuleJson.steps,
-          });
-          await buildResumeRule.save();
-        }
-
-        /* Insert tenses */
+                /* Insert tenses */
         const tenseTitle = tenseJson.map((item) => item.title);
         const checkTense = await eraTenseModel.find({
           title: { $in: tenseTitle },

@@ -1,11 +1,4 @@
 const { login, register } = require("../controller/auth.controller");
-const {
-  create: createProfileRole,
-  findAll: findAllRoles,
-  findOne: findOneById,
-  update: updateRole,
-  deleteRole,
-} = require("../controller/profileRole.controller");
 const { getAllEra: findAllEra } = require("../controller/tenseEra.controller");
 const {
   create: createQuestion,
@@ -28,11 +21,6 @@ const {
 module.exports = {
   login,
   register,
-  createProfileRole,
-  findAllRoles,
-  findOneById,
-  updateRole,
-  deleteRole,
   findAllEra,
   createQuestion,
   findAllQuestion,

@@ -176,11 +176,6 @@ function Question() {
               </label>
             </div>
           </div>
-          {/* <button
-            className={`blue-btn ${userAnswer.length > 0 ? "" : "disbaled"}`}
-          >
-            Check
-          </button> */}
           <button
             className={`blue-btn ${userAnswer.length > 0 ? "" : "disbaled"}`}
             onClick={handleSubmitAnswer}
@@ -215,24 +210,6 @@ function Question() {
             </div>
           </div>
         )}
-        {/* <div
-          className={
-            isCorrectAns === true
-              ? "right-answer-block active"
-              : "right-answer-block wrong-answer-block active"
-          }
-        >
-          <div className="flex">
-            <div className="icon"></div>
-            <div className="ques-ans-info">
-              <strong>Ans: He eats his food</strong>
-              <strong>Explanation: He eats his food</strong>
-            </div>
-          </div>
-          <div className="align-center">
-            <button className="blue-btn green-btn" onClick={handleNextQuestion}>Next</button>
-          </div>
-        </div> */}
       </div>
     </>
   );

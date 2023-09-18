@@ -230,6 +230,8 @@ exports.getRandomQuestionByUnlockStage = async (req, res, next) => {
       requestBody
     );
 
+    console.log(checkUnlockStage)
+
     if (isEmpty(checkUnlockStage)) {
       return reponseModel(
         httpStatusCodes.OK,
