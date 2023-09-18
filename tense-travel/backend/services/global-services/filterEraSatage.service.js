@@ -8,7 +8,7 @@ const getLivesOfUnlockStage = async (model, requestBody) => {
         sessionId: requestBody["sessionId"],
         "tenseEra.tenseEraId": new ObjectID(requestBody["tenseEraId"]),
         "tenseEra.stage.stageId": new ObjectID(requestBody["stageId"]),
-        "tenseEra.stage.isLocked": true,
+        "tenseEra.stage.isLocked": false,
       },
     },
     {

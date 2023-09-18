@@ -11,7 +11,7 @@
       "dialect": "mongodb://",
       "username": "",
       "password": "",
-      "host": "localhost:27017/game-tense-travel",
+      "host": "localhost:27017/resumePreparation",
       "params": ""
     },
     "log": {
