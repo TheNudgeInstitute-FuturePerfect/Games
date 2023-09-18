@@ -1,5 +1,5 @@
 {
-  "projectName": "Resume preparation",
+  "projectName": "Tense Travel",
   "development": {
     "server": {
       "port": 8080
@@ -11,14 +11,14 @@
       "dialect": "mongodb://",
       "username": "",
       "password": "",
-      "host": "localhost:27017/resumePreparation",
+      "host": "localhost:27017/tenseTravel",
       "params": ""
     },
     "log": {
       "logOption": "info"
     },
     "jwtToken": {
-      "JWT_SECRET_STRING": "resumepreparation",
+      "JWT_SECRET_STRING": "tense-travel",
       "JWT_ACCESS_EXPIRY": "1d",
       "JWT_REFRESH_EXPIRY": "8d"
     },
@@ -42,7 +42,7 @@
       "logOption": "info"
     },
     "jwtToken": {
-      "JWT_SECRET_STRING": "resume-preparation",
+      "JWT_SECRET_STRING": "tense-travel",
       "JWT_ACCESS_EXPIRY": "1d",
       "JWT_REFRESH_EXPIRY": "8d"
     }
