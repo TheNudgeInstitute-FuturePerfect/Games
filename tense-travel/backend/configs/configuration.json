@@ -1,0 +1,54 @@
+{
+  "projectName": "Resume preparation",
+  "development": {
+    "server": {
+      "port": 8080
+    },
+    "environment": {
+      "APPLICATION_ENV": "development"
+    },
+    "databaseSettings": {
+      "dialect": "mongodb://",
+      "username": "",
+      "password": "",
+      "host": "localhost:27017/resumePreparation",
+      "params": ""
+    },
+    "log": {
+      "logOption": "info"
+    },
+    "jwtToken": {
+      "JWT_SECRET_STRING": "resumepreparation",
+      "JWT_ACCESS_EXPIRY": "1d",
+      "JWT_REFRESH_EXPIRY": "8d"
+    },
+    "api": { "API_BASE_URL": "api", "API_VERSION": "v1" }
+  },
+  "production": {
+    "server": {
+      "port": 8080
+    },
+    "environment": {
+      "APPLICATION_ENV": "production"
+    },
+    "databaseSettings": {
+      "dialect": "mongodb+srv://",
+      "username": "admin:",
+      "password": "",
+      "host": "",
+      "params": ""
+    },
+    "log": {
+      "logOption": "info"
+    },
+    "jwtToken": {
+      "JWT_SECRET_STRING": "resume-preparation",
+      "JWT_ACCESS_EXPIRY": "1d",
+      "JWT_REFRESH_EXPIRY": "8d"
+    }
+  },
+  "winiston": {
+    "logpath": "/nodeJS-postgresql-with-swagger/logs/"
+  },
+  "api": { "API_BASE_URL": "api", "API_VERSION": "v1" }
+}

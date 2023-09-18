@@ -1,0 +1,48 @@
+@mixin border-radius($radius) {
+    -webkit-border-radius: $radius;
+    -moz-border-radius: $radius;
+    border-radius: $radius;
+}
+@mixin transition-effect {
+    -webkit-transition: all 0.4s ease 0s;
+    -moz-transition: all 0.4s ease 0s;
+    -o-transition: all 0.4s ease 0s;
+    transition: all 0.4s ease 0s;
+}
+@mixin transform-effect{
+    top: 50%;
+    transform: translateY(-50%);
+    -webkit-transform: translateY(-50%);
+    -moz-transform: translateY(-50%);
+}
+@mixin flex-space-between{
+     justify-content: space-between;
+}
+@mixin flex-start{
+    display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+}
+@mixin blue-btn{
+     background: $blue;
+     font-size: 16px;
+     color: $white;
+     font-weight: 800;
+     border: none;
+     @include border-radius(12px);
+     padding: 15px 15px;
+     min-width: 241px;
+     border-bottom: 6px solid #0B3773;
+}
+@mixin default-blue-btn{
+    background: $blue;
+    font-size: 12px;
+    color: $white;
+    font-weight: 800;
+    border: none;
+    @include border-radius(12px);
+    padding: 10px 15px;
+    min-width: 140px;
+ }
+
+

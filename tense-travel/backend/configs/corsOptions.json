@@ -1,0 +1,15 @@
+{
+  "corsOptions": {
+    "origin": "*",
+    "methods": ["GET", "PUT", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    "allowedHeaders": [
+      "Origin",
+      "X-Requested-With",
+      "Content-Type",
+      "Accept",
+      "Authorization",
+      "X-Domain"
+    ],
+    "optionsSuccessStatus": 200
+  }
+}

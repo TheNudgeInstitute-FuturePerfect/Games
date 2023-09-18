@@ -1,0 +1,514 @@
+{
+  "start": "Welcome to <>. Let's start making your 'Personal Details' impressive",
+  "steps": [
+    {
+      "step": 1,
+      "tag": "personalInfo",
+      "stepTitle": "Contact info",
+      "completed": "",
+      "completedCount": 3,
+      "reveal": {
+        "replyMessage": "Time to reveal the first completed section!",
+        "completedCount": 3
+      },
+      "message": "",
+      "choice": {},
+      "replyMessage": {},
+      "errorMessage": "",
+      "instruction": {},
+      "fields": [
+        {
+          "title": "name",
+          "message": "Can you provide your full name (eg. Rishita Hegde)",
+          "sequence": 1,
+          "replyMessage": "",
+          "errorMessage": "",
+          "choice": [],
+          "roleIds": [],
+          "experience": "",
+          "required": true,
+          "completed": "",
+          "payload": {
+            "title": "name",
+            "titleValue": [],
+            "sequence": 1,
+            "step": 1,
+            "experience": "",
+            "required": true
+          }
+        },
+        {
+          "title": "phoneNumber",
+          "message": "How should any recruiter contact you? Can you give me your phone number",
+          "sequence": 2,
+          "replyMessage": "",
+          "errorMessage": "",
+          "choice": [],
+          "roleIds": [],
+          "experience": "",
+          "required": true,
+          "completed": "",
+          "payload": {
+            "title": "phoneNumber",
+            "titleValue": [],
+            "sequence": 2,
+            "step": 1,
+            "experience": "",
+            "required": true
+          }
+        },
+        {
+          "title": "email",
+          "message": "Your email address is also vital for recruiter communication. Avoid using unprofessional addresses like coolguy123@email.com.",
+          "sequence": 3,
+          "replyMessage": "",
+          "errorMessage": "",
+          "choice": [
+            {
+              "message": "Do you already have one? Or would you like to create a new one?"
+            },
+            {
+              "continue": "",
+              "create": "",
+              "type": "radio"
+            }
+          ],
+          "roleIds": [],
+          "experience": "",
+          "required": true,
+          "completed": "",
+          "payload": {
+            "title": "email",
+            "titleValue": [],
+            "sequence": 3,
+            "step": 1,
+            "experience": "",
+            "required": true
+          }
+        },
+        {
+          "title": "LinkedIn profile",
+          "message": "Do you have any LinkedIn profile, website or bio you want to add?",
+          "choice": [
+            {
+              "yes": "",
+              "no": "",
+              "type": "radio"
+            },
+            {
+              "replyMessage": {
+                "yes": "Perfect! Put the link here",
+                "no": ""
+              }
+            }
+          ],
+          "sequence": 4,
+          "replyMessage": "",
+          "errorMessage": "",
+          "roleIds": [],
+          "experience": "",
+          "required": false,
+          "completed": "",
+          "payload": {
+            "title": "socialLink",
+            "titleValue": [],
+            "sequence": 4,
+            "step": 1,
+            "experience": "",
+            "required": true
+          }
+        }
+      ]
+    },
+    {
+      "step": 2,
+      "tag": "roleSelection",
+      "stepTitle": "Role selection",
+      "completed": "",
+      "completedCount": 1,
+      "reveal": "",
+      "message": "",
+      "choice": {},
+      "replyMessage": {},
+      "errorMessage": "",
+      "instruction": {},
+      "fields": [
+        {
+          "title": "Role",
+          "message": "Fantastic! So which role are you interested in applying for?",
+          "replyMessage": "Got it! What's your preferred role?",
+          "errorMessage": "Once we add your dream role, we’ll let you know! For now select one of the listed roles, so that you are empowered to master resume-building.",
+          "choice": [],
+          "response": [
+            { "success": true },
+            {
+              "success": false,
+              "errorMessage": "Once we add your dream role, we’ll let you know! For now select one of the listed roles, so that you are empowered to master resume-building.",
+              "choice": [
+                {
+                  "continue": "",
+                  "later": "",
+                  "type": "radio"
+                }
+              ]
+            }
+          ],
+          "roleIds": [
+            {
+              "apiCall": "yes"
+            },
+            {
+              "type": "radio"
+            },
+            {
+              "roleId": 1,
+              "title": "Accountant"
+            },
+            {
+              "roleId": 2,
+              "title": "Software Engineer"
+            },
+            {
+              "roleId": 3,
+              "title": "Customer Service Representative"
+            },
+            {
+              "roleId": 4,
+              "title": "Retail Sales Associate"
+            },
+            {
+              "roleId": 5,
+              "title": "Others"
+            }
+          ],
+          "sequence": 1,
+          "experience": "",
+          "required": true,
+          "completed": "",
+          "payload": {
+            "title": "role",
+            "titleValue": [],
+            "step": 2,
+            "sequence": 1,
+            "experience": "",
+            "required": true
+          }
+        }
+      ]
+    },
+    {
+      "step": 3,
+      "tag": "experienced/fresher",
+      "stepTitle": "Experienced/Fresher selection",
+      "completed": "",
+      "reveal": "",
+      "message": "Awesome choice! Now, are you an experienced professional or a fresher?",
+      "choice": {
+        "fresher": "",
+        "experience": "experience",
+        "type": "radio"
+      },
+      "replyMessage": {
+        "experience": "Excellent! As someone with experience, your resume should focus on your job-specific expertise and notable achievements.",
+        "fresher": "No worries! Starting fresh is exciting. A fresher's resume focuses on educational background, skills, and potential"
+      },
+      "errorMessage": "",
+      "instruction": {
+        "experience": {
+          "experience": "experience",
+          "requiredFieldMessage": "The 4 must-haves for your resume are",
+          "requiredFields": [
+            "Objective/Summary",
+            "Work Experience",
+            "Skills",
+            "Educational Qualifications"
+          ],
+          "requiredCount": 4,
+          "optionalFieldMessage": "Choose any 2 sections that are most relevant for you",
+          "optionalFields": ["Projects", "Certifications", "Honors and Awards"],
+          "optionalCount": 2
+        },
+        "fresher": {
+          "fresher": "fresher",
+          "requiredFieldMessage": "The 3 must-haves for your resume are",
+          "requiredFields": [
+            "Objective/Summary",
+            "Skills",
+            "Educational Qualifications"
+          ],
+          "requiredCount": 3,
+          "optionalFieldMessage": "Choose those that are most relevant for you",
+          "optionalFields": [
+            "Internships & Projects",
+            "Certifications",
+            "Honors and Awards"
+          ],
+          "optionalCount": 2
+        }
+      },
+      "fields": [
+        {
+          "title": "Objective/Summary",
+          "message": "A snapshot of your career goals and top accomplishments",
+          "sequence": 1,
+          "experience": "experience",
+          "required": true,
+          "completed": "",
+          "replyMessage": "",
+          "errorMessage": "",
+          "choice": [],
+          "roleIds": [],
+          "payload": {
+            "title": "Objective/Summary",
+            "titleValue": [],
+            "experience": "experience",
+            "step": 3,
+            "sequence": 1,
+            "required": true
+          }
+        },
+        {
+          "title": "Work Experience",
+          "message": "Your job history and achievements.",
+          "sequence": 2,
+          "experience": "experience",
+          "required": true,
+          "completed": "",
+          "replyMessage": "",
+          "errorMessage": "",
+          "choice": [],
+          "roleIds": [],
+          "payload": {
+            "title": "Work Experience",
+            "titleValue": [],
+            "experience": "experience",
+            "step": 3,
+            "sequence": 2,
+            "required": true
+          }
+        },
+        {
+          "title": "Skills",
+          "message": "Specialized talents and proficiencies.",
+          "sequence": 3,
+          "experience": "experience",
+          "required": true,
+          "completed": "",
+          "replyMessage": "",
+          "errorMessage": "",
+          "choice": [],
+          "roleIds": [],
+          "payload": {
+            "title": "Skills",
+            "titleValue": [],
+            "experience": "experience",
+            "step": 3,
+            "sequence": 3,
+            "required": true
+          }
+        },
+        {
+          "title": "Educational Qualifications",
+          "message": "Your academic background.",
+          "sequence": 4,
+          "experience": "experience",
+          "required": true,
+          "completed": "",
+          "replyMessage": "",
+          "errorMessage": "",
+          "choice": [],
+          "roleIds": [],
+          "payload": {
+            "title": "Educational Qualifications",
+            "titleValue": [],
+            "experience": "experience",
+            "step": 3,
+            "sequence": 4,
+            "required": true
+          }
+        },
+        {
+          "title": "Projects",
+          "message": "To showcase major initiatives or projects.",
+          "sequence": 1,
+          "experience": "experience",
+          "required": false,
+          "completed": "",
+          "replyMessage": "",
+          "errorMessage": "",
+          "choice": [],
+          "roleIds": [],
+          "payload": {
+            "title": "Projects",
+            "titleValue": [],
+            "experience": "experience",
+            "step": 3,
+            "sequence": 1,
+            "required": false
+          }
+        },
+        {
+          "title": "Certifications",
+          "message": "To highlight any extra qualifications.",
+          "sequence": 2,
+          "experience": "experience",
+          "required": false,
+          "completed": "",
+          "replyMessage": "",
+          "errorMessage": "",
+          "choice": [],
+          "roleIds": [],
+          "payload": {
+            "title": "Certifications",
+            "titleValue": [],
+            "experience": "experience",
+            "step": 3,
+            "sequence": 2,
+            "required": false
+          }
+        },
+        {
+          "title": "Honors and Awards",
+          "message": "To underscore your excellence.",
+          "sequence": 3,
+          "experience": "experience",
+          "required": false,
+          "completed": "",
+          "replyMessage": "",
+          "errorMessage": "",
+          "choice": [],
+          "roleIds": [],
+          "payload": {
+            "title": "Honors and Awards",
+            "titleValue": [],
+            "experience": "experience",
+            "step": 3,
+            "sequence": 3,
+            "required": false
+          }
+        },
+
+        {
+          "title": "Objective/Summary",
+          "message": "A snapshot of your career goals and top accomplishments",
+          "sequence": 1,
+          "experience": "fresher",
+          "required": true,
+          "completed": "",
+          "replyMessage": "",
+          "errorMessage": "",
+          "choice": [],
+          "roleIds": [],
+          "payload": {
+            "title": "Objective/Summary",
+            "titleValue": [],
+            "experience": "fresher",
+            "step": 3,
+            "sequence": 1,
+            "required": true
+          }
+        },
+        {
+          "title": "Skills",
+          "message": "Specialized talents and proficiencies.",
+          "sequence": 2,
+          "experience": "fresher",
+          "required": true,
+          "completed": "",
+          "replyMessage": "",
+          "errorMessage": "",
+          "choice": [],
+          "roleIds": [],
+          "payload": {
+            "title": "Skills",
+            "titleValue": [],
+            "experience": "fresher",
+            "step": 3,
+            "sequence": 2,
+            "required": true
+          }
+        },
+        {
+          "title": "Educational Qualifications",
+          "message": "Your academic background.",
+          "sequence": 3,
+          "experience": "fresher",
+          "required": true,
+          "completed": "",
+          "replyMessage": "",
+          "errorMessage": "",
+          "choice": [],
+          "roleIds": [],
+          "payload": {
+            "title": "Educational Qualifications",
+            "titleValue": [],
+            "experience": "fresher",
+            "step": 3,
+            "sequence": 3,
+            "required": true
+          }
+        },
+        {
+          "title": "Internships & Projects",
+          "message": "To showcase major initiatives or projects.",
+          "sequence": 1,
+          "experience": "fresher",
+          "required": false,
+          "completed": "",
+          "replyMessage": "",
+          "errorMessage": "",
+          "choice": [],
+          "roleIds": [],
+          "payload": {
+            "title": "Internships & Projects",
+            "titleValue": [],
+            "experience": "fresher",
+            "step": 3,
+            "sequence": 1,
+            "required": false
+          }
+        },
+        {
+          "title": "Certifications",
+          "message": "To highlight any extra qualifications.",
+          "sequence": 2,
+          "experience": "fresher",
+          "required": false,
+          "completed": "",
+          "replyMessage": "",
+          "errorMessage": "",
+          "choice": [],
+          "roleIds": [],
+          "payload": {
+            "title": "Certifications",
+            "titleValue": [],
+            "experience": "fresher",
+            "step": 3,
+            "sequence": 2,
+            "required": false
+          }
+        },
+        {
+          "title": "Honors and Awards",
+          "message": "To underscore your excellence.",
+          "sequence": 3,
+          "experience": "fresher",
+          "required": false,
+          "completed": "",
+          "replyMessage": "",
+          "errorMessage": "",
+          "choice": [],
+          "roleIds": [],
+          "payload": {
+            "title": "Honors and Awards",
+            "titleValue": [],
+            "experience": "fresher",
+            "step": 3,
+            "sequence": 3,
+            "required": false
+          }
+        }
+      ]
+    }
+  ]
+}
