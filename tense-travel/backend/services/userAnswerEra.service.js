@@ -394,6 +394,7 @@ exports.getUserCurrentEra = async (req, res, next) => {
       res,
       next
     );
+    //check if user and session are already
     if (!isEmpty(userAndSessionInUserAnswer["data"])) {
       let userEras = await userAnswerEraModel.findOne({
         userId: requestBody["userId"],
@@ -401,6 +402,7 @@ exports.getUserCurrentEra = async (req, res, next) => {
         "tenseEra.tenseEraId": requestBody["tenseEraId"],
       });
 
+      //check if stage and era are already
       if (!isEmpty(userEras)) {
         const currentEra = eraFilter({
           tenseEra: userEras["tenseEra"],
@@ -416,6 +418,7 @@ exports.getUserCurrentEra = async (req, res, next) => {
           res
         );
       } else {
+        //check if stage and era are not already
         let eraStages = await findEra(req, res, next);
         const tenseEraTitle = eraStages["data"]?.title;
         eraStages = eraStages["data"]["stage"];
@@ -461,14 +464,13 @@ exports.getUserCurrentEra = async (req, res, next) => {
           requestBody: requestBody,
         });
 
-        currentEra["stage"][0]["isLocked"] = false;
-
+        requestBody["stageId"] = currentEra["stage"][0]["stageId"];
         await unlockStage(userAnswerEraModel, requestBody, false);
 
         return reponseModel(
           httpStatusCodes.OK,
-          "User era not found",
-          false,
+          "User era found",
+          true,
           currentEra,
           req,
           res
