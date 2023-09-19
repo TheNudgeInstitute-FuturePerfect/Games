@@ -6,13 +6,21 @@ const getLivesOfUnlockStage = async (model, requestBody) => {
       $match: {
         userId: new ObjectID(requestBody["userId"]),
         sessionId: requestBody["sessionId"],
-        "tenseEra.tenseEraId": new ObjectID(requestBody["tenseEraId"]),
-        "tenseEra.stage.stageId": new ObjectID(requestBody["stageId"]),
-        "tenseEra.stage.isLocked": false,
+        tenseEra: {
+          $elemMatch: {
+            tenseEraId: new ObjectID(requestBody["tenseEraId"]),
+            stage: {
+              $elemMatch: {
+                stageId: new ObjectID(requestBody["stageId"]),
+                isLocked: false,
+              },
+            },
+          },
+        },
       },
     },
     {
-      $addFields: {
+      $project: {
         tenseEra: {
           $filter: {
             input: {

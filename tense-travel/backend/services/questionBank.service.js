@@ -211,8 +211,8 @@ exports.getQuestionDetails = async (req, res, next) => {
 
     return reponseModel(
       httpStatusCodes.OK,
-      questions.length > 0 ? "Quesiton found" : "Quesiton not found",
-      questions.length > 0 ? true : false,
+      !isEmpty(questions) ? "Quesiton found" : "Quesiton not found",
+      !isEmpty(questions) ? true : false,
       questions,
       req,
       res
@@ -229,8 +229,6 @@ exports.getRandomQuestionByUnlockStage = async (req, res, next) => {
       userAnswerEraModel,
       requestBody
     );
-
-    console.log(checkUnlockStage)
 
     if (isEmpty(checkUnlockStage)) {
       return reponseModel(
@@ -253,8 +251,8 @@ exports.getRandomQuestionByUnlockStage = async (req, res, next) => {
 
       return reponseModel(
         httpStatusCodes.OK,
-        questions.length > 0 ? "Quesiton found" : "Quesiton not found",
-        questions.length > 0 ? true : false,
+        !isEmpty(questions) ? "Quesiton found" : "Quesiton not found",
+        !isEmpty(questions.length) ? true : false,
         { questions, heartLive: stage["lives"] },
         req,
         res
