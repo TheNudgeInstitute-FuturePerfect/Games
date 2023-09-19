@@ -22,7 +22,7 @@ function Question() {
   const [isCorrectAns, setIsCorrectAns] = useState(null);
 
   const navigateStage = () => {
-    navigate("/choose-stage");
+    navigate(`/choose-stage/${eraId}`);
   };
 
   const getStageQuestions = async () => {
@@ -42,7 +42,7 @@ function Question() {
 
     questionsParsed = await questionsData.json();
     if (questionsParsed["data"].length === 0) {
-      questionsParsed = questionsParsed['message'];
+      questionsParsed = questionsParsed["message"];
       navigate(`/choose-stage/${eraId}`);
     } else {
       setLives(questionsParsed["data"]["heartLive"]);
@@ -57,6 +57,7 @@ function Question() {
     if (index !== null && index !== undefined && index !== "") {
       currentQuestionIndex = parseInt(index);
       currentQuestionIndex++;
+      // console.log(currentQuestionIndex)
 
       if (currentQuestionIndex <= 9) {
         setCurrentQuestion({
@@ -69,8 +70,9 @@ function Question() {
       for (let item in questionsParsed["data"]) {
         if (questionsParsed["data"][item]?.isCorrect === null) {
           setCurrentQuestion({ ...questionsParsed["data"][item], index: item });
-          setQueSequence(item);
           currentQuestionIndex = item;
+          setQueSequence(currentQuestionIndex);
+          // console.log(currentQuestionIndex)
           break;
         }
       }
@@ -79,29 +81,28 @@ function Question() {
 
   const onChange = (event, index) => {
     setUserAnswer(event.target.value);
-    console.log(index);
     // currentQuestionIndex = index;
   };
 
   const handleSubmitAnswer = async (event) => {
     event.preventDefault();
-    // filterCurrentQuestion(currentQuestionIndex);
-
     await checkAnswer();
   };
 
   const checkAnswer = async () => {
+    const currentQues = questionsParsed["data"][currentQuestionIndex];
+
     userAnswerSubmitPayload.sessionId = "7694ffb1-09c8-48da-b7d1-819c79c4891c";
     userAnswerSubmitPayload.userId = "64f583fe0de4f60ae6e05cc5";
-    userAnswerSubmitPayload.questionId = currentQuestion?._id;
-    userAnswerSubmitPayload.tenseEraId = currentQuestion?.tenseEraId;
-    userAnswerSubmitPayload.stageId = currentQuestion?.stageId;
-    userAnswerSubmitPayload.question = currentQuestion?.question;
+    userAnswerSubmitPayload.questionId = currentQues?._id;
+    userAnswerSubmitPayload.tenseEraId = currentQues?.tenseEraId;
+    userAnswerSubmitPayload.stageId = currentQues?.stageId;
+    userAnswerSubmitPayload.question = currentQues?.question;
     userAnswerSubmitPayload.userAnswer = userAnswer;
-    console.log(userAnswerSubmitPayload);
     inputRef.current.focus();
 
     setUserAnswer("");
+    inputRef.current.blur();
     const submitAnswer = await fetch(
       `${process.env.REACT_APP_API_URL}/userEra/user-attending-question`,
       {
@@ -111,16 +112,28 @@ function Question() {
       }
     );
 
+    setCurrentQuestion(questionsParsed["data"][currentQuestionIndex]);
+
     let submitAnswerParsed = await submitAnswer.json();
     submitAnswerParsed = submitAnswerParsed["data"]["answerResponseFormat"];
     setLives(submitAnswerParsed["heartLive"]);
     setIsCorrectAns(submitAnswerParsed["isCorrect"]);
-    console.log(submitAnswerParsed["isCorrect"]);
+
+    // updating anwered question isCorrect
+    let updatedQues = questionsParsed["data"];
+    for (let index in updatedQues) {
+      if (parseInt(currentQuestionIndex) == index) {
+        updatedQues[currentQuestionIndex]["isCorrect"] = false;
+        break;
+      }
+    }
+
+    setQuestions(updatedQues);
   };
 
   const handleNextQuestion = () => {
-    console.log("handleNextQuestion");
     setIsCorrectAns(null);
+    inputRef.current.focus();
     filterCurrentQuestion(currentQuestionIndex);
   };
 
@@ -196,8 +209,16 @@ function Question() {
             <div className="flex">
               <div className="icon"></div>
               <div className="ques-ans-info">
-                <strong>Ans: He eats his food</strong>
-                <strong>Explanation: He eats his food</strong>
+                {currentQuestion && (
+                  <strong>
+                    Ans: {currentQuestion?.question.split("__")[0]}{" "}
+                    {currentQuestion?.answer}{" "}
+                    {currentQuestion?.question.split("__")[1]}
+                  </strong>
+                )}
+                <strong>
+                  Explanation: {currentQuestion && currentQuestion?.explanation}
+                </strong>
               </div>
             </div>
             <div className="align-center">
