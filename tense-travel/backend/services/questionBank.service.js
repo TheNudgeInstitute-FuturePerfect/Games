@@ -7,6 +7,7 @@ const {
 } = require("./global-services/filterEraSatage.service");
 const {
   stageFilter,
+  stageQuestionSize,
 } = require("../utils/constants/payloadInterface/payload.interface");
 const ObjectID = require("mongodb").ObjectId;
 
@@ -230,6 +231,13 @@ exports.getRandomQuestionByUnlockStage = async (req, res, next) => {
       requestBody
     );
 
+    let stage;
+    let questionSize = stageQuestionSize.size;
+    let questions;
+    let attemptedQuestionArray;
+    let attemptedQuestionsIds;
+    let attemptedQuestionArrayModified;
+
     if (isEmpty(checkUnlockStage)) {
       return reponseModel(
         httpStatusCodes.OK,
@@ -239,25 +247,71 @@ exports.getRandomQuestionByUnlockStage = async (req, res, next) => {
         req,
         res
       );
-    } else {
-      const stage = stageFilter({
-        answerCount: checkUnlockStage[0],
-        requestBody: requestBody,
-      });
+    } else if (
+      !isEmpty(checkUnlockStage) &&
+      checkUnlockStage[0]["tenseEra"][0]["stage"][0]["question"].length > 0
+    ) {
+      attemptedQuestionArray =
+        checkUnlockStage[0]["tenseEra"][0]["stage"][0]["question"];
 
-      req.params.stageId = requestBody["stageId"];
-      let questions = await this.getRandomQuestionByStage(req, res, next);
-      questions = questions["data"];
-
-      return reponseModel(
-        httpStatusCodes.OK,
-        !isEmpty(questions) ? "Quesiton found" : "Quesiton not found",
-        !isEmpty(questions.length) ? true : false,
-        { questions, heartLive: stage["lives"] },
-        req,
-        res
+      questionSize = parseInt(
+        stageQuestionSize.size - attemptedQuestionArray.length
       );
+
+      attemptedQuestionsIds = attemptedQuestionArray.map(
+        (question) => question.questionBankId
+      );
+
+      attemptedQuestionArrayModified = attemptedQuestionArray.map(
+        (question) => {
+          return {
+            ...question,
+            _id: question.questionBankId,
+          };
+        }
+      );
+
+      questions = await questoinBankModel.aggregate([
+        {
+          $match: {
+            stageId: new ObjectID(requestBody["stageId"]),
+            _id: {
+              $nin: attemptedQuestionsIds,
+            },
+          },
+        },
+        {
+          $sample: {
+            size: questionSize,
+          },
+        },
+      ]);
+
+      attemptedQuestionArray = [
+        ...attemptedQuestionArrayModified,
+        ...questions,
+      ];
+
+      questions = attemptedQuestionArray;
+    } else {
+      req.params.stageId = requestBody["stageId"];
+      questions = await this.getRandomQuestionByStage(req, res, next);
+      questions = questions["data"];
     }
+
+    stage = stageFilter({
+      answerCount: checkUnlockStage[0],
+      requestBody: requestBody,
+    });
+
+    return reponseModel(
+      httpStatusCodes.OK,
+      !isEmpty(questions) ? "Quesiton found" : "Quesiton not found",
+      !isEmpty(questions) ? true : false,
+      { questions, heartLive: stage["lives"] },
+      req,
+      res
+    );
   } catch (err) {
     next(err);
   }

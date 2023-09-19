@@ -8,15 +8,16 @@ import { getUserCurrentEra } from "../../../utils/payload";
 function ChooseStage() {
   const navigate = useNavigate();
   const [stage, setStage] = useState({});
+  const [defaultStars, setDefaultStars] = useState(3);
 
   const navigateQuestion = (params) => {
     navigate(`/question/${eraId}/${params["stageId"]}`);
   };
+  let defaultStar = 3;
 
   const { eraId } = useParams();
 
   const getStageOfEra = async () => {
-    console.log('getStageOfEra');
     getUserCurrentEra["sessionId"] = "7694ffb1-09c8-48da-b7d1-819c79c4891c";
     getUserCurrentEra.userId = "64f583fe0de4f60ae6e05cc5";
     getUserCurrentEra.tenseEraId = eraId;
@@ -67,9 +68,19 @@ function ChooseStage() {
                       {stage && stage[2]?.stageTitle.split(" ")[1]} <br /> Tense
                     </strong>
                     <div className="star-block">
-                      <span></span>
-                      <span></span>
-                      <span></span>
+                      {stage &&
+                        Array(stage[2]?.earnStars)
+                          .fill("")
+                          .map((itm, index) => {
+                            defaultStar = defaultStar - 1;
+                            return <span className="active"></span>;
+                          })}
+                      {stage &&
+                        Array(defaultStar)
+                          .fill("")
+                          .map((itm, index) => {
+                            return <span className=""></span>;
+                          })}
                     </div>
                   </div>
                   <div className="image-block"> </div>
@@ -84,9 +95,19 @@ function ChooseStage() {
                       Tense
                     </strong>
                     <div className="star-block">
-                      <span></span>
-                      <span></span>
-                      <span></span>
+                      {stage &&
+                        Array(stage[1]?.earnStars)
+                          .fill("")
+                          .map((itm, index) => {
+                            defaultStar = defaultStar - 1;
+                            return <span className="active"></span>;
+                          })}
+                      {stage &&
+                        Array(defaultStar)
+                          .fill("")
+                          .map((itm, index) => {
+                            return <span className=""></span>;
+                          })}
                     </div>
                   </div>
                 </div>
@@ -99,9 +120,19 @@ function ChooseStage() {
                       Tense
                     </strong>
                     <div className="star-block">
-                      <span className="active"></span>
-                      <span className="active"></span>
-                      <span></span>
+                      {stage &&
+                        Array(stage[0]?.earnStars)
+                          .fill("")
+                          .map((itm, index) => {
+                            defaultStar = defaultStar - 1;
+                            return <span className="active"></span>;
+                          })}
+                      {stage &&
+                        Array(defaultStar)
+                          .fill("")
+                          .map((itm, index) => {
+                            return <span className=""></span>;
+                          })}
                     </div>
                   </div>
                   <div
