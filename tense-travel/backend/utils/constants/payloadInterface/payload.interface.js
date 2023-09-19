@@ -45,6 +45,10 @@ const heartLives = {
   live: 3,
 };
 
+const stageQuestionSize = {
+  size: 10,
+};
+
 const stageFilter = (params) => {
   let stages = null;
   let answerCount = JSON.parse(JSON.stringify(params?.answerCount["tenseEra"]));
@@ -170,7 +174,7 @@ const eraFilter = (params) => {
   return tenseEra;
 };
 
-const userAnswerStages =async (model, requestBody) =>{
+const userAnswerStages = async (model, requestBody) => {
   const userAnswerStage = await model.aggregate([
     {
       $match: {
@@ -215,7 +219,7 @@ const userAnswerStages =async (model, requestBody) =>{
   ]);
 
   return userAnswerStage;
-}
+};
 
 module.exports = {
   answerPayload,
@@ -226,5 +230,6 @@ module.exports = {
   answerResponseFormat,
   heartLives,
   eraFilter,
-  userAnswerStages
+  userAnswerStages,
+  stageQuestionSize
 };

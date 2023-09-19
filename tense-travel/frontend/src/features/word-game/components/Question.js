@@ -101,7 +101,6 @@ function Question() {
     userAnswerSubmitPayload.userAnswer = userAnswer;
     inputRef.current.focus();
 
-    setUserAnswer("");
     inputRef.current.blur();
     const submitAnswer = await fetch(
       `${process.env.REACT_APP_API_URL}/userEra/user-attending-question`,
@@ -118,12 +117,15 @@ function Question() {
     submitAnswerParsed = submitAnswerParsed["data"]["answerResponseFormat"];
     setLives(submitAnswerParsed["heartLive"]);
     setIsCorrectAns(submitAnswerParsed["isCorrect"]);
+    if (submitAnswerParsed["completedStage"] === true)
+      navigate(`/choose-stage/${eraId}`);
 
     // updating anwered question isCorrect
     let updatedQues = questionsParsed["data"];
     for (let index in updatedQues) {
       if (parseInt(currentQuestionIndex) == index) {
-        updatedQues[currentQuestionIndex]["isCorrect"] = false;
+        updatedQues[currentQuestionIndex]["isCorrect"] =
+          submitAnswerParsed["isCorrect"];
         break;
       }
     }
@@ -133,6 +135,7 @@ function Question() {
 
   const handleNextQuestion = () => {
     setIsCorrectAns(null);
+    setUserAnswer("");
     inputRef.current.focus();
     filterCurrentQuestion(currentQuestionIndex);
   };
@@ -197,7 +200,6 @@ function Question() {
           </button>
         </div>
 
-        {/* <div className={"right-answer-block" isCorrectAns={}}> */}
         {isCorrectAns !== null && (
           <div
             className={
