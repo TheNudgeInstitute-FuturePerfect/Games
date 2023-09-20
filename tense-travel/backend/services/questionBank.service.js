@@ -14,35 +14,41 @@ const ObjectID = require("mongodb").ObjectId;
 
 exports.create = async (req, res, next) => {
   try {
-    const payload = req.body;
+    const payload = req.body["questions"];
+    let checkDuplicateQuestion;
+    let duplicateQuestionAnswer = {};
 
-    let checkWord = await questoinBankModel.findOne({
-      word: { $regex: new RegExp("^" + payload["word"], "i") },
-      question: payload["question"],
-    });
+    for await (let que of payload) {
+      const checkWord = await questoinBankModel.findOne({
+        word: { $regex: new RegExp("^" + que["word"], "i") },
+        question: { $regex: new RegExp("^" + que["question"], "i") },
+        stageId: que?.stageId,
+      });
+      if (!isEmpty(checkWord)) {
+        checkDuplicateQuestion = checkWord;
+        duplicateQuestionAnswer = que;
+        break;
+      }
+    }
 
-    if (!isEmpty(checkWord)) {
+    if (!isEmpty(checkDuplicateQuestion)) {
+      checkDuplicateQuestion = duplicateQuestionAnswer;
       return reponseModel(
         httpStatusCodes.OK,
         "Word and question is already exists",
         false,
-        "",
+        checkDuplicateQuestion,
         req,
         res
       );
     } else {
-      const questionPayload = payload["answers"].map((item, index) => {
-        return { ...item, question: payload.question, word: payload.word };
-      });
-      const questionCreated = await questoinBankModel.insertMany(
-        questionPayload
-      );
+      const questionCreated = await questoinBankModel.insertMany(payload);
 
       return reponseModel(
         httpStatusCodes.OK,
-        "Word and question created",
+        "Question created",
         true,
-        questionCreated,
+        "",
         req,
         res
       );
