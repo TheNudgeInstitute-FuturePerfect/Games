@@ -312,12 +312,13 @@ exports.getRandomQuestionByUnlockStage = async (req, res, next) => {
     if (attemptedQuestionArrayLength >= 10) {
       answerResponseFormat.completedStage = true;
     }
+    // answerResponseFormat.heartLive = stage["lives"]
 
     return reponseModel(
       httpStatusCodes.OK,
       !isEmpty(questions) ? "Quesiton found" : "Quesiton not found",
       !isEmpty(questions) ? true : false,
-      { questions, heartLive: stage["lives"], answerResponseFormat },
+      { questions, ...answerResponseFormat, heartLive: stage["lives"] },
       req,
       res
     );

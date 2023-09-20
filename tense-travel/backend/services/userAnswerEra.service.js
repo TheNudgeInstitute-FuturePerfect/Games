@@ -356,6 +356,7 @@ exports.userAttendingQuestion = async (req, res, next) => {
         savedUserAnswer?.acknowledged === true
       ) {
         answerResponseFormat.nextQuestion = true;
+        answerResponseFormat.completedStage = false;
         return reponseModel(
           httpStatusCodes.OK,
           "Answer saved successful",
