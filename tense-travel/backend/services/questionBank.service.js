@@ -8,6 +8,7 @@ const {
 const {
   stageFilter,
   stageQuestionSize,
+  answerResponseFormat,
 } = require("../utils/constants/payloadInterface/payload.interface");
 const ObjectID = require("mongodb").ObjectId;
 
@@ -237,6 +238,7 @@ exports.getRandomQuestionByUnlockStage = async (req, res, next) => {
     let attemptedQuestionArray;
     let attemptedQuestionsIds;
     let attemptedQuestionArrayModified;
+    let attemptedQuestionArrayLength = 0;
 
     if (isEmpty(checkUnlockStage)) {
       return reponseModel(
@@ -257,6 +259,8 @@ exports.getRandomQuestionByUnlockStage = async (req, res, next) => {
       questionSize = parseInt(
         stageQuestionSize.size - attemptedQuestionArray.length
       );
+
+      attemptedQuestionArrayLength = attemptedQuestionArray.length;
 
       attemptedQuestionsIds = attemptedQuestionArray.map(
         (question) => question.questionBankId
@@ -304,11 +308,17 @@ exports.getRandomQuestionByUnlockStage = async (req, res, next) => {
       requestBody: requestBody,
     });
 
+    //checking if user attempts ten questions
+    if (attemptedQuestionArrayLength >= 10) {
+      answerResponseFormat.completedStage = true;
+    }
+    // answerResponseFormat.heartLive = stage["lives"]
+
     return reponseModel(
       httpStatusCodes.OK,
       !isEmpty(questions) ? "Quesiton found" : "Quesiton not found",
       !isEmpty(questions) ? true : false,
-      { questions, heartLive: stage["lives"] },
+      { questions, ...answerResponseFormat, heartLive: stage["lives"] },
       req,
       res
     );

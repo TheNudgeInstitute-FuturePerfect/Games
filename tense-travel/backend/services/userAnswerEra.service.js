@@ -17,6 +17,7 @@ const {
   userAnswerStages,
 } = require("../utils/constants/payloadInterface/payload.interface");
 const { retryGame, unlockStage } = require("./answer/retryAttempt");
+const { filterStage } = require("./global-services/filterEraSatage.service");
 const ObjectID = require("mongodb").ObjectId;
 
 exports.findUserEra = async (req, res, next) => {
@@ -183,7 +184,7 @@ exports.userAttendingQuestion = async (req, res, next) => {
       answerResponseFormat.nextQuestion = true;
       answerResponseFormat.isCorrect = null;
       answerResponseFormat.heartLive = stages["lives"];
-      
+
       return reponseModel(
         httpStatusCodes.OK,
         "Answer has already been saved",
@@ -349,15 +350,37 @@ exports.userAttendingQuestion = async (req, res, next) => {
           res
         );
       }
-      answerResponseFormat.nextQuestion = true;
-      return reponseModel(
-        httpStatusCodes.OK,
-        "Answer saved successful",
-        true,
-        { answerResponseFormat },
-        req,
-        res
-      );
+
+      if (
+        savedUserAnswer?.modifiedCount > 0 &&
+        savedUserAnswer?.acknowledged === true
+      ) {
+        answerResponseFormat.nextQuestion = true;
+        answerResponseFormat.completedStage = false;
+        return reponseModel(
+          httpStatusCodes.OK,
+          "Answer saved successful",
+          true,
+          { answerResponseFormat },
+          req,
+          res
+        );
+      } else {
+        answerResponseFormat.nextQuestion = null;
+        return reponseModel(
+          httpStatusCodes.OK,
+          "Wrong question attempt",
+          true,
+          {
+            ...answerResponseFormat,
+            heartLive: 0,
+            isCorrect: null,
+            isError: true,
+          },
+          req,
+          res
+        );
+      }
     }
   } catch (error) {
     next(error);
@@ -502,6 +525,32 @@ exports.getUserCurrentEra = async (req, res, next) => {
           tenseEra: userEras["tenseEra"],
           requestBody: requestBody,
         });
+
+        //track the locked stage and update it to unlocked stage
+        let filterStages = await filterStage(userAnswerEraModel, requestBody);
+
+        filterStages = filterStages[0]["tenseEra"][0]["stage"];
+        let unLockedStage = [];
+        let lockedStage = [];
+        filterStages.map((item, index) => {
+          if (item?.question.length > 0 && !item.isLocked) {
+            delete item?.question;
+            unLockedStage.push(item);
+          } else {
+            lockedStage.push(item);
+          }
+        });
+
+        if (lockedStage.length > 0) {
+          requestBody["stageId"] = lockedStage[0]["stageId"];
+          await unlockStage(userAnswerEraModel, requestBody, false);
+
+          currentEra["stage"].forEach((element) => {
+            if (element?.stageId === requestBody["stageId"].toString()) {
+              element.isLocked = false;
+            }
+          });
+        }
 
         return reponseModel(
           httpStatusCodes.OK,

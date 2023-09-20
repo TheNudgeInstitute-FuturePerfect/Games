@@ -18,6 +18,7 @@ const answerResponseFormat = {
   nextQuestion: false,
   heartLive: 0,
   isCorrect: null,
+  isError: false
 };
 
 const earningCoinsRule = {
