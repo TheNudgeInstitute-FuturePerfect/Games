@@ -6,6 +6,7 @@ import {
   getStageQuestion,
   userAnswerSubmitPayload,
 } from "../../../utils/payload";
+import { userIds } from "../../../utils/constants";
 
 let questionsParsed, questionsData, currentQuestionIndex;
 function Question() {
@@ -26,8 +27,8 @@ function Question() {
   };
 
   const getStageQuestions = async () => {
-    getStageQuestion["sessionId"] = "7694ffb1-09c8-48da-b7d1-819c79c4891c";
-    getStageQuestion.userId = "64f583fe0de4f60ae6e05cc5";
+    getStageQuestion["sessionId"] = userIds.sessionId;
+    getStageQuestion.userId = userIds.userId;
     getStageQuestion.tenseEraId = eraId;
     getStageQuestion.stageId = stageId;
 
@@ -50,6 +51,14 @@ function Question() {
       setQuestions(questionsParsed["data"]);
 
       filterCurrentQuestion(null);
+    }
+
+    if (
+      questionsParsed["answerResponseFormat"] &&
+      questionsParsed["answerResponseFormat"]?.completedStage === true
+    ) {
+      alert("you have completed the stage ");
+      navigate(`/choose-stage/${eraId}`);
     }
   };
 
@@ -92,8 +101,8 @@ function Question() {
   const checkAnswer = async () => {
     const currentQues = questionsParsed["data"][currentQuestionIndex];
 
-    userAnswerSubmitPayload.sessionId = "7694ffb1-09c8-48da-b7d1-819c79c4891c";
-    userAnswerSubmitPayload.userId = "64f583fe0de4f60ae6e05cc5";
+    userAnswerSubmitPayload.sessionId = userIds.sessionId;
+    userAnswerSubmitPayload.userId = userIds.userId;
     userAnswerSubmitPayload.questionId = currentQues?._id;
     userAnswerSubmitPayload.tenseEraId = currentQues?.tenseEraId;
     userAnswerSubmitPayload.stageId = currentQues?.stageId;
@@ -114,11 +123,19 @@ function Question() {
     setCurrentQuestion(questionsParsed["data"][currentQuestionIndex]);
 
     let submitAnswerParsed = await submitAnswer.json();
+    const message = submitAnswerParsed["message"];
     submitAnswerParsed = submitAnswerParsed["data"]["answerResponseFormat"];
     setLives(submitAnswerParsed["heartLive"]);
     setIsCorrectAns(submitAnswerParsed["isCorrect"]);
-    if (submitAnswerParsed["completedStage"] === true)
+    if (submitAnswerParsed["completedStage"] === true) {
+      alert(message);
       navigate(`/choose-stage/${eraId}`);
+    }
+
+    if (submitAnswerParsed["heartLive"] === 0) {
+      alert(message);
+      navigate(`/choose-stage/${eraId}`);
+    }
 
     // updating anwered question isCorrect
     let updatedQues = questionsParsed["data"];

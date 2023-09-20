@@ -4,6 +4,7 @@ import "../../../sass/styles.scss";
 import { Link, useNavigate } from "react-router-dom";
 import { useParams } from "react-router";
 import { getUserCurrentEra } from "../../../utils/payload";
+import { userIds } from "../../../utils/constants";
 
 function ChooseStage() {
   const navigate = useNavigate();
@@ -18,8 +19,8 @@ function ChooseStage() {
   const { eraId } = useParams();
 
   const getStageOfEra = async () => {
-    getUserCurrentEra["sessionId"] = "7694ffb1-09c8-48da-b7d1-819c79c4891c";
-    getUserCurrentEra.userId = "64f583fe0de4f60ae6e05cc5";
+    getUserCurrentEra["sessionId"] = userIds.sessionId;
+    getUserCurrentEra.userId = userIds.userId;
     getUserCurrentEra.tenseEraId = eraId;
 
     const tenseStageData = await fetch(
@@ -50,7 +51,17 @@ function ChooseStage() {
             <ul className="step-list">
               <li className="line1">
                 <div className="flex">
-                  <div className="image-block"> </div>
+                  {/* <div className="image-block"> </div> */}
+                  {stage && !stage[3]?.isLocked ? (
+                    <div
+                      onClick={() => navigateQuestion(stage[3])}
+                      className="image-block active"
+                    >
+                      {" "}
+                    </div>
+                  ) : (
+                    <div className="image-block"> </div>
+                  )}
                   <div className="text-block">
                     <strong>{stage && stage[3]?.stageTitle}</strong>
                     <div className="star-block">
@@ -83,12 +94,32 @@ function ChooseStage() {
                           })}
                     </div>
                   </div>
-                  <div className="image-block"> </div>
+                  {/* <div className="image-block"> </div> */}
+                  {stage && !stage[2]?.isLocked ? (
+                    <div
+                      onClick={() => navigateQuestion(stage[2])}
+                      className="image-block active"
+                    >
+                      {" "}
+                    </div>
+                  ) : (
+                    <div className="image-block"> </div>
+                  )}
                 </div>
               </li>
               <li className="line3">
                 <div className="flex">
-                  <div className="image-block"> </div>
+                  {stage && !stage[1]?.isLocked ? (
+                    <div
+                      onClick={() => navigateQuestion(stage[1])}
+                      className="image-block active"
+                    >
+                      {" "}
+                    </div>
+                  ) : (
+                    <div className="image-block"> </div>
+                  )}
+                  {/* <div className="image-block"> </div> */}
                   <div className="text-block">
                     <strong>
                       {stage && stage[1]?.stageTitle.split(" ")[1]} <br />
@@ -112,6 +143,7 @@ function ChooseStage() {
                   </div>
                 </div>
               </li>
+
               <li className="line4">
                 <div className="flex">
                   <div className="text-block">
