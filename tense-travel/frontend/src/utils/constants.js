@@ -1,6 +1,6 @@
 const userIds = {
-  userId: "64db441b82345e9ebfe91cd8",
-  sessionId: "e28f8021-1518-485a-b930-6476eed3a92e",
+  userId: "64dc5aa177be3ce577787347",
+  sessionId: "3e2d0040-89ca-4a8e-8158-01af10ec57c1",
 };
 
 module.exports = { userIds };

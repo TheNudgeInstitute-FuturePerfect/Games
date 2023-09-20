@@ -42,7 +42,13 @@ function Question() {
     );
 
     questionsParsed = await questionsData.json();
+    if (questionsParsed["data"]["questions"].length === 0) {
+      alert(questionsParsed["message"]);
+      navigate(`/choose-stage/${eraId}`);
+    }
+
     if (questionsParsed["data"].length === 0) {
+      alert(questionsParsed["message"]);
       questionsParsed = questionsParsed["message"];
       navigate(`/choose-stage/${eraId}`);
     } else {
