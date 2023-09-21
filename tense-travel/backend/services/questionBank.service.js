@@ -318,6 +318,16 @@ exports.getRandomQuestionByUnlockStage = async (req, res, next) => {
     //checking if user attempts ten questions
     if (attemptedQuestionArrayLength >= 10) {
       answerResponseFormat.completedStage = true;
+      questions = [];
+
+      return reponseModel(
+        httpStatusCodes.OK,
+        "Stage has already been completed",
+        false,
+        { questions, ...answerResponseFormat, heartLive: stage["lives"] },
+        req,
+        res
+      );
     }
     // answerResponseFormat.heartLive = stage["lives"]
 
