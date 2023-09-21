@@ -7,40 +7,48 @@ const {
 } = require("./global-services/filterEraSatage.service");
 const {
   stageFilter,
+  stageQuestionSize,
+  answerResponseFormat,
 } = require("../utils/constants/payloadInterface/payload.interface");
 const ObjectID = require("mongodb").ObjectId;
 
 exports.create = async (req, res, next) => {
   try {
-    const payload = req.body;
+    const payload = req.body["questions"];
+    let checkDuplicateQuestion;
+    let duplicateQuestionAnswer = {};
 
-    let checkWord = await questoinBankModel.findOne({
-      word: { $regex: new RegExp("^" + payload["word"], "i") },
-      question: payload["question"],
-    });
+    for await (let que of payload) {
+      const checkWord = await questoinBankModel.findOne({
+        word: { $regex: new RegExp("^" + que["word"], "i") },
+        question: { $regex: new RegExp("^" + que["question"], "i") },
+        stageId: que?.stageId,
+      });
+      if (!isEmpty(checkWord)) {
+        checkDuplicateQuestion = checkWord;
+        duplicateQuestionAnswer = que;
+        break;
+      }
+    }
 
-    if (!isEmpty(checkWord)) {
+    if (!isEmpty(checkDuplicateQuestion)) {
+      checkDuplicateQuestion = duplicateQuestionAnswer;
       return reponseModel(
         httpStatusCodes.OK,
         "Word and question is already exists",
         false,
-        "",
+        checkDuplicateQuestion,
         req,
         res
       );
     } else {
-      const questionPayload = payload["answers"].map((item, index) => {
-        return { ...item, question: payload.question, word: payload.word };
-      });
-      const questionCreated = await questoinBankModel.insertMany(
-        questionPayload
-      );
+      const questionCreated = await questoinBankModel.insertMany(payload);
 
       return reponseModel(
         httpStatusCodes.OK,
-        "Word and question created",
+        "Question created",
         true,
-        questionCreated,
+        "",
         req,
         res
       );
@@ -211,8 +219,8 @@ exports.getQuestionDetails = async (req, res, next) => {
 
     return reponseModel(
       httpStatusCodes.OK,
-      questions.length > 0 ? "Quesiton found" : "Quesiton not found",
-      questions.length > 0 ? true : false,
+      !isEmpty(questions) ? "Quesiton found" : "Quesiton not found",
+      !isEmpty(questions) ? true : false,
       questions,
       req,
       res
@@ -230,7 +238,13 @@ exports.getRandomQuestionByUnlockStage = async (req, res, next) => {
       requestBody
     );
 
-    console.log(checkUnlockStage)
+    let stage;
+    let questionSize = stageQuestionSize.size;
+    let questions;
+    let attemptedQuestionArray;
+    let attemptedQuestionsIds;
+    let attemptedQuestionArrayModified;
+    let attemptedQuestionArrayLength = 0;
 
     if (isEmpty(checkUnlockStage)) {
       return reponseModel(
@@ -241,25 +255,115 @@ exports.getRandomQuestionByUnlockStage = async (req, res, next) => {
         req,
         res
       );
-    } else {
-      const stage = stageFilter({
-        answerCount: checkUnlockStage[0],
-        requestBody: requestBody,
-      });
+    } else if (
+      !isEmpty(checkUnlockStage) &&
+      checkUnlockStage[0]["tenseEra"][0]["stage"][0]["question"].length > 0
+    ) {
+      attemptedQuestionArray =
+        checkUnlockStage[0]["tenseEra"][0]["stage"][0]["question"];
 
+      questionSize = parseInt(
+        stageQuestionSize.size - attemptedQuestionArray.length
+      );
+
+      attemptedQuestionArrayLength = attemptedQuestionArray.length;
+
+      attemptedQuestionsIds = attemptedQuestionArray.map(
+        (question) => question.questionBankId
+      );
+
+      attemptedQuestionArrayModified = attemptedQuestionArray.map(
+        (question) => {
+          return {
+            ...question,
+            _id: question.questionBankId,
+          };
+        }
+      );
+
+      questions = await questoinBankModel.aggregate([
+        {
+          $match: {
+            stageId: new ObjectID(requestBody["stageId"]),
+            status: { $eq: "active" },
+            _id: {
+              $nin: attemptedQuestionsIds,
+            },
+          },
+        },
+        {
+          $sample: {
+            size: questionSize,
+          },
+        },
+      ]);
+
+      attemptedQuestionArray = [
+        ...attemptedQuestionArrayModified,
+        ...questions,
+      ];
+
+      questions = attemptedQuestionArray;
+    } else {
       req.params.stageId = requestBody["stageId"];
-      let questions = await this.getRandomQuestionByStage(req, res, next);
+      questions = await this.getRandomQuestionByStage(req, res, next);
       questions = questions["data"];
+    }
+
+    stage = stageFilter({
+      answerCount: checkUnlockStage[0],
+      requestBody: requestBody,
+    });
+
+    //checking if user attempts ten questions
+    if (attemptedQuestionArrayLength >= 10) {
+      answerResponseFormat.completedStage = true;
+      questions = [];
 
       return reponseModel(
         httpStatusCodes.OK,
-        questions.length > 0 ? "Quesiton found" : "Quesiton not found",
-        questions.length > 0 ? true : false,
-        { questions, heartLive: stage["lives"] },
+        "Stage has already been completed",
+        false,
+        { questions, ...answerResponseFormat, heartLive: stage["lives"] },
         req,
         res
       );
     }
+    // answerResponseFormat.heartLive = stage["lives"]
+
+    return reponseModel(
+      httpStatusCodes.OK,
+      !isEmpty(questions) ? "Quesiton found" : "Quesiton not found",
+      !isEmpty(questions) ? true : false,
+      { questions, ...answerResponseFormat, heartLive: stage["lives"] },
+      req,
+      res
+    );
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.updateQuestionStatus = async (req, res, next) => {
+  try {
+    const payload = req.body;
+    const id = req.params.id;
+    const updated = await questoinBankModel.findOneAndUpdate(
+      { _id: id },
+      {
+        status: payload["status"],
+      },
+      { upsert: true }
+    );
+
+    return reponseModel(
+      httpStatusCodes.OK,
+      "Status updated",
+      true,
+      "",
+      req,
+      res
+    );
   } catch (err) {
     next(err);
   }

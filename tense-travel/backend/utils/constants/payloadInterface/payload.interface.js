@@ -1,5 +1,6 @@
 // const { userAnswerEraModel } = require("../../../models/index");
 // const { userAnswerEraModel } = require("../../../models/userAnswerEra.model");
+const ObjectID = require("mongodb").ObjectId;
 
 const answerPayload = {
   questionBankId: "",
@@ -17,6 +18,7 @@ const answerResponseFormat = {
   nextQuestion: false,
   heartLive: 0,
   isCorrect: null,
+  isError: false
 };
 
 const earningCoinsRule = {
@@ -42,6 +44,10 @@ const earningCoinsRule = {
 
 const heartLives = {
   live: 3,
+};
+
+const stageQuestionSize = {
+  size: 10,
 };
 
 const stageFilter = (params) => {
@@ -169,6 +175,53 @@ const eraFilter = (params) => {
   return tenseEra;
 };
 
+const userAnswerStages = async (model, requestBody) => {
+  const userAnswerStage = await model.aggregate([
+    {
+      $match: {
+        userId: new ObjectID(requestBody["userId"]),
+        sessionId: requestBody["sessionId"],
+        "tenseEra.tenseEraId": new ObjectID(requestBody["tenseEraId"]),
+        "tenseEra.stage.stageId": new ObjectID(requestBody["stageId"]),
+      },
+    },
+    {
+      $project: {
+        tenseEra: {
+          $filter: {
+            input: {
+              $map: {
+                input: "$tenseEra",
+                in: {
+                  $mergeObjects: [
+                    "$$this",
+                    {
+                      stage: {
+                        $filter: {
+                          input: "$$this.stage",
+                          cond: {
+                            $eq: [
+                              "$$this.stageId",
+                              new ObjectID(requestBody["stageId"]),
+                            ],
+                          },
+                        },
+                      },
+                    },
+                  ],
+                },
+              },
+            },
+            cond: { $ne: ["$$this.stage", []] },
+          },
+        },
+      },
+    },
+  ]);
+
+  return userAnswerStage;
+};
+
 module.exports = {
   answerPayload,
   stageFilter,
@@ -177,5 +230,7 @@ module.exports = {
   updateCoins,
   answerResponseFormat,
   heartLives,
-  eraFilter
+  eraFilter,
+  userAnswerStages,
+  stageQuestionSize
 };

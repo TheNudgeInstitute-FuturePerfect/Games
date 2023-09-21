@@ -6,13 +6,21 @@ const getLivesOfUnlockStage = async (model, requestBody) => {
       $match: {
         userId: new ObjectID(requestBody["userId"]),
         sessionId: requestBody["sessionId"],
-        "tenseEra.tenseEraId": new ObjectID(requestBody["tenseEraId"]),
-        "tenseEra.stage.stageId": new ObjectID(requestBody["stageId"]),
-        "tenseEra.stage.isLocked": false,
+        tenseEra: {
+          $elemMatch: {
+            tenseEraId: new ObjectID(requestBody["tenseEraId"]),
+            stage: {
+              $elemMatch: {
+                stageId: new ObjectID(requestBody["stageId"]),
+                isLocked: false,
+              },
+            },
+          },
+        },
       },
     },
     {
-      $addFields: {
+      $project: {
         tenseEra: {
           $filter: {
             input: {
@@ -47,4 +55,42 @@ const getLivesOfUnlockStage = async (model, requestBody) => {
   return unlockStageLives;
 };
 
-module.exports = { getLivesOfUnlockStage };
+const filterStage = async (model, requestBody) => {
+  const unlockStageLives = await model.aggregate([
+    {
+      $match: {
+        userId: new ObjectID(requestBody["userId"]),
+        sessionId: requestBody["sessionId"],
+        tenseEra: {
+          $elemMatch: {
+            tenseEraId: new ObjectID(requestBody["tenseEraId"]),
+            // stage: {
+            //   $elemMatch: {
+            //     isLocked: true,
+            //   },
+            // },
+          },
+        },
+      },
+    },
+    {
+      $project: {
+        tenseEra: {
+          $filter: {
+            input: "$tenseEra",
+            as: "tenseEra",
+            cond: {
+              $eq: [
+                "$$tenseEra.tenseEraId",
+                new ObjectID(requestBody["tenseEraId"]),
+              ],
+            },
+          },
+        },
+      },
+    },
+  ]);
+  return unlockStageLives;
+};
+
+module.exports = { getLivesOfUnlockStage, filterStage };

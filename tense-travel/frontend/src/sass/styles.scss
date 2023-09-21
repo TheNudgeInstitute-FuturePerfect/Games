@@ -52,6 +52,7 @@
             height: 65px;
             &.active{
                 background: url(../../src/assets/images/white-globe.svg) left top no-repeat;
+                cursor: pointer;
             }
         }
         &.line1{
@@ -174,7 +175,7 @@
         display: flex;
         gap: 4px;
         width: calc(100% - 69px);
-        border-right: 3px solid #fff;
+        // border-right: 3px solid #fff;
         height: 26px;
         justify-content: center;
         align-items: center;
@@ -302,3 +303,5 @@
         background-size: cover;
     }
  }
+
+//  custom styles

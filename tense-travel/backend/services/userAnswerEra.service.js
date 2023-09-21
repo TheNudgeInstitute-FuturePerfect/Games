@@ -1,4 +1,4 @@
-const { userAnswerEraModel } = require("../models/index");
+const { userAnswerEraModel, questoinBankModel } = require("../models/index");
 const { reponseModel } = require("../utils/responseHandler");
 const httpStatusCodes = require("../utils/httpStatusCodes");
 const isEmpty = require("lodash.isempty");
@@ -11,12 +11,13 @@ const {
 const {
   answerPayload,
   stageFilter,
-  stageAndQuestionFilter,
   earnCoins,
   answerResponseFormat,
   eraFilter,
+  userAnswerStages,
 } = require("../utils/constants/payloadInterface/payload.interface");
 const { retryGame, unlockStage } = require("./answer/retryAttempt");
+const { filterStage } = require("./global-services/filterEraSatage.service");
 const ObjectID = require("mongodb").ObjectId;
 
 exports.findUserEra = async (req, res, next) => {
@@ -82,24 +83,74 @@ exports.findUserEra = async (req, res, next) => {
 exports.userAttendingQuestion = async (req, res, next) => {
   try {
     const requestBody = req.body;
+    let stages = {};
 
     req.params["id"] = req.body["questionId"];
     let questionDetail = await getQuestionDetails(req, res, next);
     questionDetail = questionDetail["data"];
 
-    let answerExists = await userAnswerEraModel.findOne({
-      userId: requestBody["userId"],
-      sessionId: requestBody["sessionId"],
-      "tenseEra.tenseEraId": requestBody["tenseEraId"],
-      "tenseEra.stage.stageId": requestBody["stageId"],
-      // "tenseEra.stage.question.questionBankId": requestBody["questionId"],
-    });
+    let answerExists = await userAnswerEraModel.aggregate([
+      {
+        $match: {
+          userId: new ObjectID(requestBody["userId"]),
+          sessionId: requestBody["sessionId"],
+          tenseEra: {
+            $elemMatch: {
+              tenseEraId: new ObjectID(requestBody["tenseEraId"]),
+              stage: {
+                $elemMatch: {
+                  stageId: new ObjectID(requestBody["stageId"]),
+                  question: {
+                    $elemMatch: {
+                      questionBankId: new ObjectID(requestBody["questionId"]),
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      {
+        $project: {
+          tenseEra: {
+            $filter: {
+              input: {
+                $map: {
+                  input: "$tenseEra",
+                  in: {
+                    $mergeObjects: [
+                      "$$this",
+                      {
+                        stage: {
+                          $filter: {
+                            input: "$$this.stage",
+                            cond: {
+                              $eq: [
+                                "$$this.stageId",
+                                new ObjectID(requestBody["stageId"]),
+                              ],
+                            },
+                          },
+                        },
+                      },
+                    ],
+                  },
+                },
+              },
+              cond: { $ne: ["$$this.stage", []] },
+            },
+          },
+        },
+      },
+    ]);
 
-    answerExists = stageAndQuestionFilter({ answerExists, requestBody });
-    let { stages, userAnswerDetail } = answerExists;
-    answerResponseFormat.heartLive = stages["lives"];
-
-    if (stages["lives"] === 0) {
+    if (
+      !isEmpty(answerExists) &&
+      answerExists[0]["tenseEra"][0]["stage"][0]["lives"] === 0
+    ) {
+      answerResponseFormat.heartLive =
+        answerExists[0]["tenseEra"][0]["stage"][0]["lives"];
       answerResponseFormat.completedEra = false;
       answerResponseFormat.completedStage = false;
       answerResponseFormat.nextQuestion = false;
@@ -112,7 +163,10 @@ exports.userAttendingQuestion = async (req, res, next) => {
         req,
         res
       );
-    } else if (stages?.question.length === 10) {
+    } else if (
+      !isEmpty(answerExists) &&
+      answerExists[0]["tenseEra"][0]["stage"][0]["question"]?.length >= 10
+    ) {
       answerResponseFormat.completedEra = false;
       answerResponseFormat.completedStage = true;
       return reponseModel(
@@ -123,9 +177,14 @@ exports.userAttendingQuestion = async (req, res, next) => {
         req,
         res
       );
-    } else if (!isEmpty(userAnswerDetail)) {
+    } else if (!isEmpty(answerExists)) {
+      stages["lives"] = parseInt(
+        answerExists[0]["tenseEra"][0]["stage"][0]["lives"]
+      );
       answerResponseFormat.nextQuestion = true;
       answerResponseFormat.isCorrect = null;
+      answerResponseFormat.heartLive = stages["lives"];
+
       return reponseModel(
         httpStatusCodes.OK,
         "Answer has already been saved",
@@ -136,11 +195,30 @@ exports.userAttendingQuestion = async (req, res, next) => {
       );
     } else {
       //preparing payload to be saved
+      let userAnswerStage = await userAnswerStages(
+        userAnswerEraModel,
+        requestBody
+      );
       answerPayload.question = questionDetail.question;
       answerPayload.answer = questionDetail.answer;
       answerPayload.userAnswer = requestBody.userAnswer;
       answerPayload.questionBankId = requestBody.questionId;
+
+      stages["attemptQuestions"] = parseInt(
+        userAnswerStage[0]["tenseEra"][0]["stage"][0]["attemptQuestions"]
+      );
       stages["attemptQuestions"]++;
+
+      stages["lives"] = parseInt(
+        userAnswerStage[0]["tenseEra"][0]["stage"][0]["lives"]
+      );
+
+      stages["numberOfCorrect"] = parseInt(
+        userAnswerStage[0]["tenseEra"][0]["stage"][0]["numberOfCorrect"]
+      );
+      stages["numberOfInCorrect"] = parseInt(
+        userAnswerStage[0]["tenseEra"][0]["stage"][0]["numberOfInCorrect"]
+      );
 
       //checking the answer is correct or incorrect
       if (
@@ -150,6 +228,7 @@ exports.userAttendingQuestion = async (req, res, next) => {
         answerPayload.isCorrect = true;
         stages["numberOfCorrect"]++;
         answerResponseFormat.isCorrect = true;
+        answerResponseFormat.heartLive = stages["lives"];
       } else {
         answerPayload.isCorrect = false;
         stages["numberOfInCorrect"]++;
@@ -161,17 +240,33 @@ exports.userAttendingQuestion = async (req, res, next) => {
       //save user answer of the question
       const savedUserAnswer = await userAnswerEraModel.updateOne(
         {
-          userId: requestBody["userId"],
+          userId: new ObjectID(requestBody["userId"]),
           sessionId: requestBody["sessionId"],
-          "tenseEra.tenseEraId": requestBody["tenseEraId"],
-          "tenseEra.stage.stageId": requestBody["stageId"],
+          tenseEra: {
+            $elemMatch: {
+              tenseEraId: new ObjectID(requestBody["tenseEraId"]),
+              stage: {
+                $elemMatch: {
+                  stageId: new ObjectID(requestBody["stageId"]),
+                },
+              },
+            },
+          },
         },
         {
           $push: {
-            "tenseEra.$[].stage.$.question": answerPayload,
+            "tenseEra.$[].stage.$[coins].question": answerPayload,
           },
+        },
+        {
+          arrayFilters: [
+            {
+              "coins.stageId": requestBody["stageId"],
+            },
+          ],
         }
       );
+
       if (
         savedUserAnswer?.modifiedCount > 0 &&
         savedUserAnswer?.acknowledged === true
@@ -248,22 +343,44 @@ exports.userAttendingQuestion = async (req, res, next) => {
 
         return reponseModel(
           httpStatusCodes.OK,
-          "Stage has already been completed",
+          "Stage has been completed",
           true,
           { answerResponseFormat },
           req,
           res
         );
       }
-      answerResponseFormat.nextQuestion = true;
-      return reponseModel(
-        httpStatusCodes.OK,
-        "Answer saved successful",
-        true,
-        { answerResponseFormat },
-        req,
-        res
-      );
+
+      if (
+        savedUserAnswer?.modifiedCount > 0 &&
+        savedUserAnswer?.acknowledged === true
+      ) {
+        answerResponseFormat.nextQuestion = true;
+        answerResponseFormat.completedStage = false;
+        return reponseModel(
+          httpStatusCodes.OK,
+          "Answer saved successful",
+          true,
+          { answerResponseFormat },
+          req,
+          res
+        );
+      } else {
+        answerResponseFormat.nextQuestion = null;
+        return reponseModel(
+          httpStatusCodes.OK,
+          "Wrong question attempt",
+          true,
+          {
+            ...answerResponseFormat,
+            heartLive: 0,
+            isCorrect: null,
+            isError: true,
+          },
+          req,
+          res
+        );
+      }
     }
   } catch (error) {
     next(error);
@@ -408,6 +525,32 @@ exports.getUserCurrentEra = async (req, res, next) => {
           tenseEra: userEras["tenseEra"],
           requestBody: requestBody,
         });
+
+        //track the locked stage and update it to unlocked stage
+        let filterStages = await filterStage(userAnswerEraModel, requestBody);
+
+        filterStages = filterStages[0]["tenseEra"][0]["stage"];
+        let unLockedStage = [];
+        let lockedStage = [];
+        filterStages.map((item, index) => {
+          if (item?.question.length > 0 && !item.isLocked) {
+            delete item?.question;
+            unLockedStage.push(item);
+          } else {
+            lockedStage.push(item);
+          }
+        });
+
+        if (lockedStage.length > 0) {
+          requestBody["stageId"] = lockedStage[0]["stageId"];
+          await unlockStage(userAnswerEraModel, requestBody, false);
+
+          currentEra["stage"].forEach((element) => {
+            if (element?.stageId === requestBody["stageId"].toString()) {
+              element.isLocked = false;
+            }
+          });
+        }
 
         return reponseModel(
           httpStatusCodes.OK,
@@ -602,4 +745,44 @@ const updateCoins = async (requestBody, coinObj) => {
     );
   }
   return updateCoin;
+};
+
+//temporary api this will be removed in a future release
+exports.eraseUserStageAttempts = async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const deleted = await userAnswerEraModel.deleteOne({ sessionId: id });
+
+    return reponseModel(
+      httpStatusCodes.OK,
+      "Deleted success",
+      true,
+      deleted,
+      req,
+      res
+    );
+  } catch (err) {
+    next(err);
+  }
+};
+
+//temporary api this will be removed in a future release
+exports.getCurrentUserAndSessionId = async (req, res, next) => {
+  try {
+    const userData = await userAnswerEraModel.findOne(
+      {},
+      { userId: 1, sessionId: 1 }
+    );
+
+    return reponseModel(
+      httpStatusCodes.OK,
+      !isEmpty(userData) ? "Record found" : "Record not found",
+      isEmpty(userData) ? false : true,
+      userData,
+      req,
+      res
+    );
+  } catch (err) {
+    next(err);
+  }
 };

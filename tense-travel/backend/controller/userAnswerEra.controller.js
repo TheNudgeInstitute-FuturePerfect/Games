@@ -5,6 +5,8 @@ const {
   userAttendingQuestion,
   userRetryStage,
   getUserCurrentEra,
+  getCurrentUserAndSessionId,
+  eraseUserStageAttempts,
 } = require("../services/userAnswerEra.service");
 const { handleSuccess } = require("../utils/responseHandler");
 
@@ -92,5 +94,15 @@ exports.userAttendingQuestion = async (req, res, next) => {
  */
 exports.getUserCurrentEra = async (req, res, next) => {
   const response = await getUserCurrentEra(req, res, next);
+  handleSuccess(response, req, res);
+};
+
+exports.getCurrentUserAndSessionId = async (req, res, next) => {
+  const response = await getCurrentUserAndSessionId(req, res, next);
+  handleSuccess(response, req, res);
+};
+
+exports.eraseUserStageAttempts = async (req, res, next) => {
+  const response = await eraseUserStageAttempts(req, res, next);
   handleSuccess(response, req, res);
 };

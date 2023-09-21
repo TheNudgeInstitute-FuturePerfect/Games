@@ -2,15 +2,14 @@ const Joi = require("joi");
 const errorHandler = require("../../utils/responseHandler");
 const httpStatusCodes = require("../../utils/httpStatusCodes");
 
-const answers = Joi.object().keys({
+const questions = Joi.object().keys({
   tenseEraId: Joi.string().required(),
   stageId: Joi.string().required(),
   answer: Joi.string().required(),
   tenseEraTitle: Joi.string().optional().allow("", null),
   stageTitle: Joi.string().optional().allow("", null),
   explanation: Joi.string().optional().allow("", null),
-});
-const questionObj = {
+  status: Joi.string().valid("active", "inactive", "deleted").required(),
   word: Joi.string().required(),
   question: Joi.string()
     .custom((value, helper) => {
@@ -19,8 +18,9 @@ const questionObj = {
       }
     })
     .required(),
-  answers: Joi.array().items(answers).min(9).required(),
-  status: Joi.string().valid("active", "inactive", "deleted").required(),
+});
+const questionObj = {
+  questions: Joi.array().items(questions).min(9).required(),
 };
 
 const questionSchema = Joi.object(questionObj);
@@ -31,10 +31,7 @@ const addQuestionValidator = async (req, res, next) => {
     let payload = req.body;
     await questionSchema.validateAsync(
       {
-        word: payload["word"],
-        question: payload["question"],
-        answers: payload["answers"],
-        status: payload["status"],
+        questions: payload["questions"],
       },
       { abortEarly: false }
     );
@@ -92,7 +89,33 @@ const updateQuestionValidator = async (req, res, next) => {
   }
 };
 
+/* update question status */
+const questionStatusObj = {
+  status: Joi.string().valid("active", "inactive", "deleted").required()
+};
+
+const questionStatusSchema = Joi.object(questionStatusObj);
+questionStatusSchema.validate({});
+
+const updateQuestionStatusValidator = async (req, res, next) => {
+  try {
+    let payload = req.body;
+    await questionStatusSchema.validateAsync(
+      {
+        status: payload["status"],
+      },
+      { abortEarly: false }
+    );
+    next();
+  } catch (error) {
+    const errMsg = error["details"][0]?.message || "";
+    errorHandler.handle(httpStatusCodes.BAD_REQUEST, errMsg, false, req, res);
+  }
+};
+/* update question status end */
+
 module.exports = {
   addQuestionValidator,
   updateQuestionValidator,
+  updateQuestionStatusValidator,
 };
