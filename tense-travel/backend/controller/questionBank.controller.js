@@ -6,6 +6,7 @@ const {
   getRandomQuestionByStage,
   getRandomQuestionByEra,
   getRandomQuestionByUnlockStage,
+  updateQuestionStatus
 } = require("../services/questionBank.service");
 const { handleSuccess } = require("../utils/responseHandler");
 
@@ -63,5 +64,17 @@ exports.getRandomQuestionByEra = async (req, res, next) => {
  */
 exports.getRandomQuestionByUnlockStage = async (req, res, next) => {
   const response = await getRandomQuestionByUnlockStage(req, res, next);
+  handleSuccess(response, req, res);
+};
+
+/**
+ * @Method PATCH
+ * @param {id}
+ * @Payload {
+ * status: 'active
+ * }
+ */
+exports.updateQuestionStatus = async (req, res, next) => {
+  const response = await updateQuestionStatus(req, res, next);
   handleSuccess(response, req, res);
 };

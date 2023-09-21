@@ -89,7 +89,33 @@ const updateQuestionValidator = async (req, res, next) => {
   }
 };
 
+/* update question status */
+const questionStatusObj = {
+  status: Joi.string().valid("active", "inactive", "deleted").required()
+};
+
+const questionStatusSchema = Joi.object(questionStatusObj);
+questionStatusSchema.validate({});
+
+const updateQuestionStatusValidator = async (req, res, next) => {
+  try {
+    let payload = req.body;
+    await questionStatusSchema.validateAsync(
+      {
+        status: payload["status"],
+      },
+      { abortEarly: false }
+    );
+    next();
+  } catch (error) {
+    const errMsg = error["details"][0]?.message || "";
+    errorHandler.handle(httpStatusCodes.BAD_REQUEST, errMsg, false, req, res);
+  }
+};
+/* update question status end */
+
 module.exports = {
   addQuestionValidator,
   updateQuestionValidator,
+  updateQuestionStatusValidator,
 };

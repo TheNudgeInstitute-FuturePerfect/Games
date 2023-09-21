@@ -285,6 +285,7 @@ exports.getRandomQuestionByUnlockStage = async (req, res, next) => {
         {
           $match: {
             stageId: new ObjectID(requestBody["stageId"]),
+            status: { $eq: "active" },
             _id: {
               $nin: attemptedQuestionsIds,
             },
@@ -325,6 +326,31 @@ exports.getRandomQuestionByUnlockStage = async (req, res, next) => {
       !isEmpty(questions) ? "Quesiton found" : "Quesiton not found",
       !isEmpty(questions) ? true : false,
       { questions, ...answerResponseFormat, heartLive: stage["lives"] },
+      req,
+      res
+    );
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.updateQuestionStatus = async (req, res, next) => {
+  try {
+    const payload = req.body;
+    const id = req.params.id;
+    const updated = await questoinBankModel.findOneAndUpdate(
+      { _id: id },
+      {
+        status: payload["status"],
+      },
+      { upsert: true }
+    );
+
+    return reponseModel(
+      httpStatusCodes.OK,
+      "Status updated",
+      true,
+      "",
       req,
       res
     );

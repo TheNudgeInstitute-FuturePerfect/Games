@@ -1,4 +1,4 @@
-const { userAnswerEraModel } = require("../models/index");
+const { userAnswerEraModel, questoinBankModel } = require("../models/index");
 const { reponseModel } = require("../utils/responseHandler");
 const httpStatusCodes = require("../utils/httpStatusCodes");
 const isEmpty = require("lodash.isempty");
@@ -745,4 +745,44 @@ const updateCoins = async (requestBody, coinObj) => {
     );
   }
   return updateCoin;
+};
+
+//temporary api this will be removed in a future release
+exports.eraseUserStageAttempts = async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const deleted = await userAnswerEraModel.deleteOne({ sessionId: id });
+
+    return reponseModel(
+      httpStatusCodes.OK,
+      "Deleted success",
+      true,
+      deleted,
+      req,
+      res
+    );
+  } catch (err) {
+    next(err);
+  }
+};
+
+//temporary api this will be removed in a future release
+exports.getCurrentUserAndSessionId = async (req, res, next) => {
+  try {
+    const userData = await userAnswerEraModel.findOne(
+      {},
+      { userId: 1, sessionId: 1 }
+    );
+
+    return reponseModel(
+      httpStatusCodes.OK,
+      !isEmpty(userData) ? "Record found" : "Record not found",
+      isEmpty(userData) ? false : true,
+      userData,
+      req,
+      res
+    );
+  } catch (err) {
+    next(err);
+  }
 };
