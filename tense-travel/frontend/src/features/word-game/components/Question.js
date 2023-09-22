@@ -8,7 +8,7 @@ import {
   userAnswerSubmitPayload,
 } from "../../../utils/payload";
 import { userIds } from "../../../utils/constants";
-import { reTryStage } from "../../../services/index";
+import  reTryStage  from "../../../services/stageRetryAPI";
 
 let questionsParsed, questionsData, currentQuestionIndex;
 function Question() {

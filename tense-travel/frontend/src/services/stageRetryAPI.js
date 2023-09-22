@@ -10,4 +10,4 @@ const reTryStage = async (requestPayload) => {
   return questionsData;
 };
 
-module.exports = { reTryStage };
+export default reTryStage 
