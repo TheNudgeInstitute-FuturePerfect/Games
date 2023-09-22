@@ -21,4 +21,11 @@ const userAnswerSubmitPayload = {
   userAnswer: "",
 };
 
-module.exports = { getUserCurrentEra, getStageQuestion, userAnswerSubmitPayload };
+const reTryStagePaylod = {
+  userId: "",
+  sessionId: "",
+  tenseEraId: "",
+  stageId: "",
+};
+
+module.exports = { getUserCurrentEra, getStageQuestion, userAnswerSubmitPayload, reTryStagePaylod };

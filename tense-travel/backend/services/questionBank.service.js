@@ -238,6 +238,12 @@ exports.getRandomQuestionByUnlockStage = async (req, res, next) => {
       requestBody
     );
 
+    answerResponseFormat.completedEra = false;
+    answerResponseFormat.completedStage = false;
+    answerResponseFormat.nextQuestion = false;
+    answerResponseFormat.isGameOver = false;
+    answerResponseFormat.isCorrect = null;
+
     let stage;
     let questionSize = stageQuestionSize.size;
     let questions;

@@ -4,9 +4,11 @@ import "../../../sass/styles.scss";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   getStageQuestion,
+  reTryStagePaylod,
   userAnswerSubmitPayload,
 } from "../../../utils/payload";
 import { userIds } from "../../../utils/constants";
+import  reTryStage  from "../../../services/stageRetryAPI";
 
 let questionsParsed, questionsData, currentQuestionIndex;
 function Question() {
@@ -21,6 +23,7 @@ function Question() {
   const [currentQuestion, setCurrentQuestion] = useState({});
   const [lives, setLives] = useState(0);
   const [isCorrectAns, setIsCorrectAns] = useState(null);
+  const [purchaseDialogShow, setPurchaseDialogShow] = useState(false);
 
   const navigateStage = () => {
     navigate(`/choose-stage/${eraId}`);
@@ -87,7 +90,6 @@ function Question() {
           setCurrentQuestion({ ...questionsParsed["data"][item], index: item });
           currentQuestionIndex = item;
           setQueSequence(currentQuestionIndex);
-          // console.log(currentQuestionIndex)
           break;
         }
       }
@@ -138,9 +140,17 @@ function Question() {
       navigate(`/choose-stage/${eraId}`);
     }
 
-    if (submitAnswerParsed["heartLive"] <= 0) {
-      alert(message);
-      navigate(`/choose-stage/${eraId}`);
+    // if (submitAnswerParsed["heartLive"] <= 0) {
+    //   alert(message);
+    //   navigate(`/choose-stage/${eraId}`);
+    // }
+
+    if (submitAnswerParsed["isGameOver"] === true) {
+      // alert(message);
+      // navigate(`/choose-stage/${eraId}`);
+      setPurchaseDialogShow(true);
+      setUserAnswer("");
+      setIsCorrectAns(null);
     }
 
     // updating anwered question isCorrect
@@ -162,6 +172,27 @@ function Question() {
     inputRef.current.focus();
     filterCurrentQuestion(currentQuestionIndex);
   };
+
+  const retryGame = async () => {
+    setPurchaseDialogShow(false);
+    setUserAnswer("");
+
+    reTryStagePaylod.sessionId = userIds.sessionId;
+    reTryStagePaylod.userId = userIds.userId;
+    reTryStagePaylod.tenseEraId = eraId;
+    reTryStagePaylod.stageId = stageId;
+    const reTryStageRes = await reTryStage(reTryStagePaylod);
+
+    let reTryStageParsed = await reTryStageRes.json();
+    inputRef.current.focus();
+    if (reTryStageParsed["success"] === true) {
+      await getStageQuestions();
+    }
+  };
+
+  const buyHeart = ()=> {
+    navigate(`/choose-stage/${eraId}`);
+  }
 
   useEffect(() => {
     getStageQuestions();
@@ -223,6 +254,7 @@ function Question() {
           </button>
         </div>
 
+        {/* answer poup */}
         {isCorrectAns !== null && (
           <div
             className={
@@ -253,6 +285,28 @@ function Question() {
               >
                 Next
               </button>
+            </div>
+          </div>
+        )}
+
+        {/* purchase modal */}
+        {purchaseDialogShow && (
+          <div className="purchase-coins-modal active">
+            <div className="flex">
+              {/* <div className="icon"></div> */}
+              <div className="ques-ans-info">
+                <strong>Ans: He eats his food</strong>
+                <strong>Explanation: He eats his food</strong>
+              </div>
+            </div>
+            <div
+              className="align-center"
+              style={{ display: "flex", justifyContent: "space-evenly" }}
+            >
+              <button onClick={retryGame} className="">
+                Retry
+              </button>
+              <button className="" onClick={buyHeart}>Buy Hearts</button>
             </div>
           </div>
         )}

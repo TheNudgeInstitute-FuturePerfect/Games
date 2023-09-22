@@ -305,3 +305,64 @@
  }
 
 //  custom styles
+
+.purchase-coins-modal{
+    position: absolute;
+    // bottom: 100px;
+    top: 50%;
+//   left: 50%;
+    margin: 0% 0 0 0;
+    left: 0;
+    width: 100%;
+    z-index: 2;
+    background-color: transparant;
+    @include border-radius(16px 16px 16px 16px);
+    // border: 4px solid #39E53D;
+    border-bottom: none;
+    background: #333;
+    padding: 45px 17px 35px;
+    display: none;
+    // margin-bottom: 100px;
+    .icon{
+        background: url(../../src/assets/images/green-icon.svg) left top no-repeat;
+        width: 65px;
+        height: 65px;
+        margin-right: 10px;
+    }
+    .ques-ans-info{
+        width: calc(100% - 75px);
+        // strong{
+        //     font-size: 16px;
+        //     display: block;
+        //     margin-bottom: 7px;
+        //     // &:last-child{margin-bottom: 0;}
+        // }
+    }
+    .flex{
+        margin-bottom: 25px;
+    }
+    &.active{
+        display: block;
+    }
+    &.wrong-answer{
+        border-color: #C3073F;
+        .icon{
+            background: url(../../src/assets/images/error-icon.svg) left top no-repeat;
+       }
+       .blue-btn{
+         background: #C3073F;
+         border-bottom-color: #82072c;
+         color: #fff;
+       }
+    }
+ }
+ .blue-btn{
+    &.green-btn{
+        @include transition-effect;
+        background: #39E53D;
+        border-bottom-color: #207a22;
+        font-weight: 700;
+        padding: 7px 15px;
+        color: #000;
+    }
+ }
