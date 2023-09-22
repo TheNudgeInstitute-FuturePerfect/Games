@@ -190,6 +190,10 @@ function Question() {
     }
   };
 
+  const buyHeart = ()=> {
+    navigate(`/choose-stage/${eraId}`);
+  }
+
   useEffect(() => {
     getStageQuestions();
   }, []);
@@ -302,7 +306,7 @@ function Question() {
               <button onClick={retryGame} className="">
                 Retry
               </button>
-              <button className="">Buy Hearts</button>
+              <button className="" onClick={buyHeart}>Buy Hearts</button>
             </div>
           </div>
         )}
