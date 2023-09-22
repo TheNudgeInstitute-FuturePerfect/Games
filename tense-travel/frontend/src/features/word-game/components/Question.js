@@ -138,7 +138,7 @@ function Question() {
       navigate(`/choose-stage/${eraId}`);
     }
 
-    if (submitAnswerParsed["heartLive"] === 0) {
+    if (submitAnswerParsed["heartLive"] <= 0) {
       alert(message);
       navigate(`/choose-stage/${eraId}`);
     }

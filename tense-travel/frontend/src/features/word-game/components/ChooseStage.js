@@ -145,10 +145,8 @@ function ChooseStage() {
                         Array(stage[1]?.earnStars)
                           .fill("")
                           .map((itm, index) => {
-                            // defaultStar = defaultStar - 1;
                             defaultStar = coins.defaultStars.stars;
                             defaultStar = defaultStar - (index + 1);
-                            console.log(defaultStar);
                             return <span key={index} className="active"></span>;
                           })}
                       {stage.length > 0 &&
@@ -178,7 +176,6 @@ function ChooseStage() {
                           .map((itm, index) => {
                             defaultStar = coins.defaultStars.stars;
                             defaultStar = defaultStar - (index + 1);
-                            console.log(defaultStar);
                             return <span key={index} className="active"></span>;
                           })}
                       {stage.length > 0 &&

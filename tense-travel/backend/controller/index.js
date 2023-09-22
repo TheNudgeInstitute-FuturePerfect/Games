@@ -9,7 +9,7 @@ const {
   getRandomQuestionByStage,
   getRandomQuestionByEra,
   getRandomQuestionByUnlockStage,
-  updateQuestionStatus
+  updateQuestionStatus,
 } = require("../controller/questionBank.controller");
 
 const {
@@ -18,8 +18,10 @@ const {
   userRetryStage,
   getUserCurrentEra,
   getCurrentUserAndSessionId,
-  eraseUserStageAttempts
+  eraseUserStageAttempts,
 } = require("../controller/userAnswerEra.controller");
+
+const { getUserScore } = require("../controller/score.controller");
 
 module.exports = {
   login,
@@ -39,5 +41,6 @@ module.exports = {
   getRandomQuestionByUnlockStage,
   updateQuestionStatus,
   getCurrentUserAndSessionId,
-  eraseUserStageAttempts
+  eraseUserStageAttempts,
+  getUserScore,
 };

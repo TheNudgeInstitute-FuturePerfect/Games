@@ -15,6 +15,8 @@ const {
   answerResponseFormat,
   eraFilter,
   userAnswerStages,
+  stageQuestionSize,
+  earningCoinsRule,
 } = require("../utils/constants/payloadInterface/payload.interface");
 const { retryGame, unlockStage } = require("./answer/retryAttempt");
 const { filterStage } = require("./global-services/filterEraSatage.service");
@@ -89,6 +91,14 @@ exports.userAttendingQuestion = async (req, res, next) => {
     let questionDetail = await getQuestionDetails(req, res, next);
     questionDetail = questionDetail["data"];
 
+    let userAnswerStage = await userAnswerStages(
+      userAnswerEraModel,
+      requestBody
+    );
+    stages["lives"] = parseInt(
+      userAnswerStage[0]["tenseEra"][0]["stage"][0]["lives"]
+    );
+
     let answerExists = await userAnswerEraModel.aggregate([
       {
         $match: {
@@ -146,11 +156,13 @@ exports.userAttendingQuestion = async (req, res, next) => {
     ]);
 
     if (
-      !isEmpty(answerExists) &&
-      answerExists[0]["tenseEra"][0]["stage"][0]["lives"] === 0
+      (!isEmpty(answerExists) &&
+        answerExists[0]["tenseEra"][0]["stage"][0]["lives"] <= 0) ||
+      stages["lives"] <= 0
     ) {
-      answerResponseFormat.heartLive =
-        answerExists[0]["tenseEra"][0]["stage"][0]["lives"];
+      answerResponseFormat.heartLive = !isEmpty(answerExists)
+        ? answerExists[0]["tenseEra"][0]["stage"][0]["lives"]
+        : stages["lives"];
       answerResponseFormat.completedEra = false;
       answerResponseFormat.completedStage = false;
       answerResponseFormat.nextQuestion = false;
@@ -165,7 +177,8 @@ exports.userAttendingQuestion = async (req, res, next) => {
       );
     } else if (
       !isEmpty(answerExists) &&
-      answerExists[0]["tenseEra"][0]["stage"][0]["question"]?.length >= 10
+      answerExists[0]["tenseEra"][0]["stage"][0]["question"]?.length >=
+        stageQuestionSize.size
     ) {
       answerResponseFormat.completedEra = false;
       answerResponseFormat.completedStage = true;
@@ -195,10 +208,10 @@ exports.userAttendingQuestion = async (req, res, next) => {
       );
     } else {
       //preparing payload to be saved
-      let userAnswerStage = await userAnswerStages(
-        userAnswerEraModel,
-        requestBody
-      );
+      // let userAnswerStage = await userAnswerStages(
+      //   userAnswerEraModel,
+      //   requestBody
+      // );
       answerPayload.question = questionDetail.question;
       answerPayload.answer = questionDetail.answer;
       answerPayload.userAnswer = requestBody.userAnswer;
@@ -233,10 +246,9 @@ exports.userAttendingQuestion = async (req, res, next) => {
         answerPayload.isCorrect = false;
         stages["numberOfInCorrect"]++;
         stages["lives"]--;
-        answerResponseFormat.heartLive--;
+        answerResponseFormat.heartLive = stages["lives"];
         answerResponseFormat.isCorrect = false;
       }
-
       //save user answer of the question
       const savedUserAnswer = await userAnswerEraModel.updateOne(
         {
@@ -271,7 +283,7 @@ exports.userAttendingQuestion = async (req, res, next) => {
         savedUserAnswer?.modifiedCount > 0 &&
         savedUserAnswer?.acknowledged === true
       ) {
-        //stage update(nextQuestion, numberOfInCorrect, attemptQuestions)
+        //stage update(nextQuestion, numberOfInCorrect, numberOfCorrect, attemptQuestions, lives)
         const updateCounts = await userAnswerEraModel.updateOne(
           {
             userId: requestBody["userId"],
@@ -333,9 +345,9 @@ exports.userAttendingQuestion = async (req, res, next) => {
         );
 
         answerCount = stageFilter({ answerCount, requestBody });
-        let earnCoin = earnCoins(answerCount);
+        let earnStars = earnCoins(answerCount, stages["lives"]);
 
-        const updateCoin = await updateCoins(requestBody, earnCoin);
+        const updateCoin = await updateCoins(requestBody, earnStars);
 
         answerResponseFormat.completedEra = false;
         answerResponseFormat.completedStage = true;
@@ -533,7 +545,7 @@ exports.getUserCurrentEra = async (req, res, next) => {
         let unLockedStage = [];
         let lockedStage = [];
         filterStages.map((item, index) => {
-          if (item?.question.length > 0 && !item.isLocked) {
+          if (item?.question.length > 0 && item?.earnStars > 0) {
             delete item?.question;
             unLockedStage.push(item);
           } else {
@@ -712,6 +724,8 @@ const updateCoins = async (requestBody, coinObj) => {
         "tenseEra.$[].stage.$[coins].earnStars": coinObj["stars"],
         "tenseEra.$[].stage.$[coins].earnGerms": coinObj["germs"],
         "tenseEra.$[].stage.$[coins].completedStage": true,
+        "tenseEra.$[].stage.$[coins].defaultGerms":
+          earningCoinsRule.coins.defaultCoins,
       },
     },
     {
