@@ -10,6 +10,7 @@ const {
   getRandomQuestionByEra,
   getRandomQuestionByUnlockStage,
   updateQuestionStatus,
+  updateOneQuestion,
 } = require("../controller/questionBank.controller");
 
 const {
@@ -43,4 +44,5 @@ module.exports = {
   getCurrentUserAndSessionId,
   eraseUserStageAttempts,
   getUserScore,
+  updateOneQuestion
 };
