@@ -87,6 +87,11 @@ exports.userAttendingQuestion = async (req, res, next) => {
     const requestBody = req.body;
     let stages = {};
 
+    answerResponseFormat.completedEra = false;
+    answerResponseFormat.completedStage = false;
+    answerResponseFormat.nextQuestion = false;
+    answerResponseFormat.isGameOver = false;
+
     req.params["id"] = req.body["questionId"];
     let questionDetail = await getQuestionDetails(req, res, next);
     questionDetail = questionDetail["data"];
@@ -166,6 +171,7 @@ exports.userAttendingQuestion = async (req, res, next) => {
       answerResponseFormat.completedEra = false;
       answerResponseFormat.completedStage = false;
       answerResponseFormat.nextQuestion = false;
+      answerResponseFormat.isGameOver = true;
 
       return reponseModel(
         httpStatusCodes.OK,
@@ -182,6 +188,7 @@ exports.userAttendingQuestion = async (req, res, next) => {
     ) {
       answerResponseFormat.completedEra = false;
       answerResponseFormat.completedStage = true;
+      answerResponseFormat.isGameOver = false;
       return reponseModel(
         httpStatusCodes.OK,
         "Stage has already been completed",
@@ -197,6 +204,7 @@ exports.userAttendingQuestion = async (req, res, next) => {
       answerResponseFormat.nextQuestion = true;
       answerResponseFormat.isCorrect = null;
       answerResponseFormat.heartLive = stages["lives"];
+      answerResponseFormat.isGameOver = false;
 
       return reponseModel(
         httpStatusCodes.OK,
@@ -318,6 +326,7 @@ exports.userAttendingQuestion = async (req, res, next) => {
         answerResponseFormat.completedEra = false;
         answerResponseFormat.completedStage = false;
         answerResponseFormat.nextQuestion = false;
+        answerResponseFormat.isGameOver = true;
 
         return reponseModel(
           httpStatusCodes.OK,
@@ -352,6 +361,7 @@ exports.userAttendingQuestion = async (req, res, next) => {
         answerResponseFormat.completedEra = false;
         answerResponseFormat.completedStage = true;
         answerResponseFormat.nextQuestion = false;
+        answerResponseFormat.isGameOver = false;
 
         return reponseModel(
           httpStatusCodes.OK,
@@ -369,6 +379,7 @@ exports.userAttendingQuestion = async (req, res, next) => {
       ) {
         answerResponseFormat.nextQuestion = true;
         answerResponseFormat.completedStage = false;
+        answerResponseFormat.isGameOver = false;
         return reponseModel(
           httpStatusCodes.OK,
           "Answer saved successful",
@@ -425,6 +436,11 @@ exports.getEraWiseUserAnswerDetail = async (req, res, next) => {
 exports.userRetryStage = async (req, res, next) => {
   try {
     const requestBody = req.body;
+    answerResponseFormat.completedEra = false;
+    answerResponseFormat.completedStage = false;
+    answerResponseFormat.nextQuestion = false;
+    answerResponseFormat.isGameOver = false;
+    answerResponseFormat.isCorrect = null;
 
     const tenseStageDetail = await userAnswerEraModel.findOne({
       userId: requestBody["userId"],
@@ -438,7 +454,7 @@ exports.userRetryStage = async (req, res, next) => {
       requestBody,
     });
 
-    if (stage["lives"] === 0) {
+    if (stage["lives"] <= 0) {
       delete stage["histories"];
       delete stage["_id"];
 
@@ -448,12 +464,14 @@ exports.userRetryStage = async (req, res, next) => {
         requestBody
       );
 
-      const questions = await getRandomQuestions(req, res, next);
+      let questions = await getRandomQuestions(req, res, next);
+      questions = questions["data"];
+
       return reponseModel(
         httpStatusCodes.OK,
-        questions ? "Questions found" : "Questions not found",
-        questions ? true : false,
-        questions["data"],
+        !isEmpty(questions) ? "Questions found" : "Questions not found",
+        !isEmpty(questions) ? true : false,
+        { questions, ...answerResponseFormat, heartLive: 3 },
         req,
         res
       );
