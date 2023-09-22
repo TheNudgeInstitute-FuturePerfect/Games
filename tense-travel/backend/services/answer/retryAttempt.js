@@ -1,6 +1,7 @@
 const {
   heartLives,
 } = require("../../utils/constants/payloadInterface/payload.interface");
+const ObjectID = require("mongodb").ObjectId;
 
 const retryGame = async (model, historyPayload, requestBody) => {
   let retryCount = parseInt(historyPayload["retryCount"]);
@@ -15,8 +16,15 @@ const retryGame = async (model, historyPayload, requestBody) => {
     },
     {
       $push: {
-        "tenseEra.$[].stage.$.histories": historyPayload,
+        "tenseEra.$[].stage.$[history].histories": historyPayload,
       },
+    },
+    {
+      arrayFilters: [
+        {
+          "history.stageId": new ObjectID(requestBody["stageId"]),
+        },
+      ],
     }
   );
 
