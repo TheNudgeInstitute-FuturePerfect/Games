@@ -374,3 +374,44 @@ exports.updateQuestionStatus = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.find = async (req, res, next) => {
+  try {
+    const word = req.params.word;
+    let questions = await questoinBankModel.find({});
+
+    return reponseModel(
+      httpStatusCodes.OK,
+      questions.length > 0 ? "Quesiton found" : "Quesiton not found",
+      questions.length > 0 ? true : false,
+      questions,
+      req,
+      res
+    );
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.updateOneQuestion = async (req, res, next) => {
+  try {
+    const payload = req.body;
+    const id = req.params.id;
+    const updated = await questoinBankModel.findOneAndUpdate(
+      { _id: id },
+      payload,
+      { upsert: true }
+    );
+
+    return reponseModel(
+      httpStatusCodes.OK,
+      "Status updated",
+      true,
+      "",
+      req,
+      res
+    );
+  } catch (err) {
+    next(err);
+  }
+};

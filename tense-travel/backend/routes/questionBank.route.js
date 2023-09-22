@@ -10,11 +10,13 @@ const {
   getRandomQuestionByEra,
   getRandomQuestionByUnlockStage,
   updateQuestionStatus,
+  updateOneQuestion,
 } = require("../controller/index");
 const {
   addQuestionValidator,
   updateQuestionValidator,
   updateQuestionStatusValidator,
+  updateOneQuestionValidator,
 } = require("../modules/validators/questionBankValidator");
 const {
   userRetryStageValidator,
@@ -37,6 +39,12 @@ router.patch(
   "/update-question-status/:id",
   [updateQuestionStatusValidator],
   updateQuestionStatus
+);
+
+router.patch(
+  "/update-one-question/:id",
+  [updateOneQuestionValidator],
+  updateOneQuestion
 );
 
 exports.router = router;

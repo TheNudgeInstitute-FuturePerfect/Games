@@ -8,7 +8,7 @@ import {
   userAnswerSubmitPayload,
 } from "../../../utils/payload";
 import { userIds } from "../../../utils/constants";
-import  reTryStage  from "../../../services/stageRetryAPI";
+import reTryStage from "../../../services/stageRetryAPI";
 
 let questionsParsed, questionsData, currentQuestionIndex;
 function Question() {
@@ -24,6 +24,7 @@ function Question() {
   const [lives, setLives] = useState(0);
   const [isCorrectAns, setIsCorrectAns] = useState(null);
   const [purchaseDialogShow, setPurchaseDialogShow] = useState(false);
+  const [retryMsg, setRetryMsg] = useState(null);
 
   const navigateStage = () => {
     navigate(`/choose-stage/${eraId}`);
@@ -132,6 +133,7 @@ function Question() {
 
     let submitAnswerParsed = await submitAnswer.json();
     const message = submitAnswerParsed["message"];
+    setRetryMsg(message);
     submitAnswerParsed = submitAnswerParsed["data"]["answerResponseFormat"];
     setLives(submitAnswerParsed["heartLive"]);
     setIsCorrectAns(submitAnswerParsed["isCorrect"]);
@@ -190,9 +192,9 @@ function Question() {
     }
   };
 
-  const buyHeart = ()=> {
+  const buyHeart = () => {
     navigate(`/choose-stage/${eraId}`);
-  }
+  };
 
   useEffect(() => {
     getStageQuestions();
@@ -295,8 +297,8 @@ function Question() {
             <div className="flex">
               {/* <div className="icon"></div> */}
               <div className="ques-ans-info">
-                <strong>Ans: He eats his food</strong>
-                <strong>Explanation: He eats his food</strong>
+                <strong>{retryMsg && retryMsg}</strong>
+                {/* <strong>Explanation: He eats his food</strong> */}
               </div>
             </div>
             <div
@@ -306,7 +308,9 @@ function Question() {
               <button onClick={retryGame} className="">
                 Retry
               </button>
-              <button className="" onClick={buyHeart}>Buy Hearts</button>
+              <button className="" onClick={buyHeart}>
+                Buy Hearts
+              </button>
             </div>
           </div>
         )}
