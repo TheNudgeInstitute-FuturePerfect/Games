@@ -18,7 +18,16 @@ const answerResponseFormat = {
   nextQuestion: false,
   heartLive: 0,
   isCorrect: null,
-  isError: false
+  isError: false,
+  isGameOver: false,
+};
+
+const heartLives = {
+  live: 3,
+};
+
+const stageQuestionSize = {
+  size: 10,
 };
 
 const earningCoinsRule = {
@@ -40,21 +49,33 @@ const earningCoinsRule = {
     accurate: 10,
     germ: 1,
   },
+  signupBonusCoins: {
+    coin: 20,
+  },
+  coins: {
+    lives: 1, //one live = 5 coins. If user have 2 lives then 2*5=10 coins
+    defaultCoins: 5, // 5 coins will be default. If Stage completed then 5 coins will be default
+  },
 };
 
-const heartLives = {
-  live: 3,
-};
-
-const stageQuestionSize = {
-  size: 10,
+//calculate earning coins
+const earningCoins = (live) => {
+  let res;
+  if (live === 0) {
+    res = earningCoinsRule.coins.defaultCoins;
+  } else {
+    res = parseInt(live) * parseInt(earningCoinsRule.coins.defaultCoins);
+  }
+  return res;
 };
 
 const stageFilter = (params) => {
   let stages = null;
+  let eras = null;
   let answerCount = JSON.parse(JSON.stringify(params?.answerCount["tenseEra"]));
   answerCount.find((era, index) => {
     if (era?.tenseEraId === params?.requestBody["tenseEraId"]) {
+      eras = era?.earnGerms;
       era["stage"].some((stage, indx) => {
         if (stage?.stageId === params?.requestBody["stageId"]) {
           stages = stage;
@@ -91,7 +112,8 @@ const stageAndQuestionFilter = (params) => {
   return { stages, userAnswerDetail };
 };
 
-const earnCoins = (params) => {
+//calculate stars
+const earnCoins = (params, live = 0) => {
   let coin = { stars: 0, germs: 0 };
   switch (params?.numberOfCorrect) {
     case earningCoinsRule.stars.oneStars.accurate:
@@ -102,12 +124,13 @@ const earnCoins = (params) => {
       break;
     case earningCoinsRule.stars.threeStars.accurate:
       coin.stars = earningCoinsRule.stars.threeStars.star;
-      coin.germs = earningCoinsRule.germs.germ;
+      // coin.germs = earningCoinsRule.germs.germ;
       break;
     default:
       coin.stars = 0;
-      coin.germs = 0;
+    // coin.germs = 0;
   }
+  coin.germs = earningCoins(live);
   return coin;
 };
 
@@ -232,5 +255,6 @@ module.exports = {
   heartLives,
   eraFilter,
   userAnswerStages,
-  stageQuestionSize
+  stageQuestionSize,
+  earningCoinsRule,
 };

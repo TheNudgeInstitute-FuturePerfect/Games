@@ -9,10 +9,12 @@ const {
   updateQuestion,
   getRandomQuestionByEra,
   getRandomQuestionByUnlockStage,
+  updateQuestionStatus,
 } = require("../controller/index");
 const {
   addQuestionValidator,
   updateQuestionValidator,
+  updateQuestionStatusValidator,
 } = require("../modules/validators/questionBankValidator");
 const {
   userRetryStageValidator,
@@ -30,6 +32,11 @@ router.post(
   "/get-random-question-byunlock-stage",
   [userRetryStageValidator],
   getRandomQuestionByUnlockStage
+);
+router.patch(
+  "/update-question-status/:id",
+  [updateQuestionStatusValidator],
+  updateQuestionStatus
 );
 
 exports.router = router;

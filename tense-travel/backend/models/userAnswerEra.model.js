@@ -54,6 +54,18 @@ const TenseEraSchema = new Schema({
           type: Number,
           default: 0,
         },
+        defaultGerms: {
+          type: Number,
+          default: 0,
+        },
+        isLivePurchased: {
+          type: Boolean,
+          default: false,
+        },
+        livePurchasedCount: {
+          type: Number,
+          default: 0,
+        },
         stageStatus: {
           type: Boolean,
           default: false,
