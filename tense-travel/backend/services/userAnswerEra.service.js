@@ -783,7 +783,7 @@ const updateCoins = async (requestBody, coinObj) => {
 exports.eraseUserStageAttempts = async (req, res, next) => {
   try {
     const id = req.params.id;
-    const deleted = await userAnswerEraModel.deleteOne({ sessionId: id });
+    const deleted = await userAnswerEraModel.deleteMany({});
 
     return reponseModel(
       httpStatusCodes.OK,
@@ -800,11 +800,12 @@ exports.eraseUserStageAttempts = async (req, res, next) => {
 
 //temporary api this will be removed in a future release
 exports.getCurrentUserAndSessionId = async (req, res, next) => {
+  var mysort = { createdAt: -1 };
   try {
     const userData = await userAnswerEraModel.findOne(
       {},
       { userId: 1, sessionId: 1 }
-    );
+    ).sort(mysort);
 
     return reponseModel(
       httpStatusCodes.OK,

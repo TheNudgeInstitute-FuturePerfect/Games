@@ -30,7 +30,7 @@ exports.getUserScore = async (req, res, next) => {
                           $filter: {
                             input: "$$this.stage",
                             cond: {
-                              $ne: ["$$this.retryCount", 0],
+                              // $ne: ["$$this.retryCount", 0],
                             },
                           },
                         },
