@@ -169,7 +169,14 @@ function Question() {
   };
 
   const answerRWPopup = (userSubmitAnswerResponse) => {
-    if (userSubmitAnswerResponse["completedStage"] === true) {
+    if (
+      userSubmitAnswerResponse["completedStage"] === true &&
+      userSubmitAnswerResponse["isCorrect"] !== null
+    ) {
+      inputRef.current.blur();
+      setIsCorrectAns(userSubmitAnswerResponse["isCorrect"]);
+      return;
+    } else if (userSubmitAnswerResponse["completedStage"] === true) {
       inputRef.current.blur();
       setPurchaseDialogShow(true);
       setRetryMsg("Stage has already been completed");
