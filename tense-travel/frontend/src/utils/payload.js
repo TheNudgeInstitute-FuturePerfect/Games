@@ -28,4 +28,21 @@ const reTryStagePaylod = {
   stageId: "",
 };
 
-module.exports = { getUserCurrentEra, getStageQuestion, userAnswerSubmitPayload, reTryStagePaylod };
+const userSubmitAnswerResponse = {
+  completedEra: false,
+  completedStage: null,
+  nextQuestion: false,
+  heartLive: 0,
+  isCorrect: false,
+  isError: false,
+  isGameOver: null,
+  message: "",
+};
+
+module.exports = {
+  getUserCurrentEra,
+  getStageQuestion,
+  userAnswerSubmitPayload,
+  reTryStagePaylod,
+  userSubmitAnswerResponse,
+};

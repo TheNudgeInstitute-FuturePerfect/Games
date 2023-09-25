@@ -6,9 +6,11 @@ import {
   getStageQuestion,
   reTryStagePaylod,
   userAnswerSubmitPayload,
+  userSubmitAnswerResponse,
 } from "../../../utils/payload";
 import { userIds } from "../../../utils/constants";
 import reTryStage from "../../../services/stageRetryAPI";
+import CommonModal from "../common/CommonModal";
 
 let questionsParsed, questionsData, currentQuestionIndex;
 function Question() {
@@ -47,14 +49,12 @@ function Question() {
 
     questionsParsed = await questionsData.json();
     if (questionsParsed["data"]["questions"].length === 0) {
-      alert(questionsParsed["message"]);
-      navigate(`/choose-stage/${eraId}`);
-    }
+      userSubmitAnswerResponse = {
+        ...questionsParsed["data"],
+        message: questionsParsed["data"]["message"],
+      };
 
-    if (questionsParsed["data"].length === 0) {
-      alert(questionsParsed["message"]);
-      questionsParsed = questionsParsed["message"];
-      navigate(`/choose-stage/${eraId}`);
+      answerRWPopup(userSubmitAnswerResponse); //answerRightWrongPopup
     } else {
       setLives(questionsParsed["data"]["heartLive"]);
       questionsParsed["data"] = questionsParsed["data"]["questions"];
@@ -62,21 +62,12 @@ function Question() {
 
       filterCurrentQuestion(null);
     }
-
-    if (
-      questionsParsed["answerResponseFormat"] &&
-      questionsParsed["answerResponseFormat"]?.completedStage === true
-    ) {
-      alert("you have completed the stage ");
-      navigate(`/choose-stage/${eraId}`);
-    }
   };
 
   const filterCurrentQuestion = (index) => {
     if (index !== null && index !== undefined && index !== "") {
       currentQuestionIndex = parseInt(index);
       currentQuestionIndex++;
-      // console.log(currentQuestionIndex)
 
       if (currentQuestionIndex <= 9) {
         setCurrentQuestion({
@@ -99,7 +90,6 @@ function Question() {
 
   const onChange = (event, index) => {
     setUserAnswer(event.target.value);
-    // currentQuestionIndex = index;
   };
 
   const handleSubmitAnswer = async (event) => {
@@ -134,26 +124,16 @@ function Question() {
     let submitAnswerParsed = await submitAnswer.json();
     const message = submitAnswerParsed["message"];
     setRetryMsg(message);
+
+    userSubmitAnswerResponse = {
+      ...submitAnswerParsed["data"]["answerResponseFormat"],
+      message,
+    };
+
+    answerRWPopup(userSubmitAnswerResponse); //answerRightWrongPopup
+
     submitAnswerParsed = submitAnswerParsed["data"]["answerResponseFormat"];
     setLives(submitAnswerParsed["heartLive"]);
-    setIsCorrectAns(submitAnswerParsed["isCorrect"]);
-    if (submitAnswerParsed["completedStage"] === true) {
-      alert(message);
-      navigate(`/choose-stage/${eraId}`);
-    }
-
-    // if (submitAnswerParsed["heartLive"] <= 0) {
-    //   alert(message);
-    //   navigate(`/choose-stage/${eraId}`);
-    // }
-
-    if (submitAnswerParsed["isGameOver"] === true) {
-      // alert(message);
-      // navigate(`/choose-stage/${eraId}`);
-      setPurchaseDialogShow(true);
-      setUserAnswer("");
-      setIsCorrectAns(null);
-    }
 
     // updating anwered question isCorrect
     let updatedQues = questionsParsed["data"];
@@ -173,6 +153,36 @@ function Question() {
     setUserAnswer("");
     inputRef.current.focus();
     filterCurrentQuestion(currentQuestionIndex);
+
+    if (userSubmitAnswerResponse["isGameOver"] === true) {
+      inputRef.current.blur();
+      setPurchaseDialogShow(true);
+      setUserAnswer("");
+      setIsCorrectAns(null);
+    }
+
+    if (userSubmitAnswerResponse["completedStage"] === true) {
+      inputRef.current.blur();
+      setPurchaseDialogShow(true);
+      setRetryMsg(userSubmitAnswerResponse["message"]);
+    }
+  };
+
+  const answerRWPopup = (userSubmitAnswerResponse) => {
+    if (userSubmitAnswerResponse["completedStage"] === true) {
+      inputRef.current.blur();
+      setPurchaseDialogShow(true);
+      setRetryMsg("Stage has already been completed");
+      return;
+    }
+
+    if (userSubmitAnswerResponse["isGameOver"] === true) {
+      inputRef.current.blur();
+      setPurchaseDialogShow(true);
+      setRetryMsg(userSubmitAnswerResponse["message"]);
+      return;
+    }
+    setIsCorrectAns(userSubmitAnswerResponse["isCorrect"]);
   };
 
   const retryGame = async () => {
@@ -301,17 +311,29 @@ function Question() {
                 {/* <strong>Explanation: He eats his food</strong> */}
               </div>
             </div>
-            <div
-              className="align-center"
-              style={{ display: "flex", justifyContent: "space-evenly" }}
-            >
-              <button onClick={retryGame} className="">
-                Retry
-              </button>
-              <button className="" onClick={buyHeart}>
-                Buy Hearts
-              </button>
-            </div>
+            {userSubmitAnswerResponse.isGameOver && (
+              <div
+                className="align-center"
+                style={{ display: "flex", justifyContent: "space-evenly" }}
+              >
+                <button onClick={retryGame} className="">
+                  Retry
+                </button>
+                <button className="" onClick={buyHeart}>
+                  Buy Hearts
+                </button>
+              </div>
+            )}
+            {userSubmitAnswerResponse.completedStage && (
+              <div
+                className="align-center"
+                style={{ display: "flex", justifyContent: "space-evenly" }}
+              >
+                <button className="" onClick={buyHeart}>
+                  Ok
+                </button>
+              </div>
+            )}
           </div>
         )}
       </div>
