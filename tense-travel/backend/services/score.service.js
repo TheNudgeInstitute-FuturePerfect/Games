@@ -42,6 +42,7 @@ exports.getUserScore = async (req, res, next) => {
               cond: { $ne: ["$$this.stage", []] },
             },
           },
+          earnGerms:1
         },
       },
     ]);

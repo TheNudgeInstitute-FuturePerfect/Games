@@ -19,7 +19,11 @@ const {
   earningCoinsRule,
 } = require("../utils/constants/payloadInterface/payload.interface");
 const { retryGame, unlockStage } = require("./answer/retryAttempt");
-const { filterStage } = require("./global-services/filterEraSatage.service");
+const {
+  filterStage,
+  getGermsDetails,
+} = require("./global-services/filterEraSatage.service");
+const { updateCoin } = require("./answer/coinsCalculation");
 const ObjectID = require("mongodb").ObjectId;
 
 exports.findUserEra = async (req, res, next) => {
@@ -340,23 +344,49 @@ exports.userAttendingQuestion = async (req, res, next) => {
 
       //checking user completed ten questions of a stage
       let answerCount = null;
-      if (stages["attemptQuestions"] === 10) {
-        answerCount = await userAnswerEraModel.findOne(
-          {
-            userId: requestBody["userId"],
-            sessionId: requestBody["sessionId"],
-            "tenseEra.tenseEraId": requestBody["tenseEraId"],
-            "tenseEra.stage.stageId": requestBody["stageId"],
-            "tenseEra.stage.question.questionBankId": requestBody["questionId"],
-            "tenseEra.stage.question": { $size: 10 },
-          },
-          { tenseEra: 1 }
-        );
+      if (stages["attemptQuestions"] === stageQuestionSize.size) {
+        answerCount = await getGermsDetails(userAnswerEraModel, requestBody);
+        if (isEmpty(answerCount)) {
+          answerResponseFormat.completedEra = false;
+          answerResponseFormat.completedStage = true;
+          answerResponseFormat.nextQuestion = false;
+          answerResponseFormat.isGameOver = false;
+          answerResponseFormat.isError = true;
+
+          return reponseModel(
+            httpStatusCodes.OK,
+            "Something happening wrong",
+            false,
+            { answerResponseFormat },
+            req,
+            res
+          );
+        }
+        answerCount = answerCount[0];
+        //getting era earngerms
+        const stageCompletionGerms = earningCoinsRule.coins.defaultCoins;
+        let eraLevelEarnGerms = answerCount["tenseEra"][0]["earnGerms"];
+        eraLevelEarnGerms = parseInt(eraLevelEarnGerms);
+
+        let userTotalGerms = parseInt(answerCount["earnGerms"]);
 
         answerCount = stageFilter({ answerCount, requestBody });
         let earnStars = earnCoins(answerCount, stages["lives"]);
 
-        const updateCoin = await updateCoins(requestBody, earnStars);
+        //adding era earn germs with curret stage
+        earnStars["eraGerms"] =
+          parseInt(earnStars["germs"]) +
+          eraLevelEarnGerms +
+          stageCompletionGerms;
+
+        earnStars["userGerms"] =
+          parseInt(earnStars["germs"]) + userTotalGerms + stageCompletionGerms;
+
+        const updateCoins = await updateCoin(
+          userAnswerEraModel,
+          requestBody,
+          earnStars
+        );
 
         answerResponseFormat.completedEra = false;
         answerResponseFormat.completedStage = true;
@@ -765,6 +795,7 @@ const updateCoins = async (requestBody, coinObj) => {
       {
         $set: {
           "tenseEra.$[coins].earnGerms": coinObj["germs"],
+          earnGerms: coinObj["germs"],
         },
       },
       {
@@ -802,10 +833,9 @@ exports.eraseUserStageAttempts = async (req, res, next) => {
 exports.getCurrentUserAndSessionId = async (req, res, next) => {
   var mysort = { createdAt: -1 };
   try {
-    const userData = await userAnswerEraModel.findOne(
-      {},
-      { userId: 1, sessionId: 1 }
-    ).sort(mysort);
+    const userData = await userAnswerEraModel
+      .findOne({}, { userId: 1, sessionId: 1 })
+      .sort(mysort);
 
     return reponseModel(
       httpStatusCodes.OK,

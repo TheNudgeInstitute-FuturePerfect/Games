@@ -114,7 +114,7 @@ const stageAndQuestionFilter = (params) => {
 
 //calculate stars
 const earnCoins = (params, live = 0) => {
-  let coin = { stars: 0, germs: 0 };
+  let coin = { stars: 0, germs: 0, userGerms: 0, eraGerms:0 };
   switch (params?.numberOfCorrect) {
     case earningCoinsRule.stars.oneStars.accurate:
       coin.stars = earningCoinsRule.stars.oneStars.star;
