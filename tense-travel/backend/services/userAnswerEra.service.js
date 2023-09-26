@@ -1,4 +1,8 @@
-const { userAnswerEraModel, questoinBankModel } = require("../models/index");
+const {
+  userAnswerEraModel,
+  questoinBankModel,
+  userModel,
+} = require("../models/index");
 const { reponseModel } = require("../utils/responseHandler");
 const httpStatusCodes = require("../utils/httpStatusCodes");
 const isEmpty = require("lodash.isempty");
@@ -22,6 +26,8 @@ const { retryGame, unlockStage } = require("./answer/retryAttempt");
 const {
   filterStage,
   getGermsDetails,
+  getUserDetails,
+  updateUserDetails,
 } = require("./global-services/filterEraSatage.service");
 const { updateCoin } = require("./answer/coinsCalculation");
 const ObjectID = require("mongodb").ObjectId;
@@ -107,6 +113,8 @@ exports.userAttendingQuestion = async (req, res, next) => {
     stages["lives"] = parseInt(
       userAnswerStage[0]["tenseEra"][0]["stage"][0]["lives"]
     );
+    stages["isLivePurchased"] =
+      userAnswerStage[0]["tenseEra"][0]["stage"][0]["isLivePurchased"];
 
     let answerExists = await userAnswerEraModel.aggregate([
       {
@@ -326,7 +334,7 @@ exports.userAttendingQuestion = async (req, res, next) => {
       }
 
       //checking incorrect answer is three then retry game logic
-      if (stages["numberOfInCorrect"] >= 3) {
+      if (stages["numberOfInCorrect"] >= 3 || stages["lives"] <= 0) {
         answerResponseFormat.completedEra = false;
         answerResponseFormat.completedStage = false;
         answerResponseFormat.nextQuestion = false;
@@ -362,16 +370,20 @@ exports.userAttendingQuestion = async (req, res, next) => {
             res
           );
         }
+        /* germs calculation start */
         answerCount = answerCount[0];
         //getting era earngerms
         const stageCompletionGerms = earningCoinsRule.coins.defaultCoins;
         let eraLevelEarnGerms = answerCount["tenseEra"][0]["earnGerms"];
         eraLevelEarnGerms = parseInt(eraLevelEarnGerms);
 
-        let userTotalGerms = parseInt(answerCount["earnGerms"]);
+        let userSessionWiseTotalGerms = parseInt(answerCount["earnGerms"]); //getting current user session germs
 
         answerCount = stageFilter({ answerCount, requestBody });
         let earnStars = earnCoins(answerCount, stages["lives"]);
+        if (stages["isLivePurchased"] === true) {
+          earnStars["germs"] = 0;
+        }
 
         //adding era earn germs with curret stage
         earnStars["eraGerms"] =
@@ -379,14 +391,55 @@ exports.userAttendingQuestion = async (req, res, next) => {
           eraLevelEarnGerms +
           stageCompletionGerms;
 
-        earnStars["userGerms"] =
-          parseInt(earnStars["germs"]) + userTotalGerms + stageCompletionGerms;
+        //adding user germs with curret session
+        earnStars["userSessionGerms"] =
+          parseInt(earnStars["germs"]) +
+          userSessionWiseTotalGerms +
+          stageCompletionGerms;
 
         const updateCoins = await updateCoin(
           userAnswerEraModel,
           requestBody,
           earnStars
         );
+
+        //calculating user germs
+        if (
+          updateCoins?.modifiedCount > 0 &&
+          updateCoins?.acknowledged === true
+        ) {
+          const userDetails = await getUserDetails(
+            userModel,
+            requestBody["userId"]
+          );
+          if (!isEmpty(userDetails)) {
+            let userTotalGerms = 0;
+            let userEarnGerms = 0;
+            userEarnGerms = userDetails?.earnGerms;
+            userTotalGerms = userDetails?.totalEarnGerms;
+
+            userEarnGerms =
+              parseInt(userEarnGerms) +
+              parseInt(earnStars["germs"]) +
+              stageCompletionGerms;
+
+            userTotalGerms =
+              parseInt(userTotalGerms) +
+              parseInt(earnStars["germs"]) +
+              stageCompletionGerms;
+
+            let payload = {
+              earnGerms: userEarnGerms,
+              totalEarnGerms: userTotalGerms,
+            };
+            const updateUser = await updateUserDetails(
+              userModel,
+              requestBody["userId"],
+              payload
+            );
+          }
+        }
+        /* germs calculation end */
 
         answerResponseFormat.completedEra = false;
         answerResponseFormat.completedStage = true;

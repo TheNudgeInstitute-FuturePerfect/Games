@@ -153,4 +153,31 @@ const getGermsDetails = async (model, requestBody) => {
   return userGermsDetails;
 };
 
-module.exports = { getLivesOfUnlockStage, filterStage, getGermsDetails };
+const getUserDetails = async (model, userId) => {
+  const userDetails = await model.findOne(
+    {
+      _id: new ObjectID(userId),
+    },
+    { __v: 0, createdAt: 0, updatedAt: 0 }
+  );
+  return userDetails;
+};
+
+const updateUserDetails = async (model, userId, updateObj) => {
+  const updateDetails = await model.findOneAndUpdate(
+    {
+      _id: new ObjectID(userId),
+    },
+    updateObj,
+    { upsert: true }
+  );
+  return updateDetails;
+};
+
+module.exports = {
+  getLivesOfUnlockStage,
+  filterStage,
+  getGermsDetails,
+  getUserDetails,
+  updateUserDetails,
+};

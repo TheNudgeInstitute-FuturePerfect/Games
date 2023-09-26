@@ -31,6 +31,10 @@ const userSchema = new Schema(
       type: Number,
       default: earningCoinsRule?.signupBonusCoins?.coin, //signup bonus germs
     },
+    totalEarnGerms: {
+      type: Number,
+      default: earningCoinsRule?.signupBonusCoins?.coin, //signup bonus germs
+    },
     password: { type: String },
     educationQualification: [qualificationSchema],
   },

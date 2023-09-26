@@ -28,7 +28,7 @@ const updateCoin = async (model, requestBody, coinObj) => {
     }
   );
 
-  if (coinObj["germs"] > 0) {
+  if (updateCoin?.modifiedCount > 0 && updateCoin?.acknowledged === true) {
     await model.updateOne(
       {
         userId: requestBody["userId"],
@@ -38,7 +38,7 @@ const updateCoin = async (model, requestBody, coinObj) => {
       {
         $set: {
           "tenseEra.$[coins].earnGerms": coinObj["eraGerms"],
-          earnGerms: coinObj["userGerms"],
+          earnGerms: coinObj["userSessionGerms"],
         },
       },
       {

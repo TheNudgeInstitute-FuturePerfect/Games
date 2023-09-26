@@ -66,6 +66,10 @@ const TenseEraSchema = new Schema({
           type: Number,
           default: 0,
         },
+        livePurchasedSpendingCoin: {
+          type: Number,
+          default: 0,
+        },
         stageStatus: {
           type: Boolean,
           default: false,
