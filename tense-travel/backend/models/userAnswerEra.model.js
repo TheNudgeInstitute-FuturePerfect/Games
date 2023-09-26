@@ -158,6 +158,10 @@ const UserAnswerEraSchema = new Schema(
       type: String,
       default: null,
     },
+    earnGerms: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     timestamps: true,
