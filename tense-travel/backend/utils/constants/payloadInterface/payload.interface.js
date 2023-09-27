@@ -20,6 +20,22 @@ const answerResponseFormat = {
   isCorrect: null,
   isError: false,
   isGameOver: false,
+  isLivePurchased: false,
+};
+
+const userAnswerEraHisotryPayload = {
+  userAnswerEraId: "",
+  userId: "",
+  sessionId: "",
+  tenseEraId: "",
+  tenseEraTitle: "",
+  stageId: "",
+  earnStars: "",
+  earnGerms: "",
+  stage: {},
+  questions: [],
+  startTime: "",
+  endTime: "",
 };
 
 const heartLives = {
@@ -58,7 +74,7 @@ const earningCoinsRule = {
   },
   buyLives: {
     coin: 5,
-    lives: 1,//buy 1 lives spending by 5 coins
+    lives: 1, //buy 1 lives spending by 5 coins
   },
 };
 
@@ -261,4 +277,5 @@ module.exports = {
   userAnswerStages,
   stageQuestionSize,
   earningCoinsRule,
+  userAnswerEraHisotryPayload,
 };

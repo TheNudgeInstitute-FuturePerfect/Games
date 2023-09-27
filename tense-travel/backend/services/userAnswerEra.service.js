@@ -28,6 +28,7 @@ const {
   getGermsDetails,
   getUserDetails,
   updateUserDetails,
+  checkAttendingQuestionIsAnswered,
 } = require("./global-services/filterEraSatage.service");
 const { updateCoin } = require("./answer/coinsCalculation");
 const ObjectID = require("mongodb").ObjectId;
@@ -115,62 +116,12 @@ exports.userAttendingQuestion = async (req, res, next) => {
     );
     stages["isLivePurchased"] =
       userAnswerStage[0]["tenseEra"][0]["stage"][0]["isLivePurchased"];
+    answerResponseFormat.isLivePurchased = stages["isLivePurchased"];
 
-    let answerExists = await userAnswerEraModel.aggregate([
-      {
-        $match: {
-          userId: new ObjectID(requestBody["userId"]),
-          sessionId: requestBody["sessionId"],
-          tenseEra: {
-            $elemMatch: {
-              tenseEraId: new ObjectID(requestBody["tenseEraId"]),
-              stage: {
-                $elemMatch: {
-                  stageId: new ObjectID(requestBody["stageId"]),
-                  question: {
-                    $elemMatch: {
-                      questionBankId: new ObjectID(requestBody["questionId"]),
-                    },
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-      {
-        $project: {
-          tenseEra: {
-            $filter: {
-              input: {
-                $map: {
-                  input: "$tenseEra",
-                  in: {
-                    $mergeObjects: [
-                      "$$this",
-                      {
-                        stage: {
-                          $filter: {
-                            input: "$$this.stage",
-                            cond: {
-                              $eq: [
-                                "$$this.stageId",
-                                new ObjectID(requestBody["stageId"]),
-                              ],
-                            },
-                          },
-                        },
-                      },
-                    ],
-                  },
-                },
-              },
-              cond: { $ne: ["$$this.stage", []] },
-            },
-          },
-        },
-      },
-    ]);
+    let answerExists = await checkAttendingQuestionIsAnswered(
+      userAnswerEraModel,
+      requestBody
+    );
 
     if (
       (!isEmpty(answerExists) &&
