@@ -195,4 +195,32 @@ const buyLives = async (
   }
 };
 
-module.exports = { retryGame, unlockStage, buyLives };
+const createUserEraAnswerHistory = async (
+  model,
+  userAnswerEraHisotryPayload
+) => {
+  const createUserHistory = await new model({
+    userAnswerEraId: userAnswerEraHisotryPayload["userAnswerEraId"],
+    userId: userAnswerEraHisotryPayload["userId"],
+    sessionId: userAnswerEraHisotryPayload["sessionId"],
+    tenseEraId: userAnswerEraHisotryPayload["tenseEraId"],
+    stageId: userAnswerEraHisotryPayload["stageId"],
+    earnStars: userAnswerEraHisotryPayload["earnStars"],
+    earnGerms: userAnswerEraHisotryPayload["earnGerms"],
+    stage: userAnswerEraHisotryPayload["stage"],
+    questions: userAnswerEraHisotryPayload["questions"],
+    startTime: userAnswerEraHisotryPayload["startTime"],
+    endTime: userAnswerEraHisotryPayload["endTime"],
+  });
+
+  const createdUserHistory = await createUserHistory.save();
+
+  return createdUserHistory;
+};
+
+module.exports = {
+  retryGame,
+  unlockStage,
+  buyLives,
+  createUserEraAnswerHistory,
+};

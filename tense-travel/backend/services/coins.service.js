@@ -85,6 +85,15 @@ exports.buyLives = async (req, res, next) => {
           req,
           res
         );
+      } else if (stage["isLivePurchased"] === true) {
+        return reponseModel(
+          httpStatusCodes.OK,
+          `Purchasing is not allowed! Earlier, you had purchased one life. Please retry playing the game.`,
+          false,
+          [],
+          req,
+          res
+        );
       } else {
         const userDetail = await getUserDetails(
           userModel,
@@ -108,7 +117,8 @@ exports.buyLives = async (req, res, next) => {
           delete stage["_id"];
 
           userAnswerEraHisotryPayload.stage = stage;
-          userAnswerEraHisotryPayload.stage['tenseEraId'] = requestBody["tenseEraId"];
+          userAnswerEraHisotryPayload.stage["tenseEraId"] =
+            requestBody["tenseEraId"];
           delete userAnswerEraHisotryPayload["stage"]["question"];
 
           totalEarnGerms =
