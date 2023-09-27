@@ -21,8 +21,13 @@ const {
   userAnswerStages,
   stageQuestionSize,
   earningCoinsRule,
+  userAnswerEraHisotryPayload,
 } = require("../utils/constants/payloadInterface/payload.interface");
-const { retryGame, unlockStage } = require("./answer/retryAttempt");
+const {
+  retryGame,
+  unlockStage,
+  createUserEraAnswerHistory,
+} = require("./answer/retryAttempt");
 const {
   filterStage,
   getGermsDetails,
@@ -470,11 +475,25 @@ exports.getEraWiseUserAnswerDetail = async (req, res, next) => {
 exports.userRetryStage = async (req, res, next) => {
   try {
     const requestBody = req.body;
+    // reseting answerResponseFormat
     answerResponseFormat.completedEra = false;
     answerResponseFormat.completedStage = false;
     answerResponseFormat.nextQuestion = false;
     answerResponseFormat.isGameOver = false;
     answerResponseFormat.isCorrect = null;
+
+    //reseting  userAnswerEraHisotryPayload
+    userAnswerEraHisotryPayload.userAnswerEraId = "";
+    userAnswerEraHisotryPayload.userId = "";
+    userAnswerEraHisotryPayload.sessionId = "";
+    userAnswerEraHisotryPayload.tenseEraId = "";
+    userAnswerEraHisotryPayload.stageId = "";
+    userAnswerEraHisotryPayload.earnStars = "";
+    userAnswerEraHisotryPayload.earnGerms = "";
+    userAnswerEraHisotryPayload.stage = {};
+    userAnswerEraHisotryPayload.questions = [];
+    userAnswerEraHisotryPayload.startTime = "";
+    userAnswerEraHisotryPayload.endTime = "";
 
     const tenseStageDetail = await userAnswerEraModel.findOne({
       userId: requestBody["userId"],
@@ -482,6 +501,13 @@ exports.userRetryStage = async (req, res, next) => {
       "tenseEra.tenseEraId": requestBody["tenseEraId"],
       "tenseEra.stage.stageId": requestBody["stageId"],
     });
+
+    // preparing history
+    userAnswerEraHisotryPayload.userAnswerEraId = tenseStageDetail["_id"];
+    userAnswerEraHisotryPayload.userId = requestBody["userId"];
+    userAnswerEraHisotryPayload.sessionId = requestBody["sessionId"];
+    userAnswerEraHisotryPayload.tenseEraId = requestBody["tenseEraId"];
+    userAnswerEraHisotryPayload.stageId = requestBody["stageId"];
 
     const stage = stageFilter({
       answerCount: tenseStageDetail,
@@ -492,10 +518,27 @@ exports.userRetryStage = async (req, res, next) => {
       delete stage["histories"];
       delete stage["_id"];
 
+      // preparing history
+      userAnswerEraHisotryPayload.earnStars = stage["earnStars"];
+      userAnswerEraHisotryPayload.earnGerms = stage["earnGerms"];
+      userAnswerEraHisotryPayload.questions = stage["question"];
+      userAnswerEraHisotryPayload.startTime = stage["startTime"];
+      userAnswerEraHisotryPayload.endTime = stage["endTime"];
+      userAnswerEraHisotryPayload.stage = stage;
+      userAnswerEraHisotryPayload.stage["tenseEraId"] =
+        requestBody["tenseEraId"];
+      delete userAnswerEraHisotryPayload["stage"]["question"];
+
       const retryDetail = await retryGame(
         userAnswerEraModel,
         stage,
         requestBody
+      );
+
+      //creating history
+      const createdUserEraAnswerHistory = await createUserEraAnswerHistory(
+        userAnswerEraModel,
+        userAnswerEraHisotryPayload
       );
 
       let questions = await getRandomQuestions(req, res, next);
@@ -505,7 +548,12 @@ exports.userRetryStage = async (req, res, next) => {
         httpStatusCodes.OK,
         !isEmpty(questions) ? "Questions found" : "Questions not found",
         !isEmpty(questions) ? true : false,
-        { questions, ...answerResponseFormat, heartLive: 3 },
+        {
+          questions,
+          ...answerResponseFormat,
+          heartLive: 3,
+          isLivePurchased: false,
+        },
         req,
         res
       );
