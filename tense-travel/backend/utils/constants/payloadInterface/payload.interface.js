@@ -73,8 +73,8 @@ const earningCoinsRule = {
     defaultCoins: 5, // 5 coins will be default. If Stage completed then 5 coins will be default
   },
   buyLives: {
-    coin: 5,
-    lives: 1, //buy 1 lives spending by 5 coins
+    coin: 10,
+    lives: 1, //buy 1 lives spending by 10 coins
   },
 };
 

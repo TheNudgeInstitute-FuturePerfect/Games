@@ -99,7 +99,10 @@ exports.buyLives = async (req, res, next) => {
           userModel,
           requestBody["userId"]
         );
-        if (!isEmpty(userDetail) && userDetail["totalEarnGerms"] >= 5) {
+        if (
+          !isEmpty(userDetail) &&
+          userDetail["totalEarnGerms"] >= earningCoinsRule?.buyLives?.coin
+        ) {
           //preparing user Answer Era Hisotry Payload
           userAnswerEraHisotryPayload.userAnswerEraId =
             tenseStageDetail[0]["_id"];
@@ -123,7 +126,7 @@ exports.buyLives = async (req, res, next) => {
 
           totalEarnGerms =
             userDetail["totalEarnGerms"] - earningCoinsRule?.buyLives?.coin;
-          if (eraDetail?.earnGerms >= 5) {
+          if (eraDetail?.earnGerms >= earningCoinsRule?.buyLives?.coin) {
             eraCoins = eraDetail?.earnGerms - earningCoinsRule?.buyLives?.coin;
           }
           userGermsPayload = { totalEarnGerms, eraCoins };
