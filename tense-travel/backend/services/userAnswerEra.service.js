@@ -337,8 +337,11 @@ exports.userAttendingQuestion = async (req, res, next) => {
 
         answerCount = stageFilter({ answerCount, requestBody });
         let earnStars = earnCoins(answerCount, stages["lives"]);
+        
+        //if user has purchased the lives then give one star
         if (stages["isLivePurchased"] === true) {
           earnStars["germs"] = 0;
+          earnStars["stars"] = earningCoinsRule.stars.oneStars.star;
         }
 
         //adding era earn germs with curret stage
