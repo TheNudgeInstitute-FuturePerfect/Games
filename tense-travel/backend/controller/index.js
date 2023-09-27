@@ -23,6 +23,7 @@ const {
 } = require("../controller/userAnswerEra.controller");
 
 const { getUserScore } = require("../controller/score.controller");
+const { getUserCoins, buyLives } = require("../controller/coin.controller");
 
 module.exports = {
   login,
@@ -44,5 +45,7 @@ module.exports = {
   getCurrentUserAndSessionId,
   eraseUserStageAttempts,
   getUserScore,
-  updateOneQuestion
+  updateOneQuestion,
+  getUserCoins,
+  buyLives
 };

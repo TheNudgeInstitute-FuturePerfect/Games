@@ -20,6 +20,22 @@ const answerResponseFormat = {
   isCorrect: null,
   isError: false,
   isGameOver: false,
+  isLivePurchased: false,
+};
+
+const userAnswerEraHisotryPayload = {
+  userAnswerEraId: "",
+  userId: "",
+  sessionId: "",
+  tenseEraId: "",
+  tenseEraTitle: "",
+  stageId: "",
+  earnStars: "",
+  earnGerms: "",
+  stage: {},
+  questions: [],
+  startTime: "",
+  endTime: "",
 };
 
 const heartLives = {
@@ -55,6 +71,10 @@ const earningCoinsRule = {
   coins: {
     lives: 1, //one live = 5 coins. If user have 2 lives then 2*5=10 coins
     defaultCoins: 5, // 5 coins will be default. If Stage completed then 5 coins will be default
+  },
+  buyLives: {
+    coin: 5,
+    lives: 1, //buy 1 lives spending by 5 coins
   },
 };
 
@@ -114,7 +134,7 @@ const stageAndQuestionFilter = (params) => {
 
 //calculate stars
 const earnCoins = (params, live = 0) => {
-  let coin = { stars: 0, germs: 0, userGerms: 0, eraGerms:0 };
+  let coin = { stars: 0, germs: 0, userGerms: 0, eraGerms: 0 };
   switch (params?.numberOfCorrect) {
     case earningCoinsRule.stars.oneStars.accurate:
       coin.stars = earningCoinsRule.stars.oneStars.star;
@@ -257,4 +277,5 @@ module.exports = {
   userAnswerStages,
   stageQuestionSize,
   earningCoinsRule,
+  userAnswerEraHisotryPayload,
 };
