@@ -166,7 +166,7 @@ exports.buyLives = async (req, res, next) => {
         } else {
           return reponseModel(
             httpStatusCodes.OK,
-            `Sorry! You do not have sufficient coins to purchase the lives.`,
+            `Sorry! You do not have sufficient coins to purchase the lives. Please play other stages to earn the coins.`,
             false,
             [],
             req,

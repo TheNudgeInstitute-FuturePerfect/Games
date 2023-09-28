@@ -39,10 +39,18 @@ const userSubmitAnswerResponse = {
   message: "",
 };
 
+const buyLivesPaylod = {
+  userId: "",
+  sessionId: "",
+  tenseEraId: "",
+  stageId: "",
+};
+
 module.exports = {
   getUserCurrentEra,
   getStageQuestion,
   userAnswerSubmitPayload,
   reTryStagePaylod,
   userSubmitAnswerResponse,
+  buyLivesPaylod,
 };
