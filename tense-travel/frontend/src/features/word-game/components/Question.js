@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from "react";
-// import "../../../css/styles.css";
 import "../../../sass/styles.scss";
 import { useNavigate, useParams } from "react-router-dom";
 import {
@@ -182,7 +181,8 @@ function Question() {
 
     if (userSubmitAnswerResponse["isGameOver"] === true) {
       inputRef.current.blur();
-      setPurchaseDialogShow(true);
+      // setPurchaseDialogShow(true);
+      handleBuyCoinPopupShow(popupTypes[0]);
       setUserAnswer("");
       setIsCorrectAns(null);
     }
@@ -223,9 +223,19 @@ function Question() {
 
     if (userSubmitAnswerResponse["isGameOver"] === true) {
       inputRef.current.blur();
+      if (
+        userSubmitAnswerResponse["isGameOver"] === true &&
+        userSubmitAnswerResponse["isCorrect"] === null &&
+        userSubmitAnswerResponse["isLivePurchased"] === false
+      ) {
+        handleBuyCoinPopupShow(popupTypes[0]);
+      } else {
+        setIsCorrectAns(userSubmitAnswerResponse["isCorrect"]);
+      }
       // setPurchaseDialogShow(true);
-      handleBuyCoinPopupShow(popupTypes[0]);
+      // handleBuyCoinPopupShow(popupTypes[0]);
       // setRetryMsg(userSubmitAnswerResponse["message"]);
+      // setIsCorrectAns(userSubmitAnswerResponse["isCorrect"]);
       return;
     }
     setIsCorrectAns(userSubmitAnswerResponse["isCorrect"]);
@@ -254,21 +264,20 @@ function Question() {
     buyLivesPaylod.stageId = stageId;
     buyLivesPaylod.tenseEraId = eraId;
     const buyLiveRes = await buyLives(buyLivesPaylod);
-    
+
     if (buyLiveRes["success"] === true) {
       setShow(false);
       await getStageQuestions();
     }
   };
 
+  const gameCompleted = () => {
+    navigate(`/choose-stage/${eraId}`);
+  };
+
   useEffect(() => {
     getStageQuestions();
   }, []);
-
-  useEffect(() => {
-    // handleShow()
-    // console.log("showModal", showModal);
-  }, [showModal]);
 
   return (
     <>
@@ -396,7 +405,7 @@ function Question() {
                 className="align-center"
                 style={{ display: "flex", justifyContent: "space-evenly" }}
               >
-                <button className="" onClick={buyHeart}>
+                <button className="" onClick={gameCompleted}>
                   Ok
                 </button>
               </div>
