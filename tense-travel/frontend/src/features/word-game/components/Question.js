@@ -3,14 +3,16 @@ import React, { useEffect, useRef, useState } from "react";
 import "../../../sass/styles.scss";
 import { useNavigate, useParams } from "react-router-dom";
 import {
+  buyLivesPaylod,
   getStageQuestion,
   reTryStagePaylod,
   userAnswerSubmitPayload,
   userSubmitAnswerResponse,
 } from "../../../utils/payload";
 import { userIds } from "../../../utils/constants";
-import reTryStage from "../../../services/stageRetryAPI";
+import { buyLives, reTryStage } from "../../../services/questionAPI";
 import CommonModal from "../common/CommonModal";
+import { actionType, popupTypes } from "../../../utils/commonFunction";
 
 let questionsParsed, questionsData, currentQuestionIndex;
 function Question() {
@@ -27,6 +29,27 @@ function Question() {
   const [isCorrectAns, setIsCorrectAns] = useState(null);
   const [purchaseDialogShow, setPurchaseDialogShow] = useState(false);
   const [retryMsg, setRetryMsg] = useState(null);
+  const [showModal, setShow] = useState(false); //buy lives modal
+  const [modalParams, setModalParams] = useState({});
+
+  const handleBuyCoinPopupClose = () => {
+    setShow(false);
+    navigate(`/choose-stage/${eraId}`);
+  };
+
+  const handleBuyCoinPopupShow = (popupType, action = "") => {
+    const popup = actionType(popupType);
+    const modalParams = { modalName: popup };
+    setModalParams(modalParams);
+    setShow(true);
+    if (popupType === "PURCHASE_LIVES") {
+      buyHeart();
+    }
+    if (popupType === "RETRY_GAME_POPUP" && action === "retryGame") {
+      retryGame();
+    }
+    return;
+  };
 
   const navigateStage = () => {
     navigate(`/choose-stage/${eraId}`);
@@ -56,6 +79,7 @@ function Question() {
 
       answerRWPopup(userSubmitAnswerResponse); //answerRightWrongPopup
     } else {
+      inputRef.current.focus();
       setLives(questionsParsed["data"]["heartLive"]);
       questionsParsed["data"] = questionsParsed["data"]["questions"];
       setQuestions(questionsParsed["data"]);
@@ -94,6 +118,8 @@ function Question() {
 
   const handleSubmitAnswer = async (event) => {
     event.preventDefault();
+    // handleBuyCoinPopupShow(popupTypes[3]);
+    // return;
     await checkAnswer();
   };
 
@@ -169,6 +195,7 @@ function Question() {
   };
 
   const answerRWPopup = (userSubmitAnswerResponse) => {
+    //answerRWPopup=answerRightWrongPopup
     if (
       userSubmitAnswerResponse["completedStage"] === true &&
       userSubmitAnswerResponse["isCorrect"] !== null
@@ -183,10 +210,22 @@ function Question() {
       return;
     }
 
+    if (
+      userSubmitAnswerResponse["isGameOver"] === true &&
+      userSubmitAnswerResponse["isLivePurchased"] === true
+    ) {
+      inputRef.current.blur();
+      // setPurchaseDialogShow(true);
+      handleBuyCoinPopupShow(popupTypes[3]);
+      // setRetryMsg(userSubmitAnswerResponse["message"]);
+      return;
+    }
+
     if (userSubmitAnswerResponse["isGameOver"] === true) {
       inputRef.current.blur();
-      setPurchaseDialogShow(true);
-      setRetryMsg(userSubmitAnswerResponse["message"]);
+      // setPurchaseDialogShow(true);
+      handleBuyCoinPopupShow(popupTypes[0]);
+      // setRetryMsg(userSubmitAnswerResponse["message"]);
       return;
     }
     setIsCorrectAns(userSubmitAnswerResponse["isCorrect"]);
@@ -202,24 +241,45 @@ function Question() {
     reTryStagePaylod.stageId = stageId;
     const reTryStageRes = await reTryStage(reTryStagePaylod);
 
-    let reTryStageParsed = await reTryStageRes.json();
-    inputRef.current.focus();
-    if (reTryStageParsed["success"] === true) {
+    if (reTryStageRes["success"] === true) {
+      setShow(false);
       await getStageQuestions();
     }
   };
 
-  const buyHeart = () => {
-    navigate(`/choose-stage/${eraId}`);
+  const buyHeart = async () => {
+    setUserAnswer("");
+    buyLivesPaylod.sessionId = userIds.sessionId;
+    buyLivesPaylod.userId = userIds.userId;
+    buyLivesPaylod.stageId = stageId;
+    buyLivesPaylod.tenseEraId = eraId;
+    const buyLiveRes = await buyLives(buyLivesPaylod);
+    
+    if (buyLiveRes["success"] === true) {
+      setShow(false);
+      await getStageQuestions();
+    }
   };
 
   useEffect(() => {
     getStageQuestions();
   }, []);
 
+  useEffect(() => {
+    // handleShow()
+    // console.log("showModal", showModal);
+  }, [showModal]);
+
   return (
     <>
       <div className="container">
+        {showModal && (
+          <CommonModal
+            modalParams={modalParams}
+            handleBuyCoinPopupClose={handleBuyCoinPopupClose}
+            handleBuyCoinPopupShow={handleBuyCoinPopupShow}
+          />
+        )}
         <div className="fourth-step">
           <div className="question-block">
             <div className="question-slide-line">

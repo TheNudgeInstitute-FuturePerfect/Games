@@ -1,6 +1,6 @@
 const userIds = {
-  userId: "65126df1586c282c05e82e17",
-  sessionId: "fe42a941-76f2-44cf-941a-2865ddaa242c",
+  userId: "6512d73d574d4522062e3f84",
+  sessionId: "7694ffb1-09c8-48da-b7d1-819c79c4891c",
 };
 
 const coins = {
@@ -9,4 +9,16 @@ const coins = {
   },
 };
 
-module.exports = { userIds, coins };
+const gameOverModalConfig = {
+  POPUP_TYPES: {
+    PURCHASE_POPUP: "gameOverMainScreen",
+    PURCHASE_LIVES_POPUP: "gameOverBuyLives",
+    RETRY_GAME_POPUP: "gameOverFinalScreen",
+  },
+  PURCHASE_TYPES: {
+    PURCHASE_LIVES: "gameOverBuyLives",
+  },
+  UNDEFINED: "null",
+};
+
+module.exports = { userIds, coins, gameOverModalConfig };
