@@ -36,6 +36,7 @@ const {
   checkAttendingQuestionIsAnswered,
 } = require("./global-services/filterEraSatage.service");
 const { updateCoin } = require("./answer/coinsCalculation");
+const { userAnswerEraHistoryModel } = require("../models/userAnswerEraHistory.model");
 const ObjectID = require("mongodb").ObjectId;
 
 exports.findUserEra = async (req, res, next) => {
@@ -540,7 +541,7 @@ exports.userRetryStage = async (req, res, next) => {
 
       //creating history
       const createdUserEraAnswerHistory = await createUserEraAnswerHistory(
-        userAnswerEraModel,
+        userAnswerEraHistoryModel,
         userAnswerEraHisotryPayload
       );
 
