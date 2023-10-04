@@ -158,7 +158,7 @@ const getUserDetails = async (model, userId) => {
     {
       _id: new ObjectID(userId),
     },
-    { __v: 0, createdAt: 0, updatedAt: 0 }
+    { __v: 0, createdAt: 0, updatedAt: 0, password:0 }
   );
   return userDetails;
 };

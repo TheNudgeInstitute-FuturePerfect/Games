@@ -46,6 +46,11 @@ const buyLivesPaylod = {
   stageId: "",
 };
 
+const API_ERROR_ESPONSE = {
+  message: "",
+  success: null,
+};
+
 module.exports = {
   getUserCurrentEra,
   getStageQuestion,
@@ -53,4 +58,5 @@ module.exports = {
   reTryStagePaylod,
   userSubmitAnswerResponse,
   buyLivesPaylod,
+  API_ERROR_ESPONSE
 };

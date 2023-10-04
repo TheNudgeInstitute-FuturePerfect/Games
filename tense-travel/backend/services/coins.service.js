@@ -29,16 +29,14 @@ exports.getUserCoins = async (req, res, next) => {
     const userId = req.params.userId;
     let userDetails = await getUserDetails(userModel, userId);
 
-    if (!isEmpty(userDetails)) {
-      return reponseModel(
-        httpStatusCodes.OK,
-        !isEmpty(userDetails) ? "User details found" : "User details not found",
-        !isEmpty(userDetails) ? true : false,
-        userDetails,
-        req,
-        res
-      );
-    }
+    return reponseModel(
+      httpStatusCodes.OK,
+      !isEmpty(userDetails) ? "User coins found" : "User coins not found",
+      !isEmpty(userDetails) ? true : false,
+      userDetails,
+      req,
+      res
+    );
   } catch (err) {
     next(err);
   }

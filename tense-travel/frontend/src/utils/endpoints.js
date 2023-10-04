@@ -4,6 +4,7 @@ const API_END_POINT = {
   BASE_URL_GAME: "game",
   BASE_URL_TENSE_TRAVEL: "tense-travel",
   BUY_STAGE_LIVES: "coin/buy-stage-lives",
+  GET_USER_COINS: `coin/get-user-coins`,
 };
 
 export { API_END_POINT };
