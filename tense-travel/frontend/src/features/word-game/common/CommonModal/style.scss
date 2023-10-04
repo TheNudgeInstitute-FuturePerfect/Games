@@ -232,6 +232,35 @@
             margin-top: 10px;
         }
     }
+    .noContentModalBody{
+        width: 258px;
+        height: 220PX;
+        position: absolute;
+        bottom: 29%;
+        border: 2px solid #fff;
+        border-radius: 7px;
+        background: #000000;
+        .noCoinTipPopup {
+            text-align: center;
+            font-family: Schoolbell;
+            font-size: 24px;
+            font-weight: 400;
+            margin-top: 32px;
+        }
+        .takeMeThereBtn {
+            border-radius: 7px;
+            border-bottom: 3px solid #fff;
+            border-color: #fff;
+            color: #fff;
+            margin-top: 8%;
+            font-family: Schoolbell;
+            font-size: 24px;
+        }
+        .takeMeThereBtn:hover{
+            background: none;
+        }
+    }
+
     .noCoinMoreBtn {
         border-radius: 12px;
         background: #4F35A0;

@@ -30,6 +30,7 @@ function Question() {
   const [retryMsg, setRetryMsg] = useState(null);
   const [showModal, setShow] = useState(false); //buy lives modal
   const [modalParams, setModalParams] = useState({});
+  const [livePurchase, setLivePurchase] = useState(false);
 
   const handleBuyCoinPopupClose = () => {
     setShow(false);
@@ -268,6 +269,7 @@ function Question() {
     if (buyLiveRes["success"] === true) {
       setShow(false);
       await getStageQuestions();
+      setLivePurchase(true);
     }
   };
 
@@ -305,7 +307,13 @@ function Question() {
                       );
                     })}
                 </ul>
-                <div className="count-question">{lives}</div>
+                <div
+                  className={
+                    !livePurchase ? "count-question" : "count-question-golden"
+                  }
+                >
+                  {lives}
+                </div>
               </div>
             </div>
             <h1>{questions && questions[queSequence]?.stageTitle}</h1>

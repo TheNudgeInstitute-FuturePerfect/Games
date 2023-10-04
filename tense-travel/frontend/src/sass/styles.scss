@@ -213,6 +213,17 @@
     font-weight: 700;
     margin-left: 10px;
 }
+.count-question-golden {
+    background: url(../../src/assets/images/heart-golden.svg) left top no-repeat;
+    width: 30px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    margin-left: 10px;
+}
 .input-question{
     background: #4F4F4F;
     @include border-radius(12px);

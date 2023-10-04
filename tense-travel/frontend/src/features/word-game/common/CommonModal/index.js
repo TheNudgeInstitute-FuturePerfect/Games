@@ -13,7 +13,6 @@ function CommonModal(props) {
   } = props;
 
   const handleNoMoreCoin = () => {
-    // console.log('handleNoMoreCoin')
     setTipPopup(true);
   };
 
@@ -133,7 +132,6 @@ function CommonModal(props) {
         let requestPayload = { userId: userIds.userId };
         const userCoins = await getUserCoins(requestPayload);
         const totalGerms = userCoins["data"]["totalEarnGerms"];
-        // console.log(totalEarnGerms)
         // setTotalEarnGerms(null);
         setTotalEarnGerms(totalGerms > 0 ? totalGerms : null);
       };
@@ -412,33 +410,24 @@ function CommonModal(props) {
                     Go Back
                   </Button>
                 </div>
-                {/* <div className="noCoinTipPopup"
-                  // style={{
-                  //   // display: "flex",
-                  //   // justifyContent: "center",
-                  //   textAlign: "center",
-                  //   // background: "#000",
-                  //   backgroundColor: 'rgba(0, 0, 0)',
-                  //   color: "#fff",
-                  //   border: "2px solid #fff",
-                  //   height: "199px",
-                  //   width: "258px",
-                  //   position: "relative",
-                  //   bottom: "200px",
-                  //   margin: "auto",
-                  //   borderRadius: "7px",
-                  //   fontFamily: "Schoolbell",
-                  //   fontSize: "24px",
-                  //   fontWeight: "400",
-                  // }}
-                >
-                  <div>
-                    TIP: Play already completed levels to get more coins!
-                  </div>
-                  <div>
-                    ds
-                  </div>
-                </div> */}
+              </div>
+            </div>
+          )}
+          {tipPopup === true && (
+            <div className="d-flex align-items-center justify-content-center modalContainer">
+              <div className="noContentModalBody">
+                <div className="noCoinTipPopup">
+                  TIP: Play already completed levels to get more coins!
+                </div>
+                <div className="d-flex align-items-center justify-content-center">
+                  <Button
+                    variant="outline-primary"
+                    className="takeMeThereBtn"
+                    onClick={() => props.handleBuyCoinPopupClose()}
+                  >
+                    Take Me there
+                  </Button>
+                </div>
               </div>
             </div>
           )}
