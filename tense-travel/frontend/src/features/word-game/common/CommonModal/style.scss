@@ -120,10 +120,20 @@
             opacity: 1 !important;
             .emojiIcon{
                 margin: 0 auto;
+                display: flex;
+                justify-content: center;
                 svg {
                     // margin-top: -3px;
                     width: 100%;
                 }
+                .buy-coin-1x{
+                    position: absolute;
+                    margin-top: 6px;
+                    font-weight: 700;
+                }
+            }
+            .buy-coin-10{
+                font-weight: 700;
             }
         }
         .balanceBtn{
@@ -183,6 +193,80 @@
         .finalScreenDesc{
             width: 90%;
             margin: 15% auto;
+        }
+        .noCoinTipPopup {
+            text-align: "center" !important;
+            background-color: rgba(0, 0, 0);
+            color: "#fff";
+            border: "2px solid #fff" !important;
+            height: "199px";
+            width: "258px";
+            position: "relative";
+            bottom: "200px";
+            margin: "auto";
+            border-radius: "7px";
+            font-family: "Schoolbell";
+            font-size: "24px";
+            font-weight: "400";
+        }
+    }
+    .noCoinsmodalSubHeading{
+        flex-shrink: 0;
+        color: #FFF;
+        text-align: center;
+        font-family: Montserrat;
+        font-size: 24px;
+        font-style: normal;
+        font-weight: 700;
+        line-height: normal;
+        margin-top: 48px;
+        .noCoinMessage {
+            color: #FFF;
+            font-size: 14px;
+            font-style: normal;
+            font-weight: 500;
+            line-height: normal;
+            width: 90%;
+            margin: auto;
+            top: 20px;
+            margin-top: 10px;
+        }
+    }
+    .noCoinMoreBtn {
+        border-radius: 12px;
+        background: #4F35A0;
+        box-shadow: 0px 8px 0px 0px #242469;
+        width: 150px;
+        // height: 48px;
+        height: 47.361px;
+        flex-shrink: 0;
+        margin-top: 43px;
+        border: 2px solid #4F35A0;
+        // pointer-events: none;
+        opacity: 1 !important;
+        .emojiIcon{
+            margin: 0 auto;
+            display: flex;
+            // justify-content: center;
+            justify-content: space-between;
+            align-items: center;
+            .moreCoins {
+                font-size: 15px;
+                font-weight: 700;
+            }
+            
+        //     svg {
+        //         // margin-top: -3px;
+        //         width: 100%;
+        //     }
+        //     .buy-coin-1x{
+        //         position: absolute;
+        //         margin-top: 6px;
+        //         font-weight: 700;
+        //     }
+        // }
+        // .buy-coin-10{
+        //     font-weight: 700;
         }
     }
 }

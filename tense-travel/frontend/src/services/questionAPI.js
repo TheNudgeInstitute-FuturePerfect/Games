@@ -1,5 +1,5 @@
 import { API_END_POINT } from "../utils/endpoints";
-import { buyLivesPaylod } from "../utils/payload";
+import { API_ERROR_ESPONSE, buyLivesPaylod } from "../utils/payload";
 
 const buyLives = async (requestPayload) => {
   let questionsData = await fetch(
