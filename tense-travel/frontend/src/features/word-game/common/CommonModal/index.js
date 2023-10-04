@@ -13,7 +13,6 @@ function CommonModal(props) {
   } = props;
 
   const handleNoMoreCoin = () => {
-    console.log("handleNoMoreCoin");
     setTipPopup(true);
   };
 
