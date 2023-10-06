@@ -30,7 +30,7 @@ function Question() {
   const [retryMsg, setRetryMsg] = useState(null);
   const [showModal, setShow] = useState(false); //buy lives modal
   const [modalParams, setModalParams] = useState({});
-  const [livePurchase, setLivePurchase] = useState(false);
+  const [goldenHeart, setGoldenHeart] = useState(false);
 
   const handleBuyCoinPopupClose = () => {
     setShow(false);
@@ -71,6 +71,10 @@ function Question() {
     );
 
     questionsParsed = await questionsData.json();
+    setGoldenHeart(
+      questionsParsed["data"]["isLivePurchased"] === true ? true : false
+    );
+
     if (questionsParsed["data"]["questions"].length === 0) {
       userSubmitAnswerResponse = {
         ...questionsParsed["data"],
@@ -117,6 +121,9 @@ function Question() {
   };
 
   const handleSubmitAnswer = async (event) => {
+    // navigate("/complete-stage");
+    // return;
+    
     event.preventDefault();
     // handleBuyCoinPopupShow(popupTypes[3]);
     // return;
@@ -190,8 +197,9 @@ function Question() {
 
     if (userSubmitAnswerResponse["completedStage"] === true) {
       inputRef.current.blur();
-      setPurchaseDialogShow(true);
-      setRetryMsg(userSubmitAnswerResponse["message"]);
+      // setPurchaseDialogShow(true);
+      // setRetryMsg(userSubmitAnswerResponse["message"]);
+      navigate('/complete-stage');
     }
   };
 
@@ -216,9 +224,7 @@ function Question() {
       userSubmitAnswerResponse["isLivePurchased"] === true
     ) {
       inputRef.current.blur();
-      // setPurchaseDialogShow(true);
       handleBuyCoinPopupShow(popupTypes[3]);
-      // setRetryMsg(userSubmitAnswerResponse["message"]);
       return;
     }
 
@@ -233,10 +239,6 @@ function Question() {
       } else {
         setIsCorrectAns(userSubmitAnswerResponse["isCorrect"]);
       }
-      // setPurchaseDialogShow(true);
-      // handleBuyCoinPopupShow(popupTypes[0]);
-      // setRetryMsg(userSubmitAnswerResponse["message"]);
-      // setIsCorrectAns(userSubmitAnswerResponse["isCorrect"]);
       return;
     }
     setIsCorrectAns(userSubmitAnswerResponse["isCorrect"]);
@@ -269,7 +271,7 @@ function Question() {
     if (buyLiveRes["success"] === true) {
       setShow(false);
       await getStageQuestions();
-      setLivePurchase(true);
+      setGoldenHeart(true);
     }
   };
 
@@ -309,7 +311,7 @@ function Question() {
                 </ul>
                 <div
                   className={
-                    !livePurchase ? "count-question" : "count-question-golden"
+                    !goldenHeart ? "count-question" : "count-question-golden"
                   }
                 >
                   {lives}
@@ -322,7 +324,7 @@ function Question() {
               <label>{questions[queSequence]?.question.split("__")[0]}</label>{" "}
               <input
                 style={{
-                  width: "70px",
+                  width: ((questions[queSequence]?.answer.length)*5)+'%',
                   backgroundColor: "transparent",
                   color: "white",
                   outline: "none",
@@ -335,7 +337,7 @@ function Question() {
                 value={userAnswer}
                 autoFocus
                 ref={inputRef}
-                placeholder="_________"
+                placeholder={"_________"}
               />{" "}
               <label htmlFor="">
                 {questions[queSequence]?.question.split("__")[1]}
