@@ -32,7 +32,19 @@ function Question() {
   const [showModal, setShow] = useState(false); //buy lives modal
   const [modalParams, setModalParams] = useState({});
   const [goldenHeart, setGoldenHeart] = useState(false);
-  const stageCompleteContext = useContext(stageContext)
+  const stageCompleteContext = useContext(stageContext);
+
+  /*fill in the blank input style*/
+  const [inputStyle, setInputStyle] = useState({
+    backgroundColor: "transparent",
+    color: "white",
+    outline: "none",
+    border: "none",
+    fontSize: "16px",
+    fontWeight: "800",
+    maxWidth: "100%",
+    width: "20%",
+  });
 
   const handleBuyCoinPopupClose = () => {
     setShow(false);
@@ -120,12 +132,25 @@ function Question() {
 
   const onChange = (event, index) => {
     setUserAnswer(event.target.value);
+
+    event.preventDefault();
+    setInputStyle({
+      backgroundColor: "transparent",
+      color: "white",
+      outline: "none",
+      border: "none",
+      fontSize: "16px",
+      fontWeight: "800",
+      maxWidth: "100%",
+      minWidth: "20%",
+      width: (event.target.value.length + 1) * 10 + "px",
+    });
   };
 
   const handleSubmitAnswer = async (event) => {
     // navigate("/complete-stage");
     // return;
-    
+
     event.preventDefault();
     // handleBuyCoinPopupShow(popupTypes[3]);
     // return;
@@ -202,12 +227,13 @@ function Question() {
       // setPurchaseDialogShow(true);
       // setRetryMsg(userSubmitAnswerResponse["message"]);
       stageCompleteContext.setStageInfo({
-        userId:userIds.userId,
-        sessionId:userIds.sessionId,
+        userId: userIds.userId,
+        sessionId: userIds.sessionId,
         stageId: stageId,
-        eraId:eraId
-      })
-      navigate('/complete-stage');
+        tenseEraId: eraId,
+      });
+
+      navigate("/complete-stage");
     }
   };
 
@@ -331,15 +357,16 @@ function Question() {
             <div className="input-question">
               <label>{questions[queSequence]?.question.split("__")[0]}</label>{" "}
               <input
-                style={{
-                  width: ((questions[queSequence]?.answer.length)*5)+'%',
-                  backgroundColor: "transparent",
-                  color: "white",
-                  outline: "none",
-                  border: "none",
-                  fontSize: "16px",
-                  fontWeight: "800",
-                }}
+                // style={{
+                //   width: questions[queSequence]?.answer.length * 4 + "%",
+                //   backgroundColor: "transparent",
+                //   color: "white",
+                //   outline: "none",
+                //   border: "none",
+                //   fontSize: "16px",
+                //   fontWeight: "800",
+                // }}
+                style={inputStyle}
                 type="text"
                 onChange={(event) => onChange(event, queSequence)}
                 value={userAnswer}
