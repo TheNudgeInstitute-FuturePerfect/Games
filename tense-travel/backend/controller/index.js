@@ -22,7 +22,10 @@ const {
   eraseUserStageAttempts,
 } = require("../controller/userAnswerEra.controller");
 
-const { getUserScore } = require("../controller/score.controller");
+const {
+  getUserScore,
+  recentStageCompletedScore,
+} = require("../controller/score.controller");
 const { getUserCoins, buyLives } = require("../controller/coin.controller");
 
 module.exports = {
@@ -47,5 +50,6 @@ module.exports = {
   getUserScore,
   updateOneQuestion,
   getUserCoins,
-  buyLives
+  buyLives,
+  recentStageCompletedScore,
 };

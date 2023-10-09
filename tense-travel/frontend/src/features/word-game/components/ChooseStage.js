@@ -101,12 +101,13 @@ function ChooseStage() {
                             return <span key={index} className="active"></span>;
                           })}
                       {stage.length > 0 &&
-                        Array(coins.defaultStars.stars)
+                        Array(defaultStar)
                           .fill("")
                           .map((itm, index) => {
                             defaultStar = coins.defaultStars.stars;
                             return <span key={index} className=""></span>;
-                          })}
+                          })
+                          }
                     </div>
                   </div>
                   {stage.length > 0 && !stage[2]?.isLocked ? (

@@ -158,7 +158,7 @@ const getUserDetails = async (model, userId) => {
     {
       _id: new ObjectID(userId),
     },
-    { __v: 0, createdAt: 0, updatedAt: 0, password:0 }
+    { __v: 0, createdAt: 0, updatedAt: 0, password: 0 }
   );
   return userDetails;
 };
@@ -174,7 +174,7 @@ const updateUserDetails = async (model, userId, updateObj) => {
   return updateDetails;
 };
 
-const checkAttendingQuestionIsAnswered = async (model, requestBody)=> {
+const checkAttendingQuestionIsAnswered = async (model, requestBody) => {
   const answerExists = await model.aggregate([
     {
       $match: {
@@ -232,7 +232,7 @@ const checkAttendingQuestionIsAnswered = async (model, requestBody)=> {
   ]);
 
   return answerExists;
-}
+};
 
 module.exports = {
   getLivesOfUnlockStage,
@@ -240,5 +240,5 @@ module.exports = {
   getGermsDetails,
   getUserDetails,
   updateUserDetails,
-  checkAttendingQuestionIsAnswered
+  checkAttendingQuestionIsAnswered,
 };

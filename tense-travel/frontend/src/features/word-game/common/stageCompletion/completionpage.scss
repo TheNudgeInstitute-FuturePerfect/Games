@@ -69,11 +69,14 @@
     padding-top: 125px;
     padding-bottom: 81px;
 }
-.empty-three-star {
-    text-align: center;
+.complete-stage-star-block {
+    display: flex;
+    justify-content: center;
+    gap: 9px;
     margin-bottom: 22px;
-    img{
-        margin-left: 10px;
+    img {
+        width: 53px;
+        height: 53px;
     }
 }
  .three-star{
@@ -94,6 +97,7 @@
         position: absolute;
         top: 36px;
         right: 27px;
+        font-weight: 700;
     }
 
 }
