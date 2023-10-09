@@ -36,7 +36,9 @@ const {
   checkAttendingQuestionIsAnswered,
 } = require("./global-services/filterEraSatage.service");
 const { updateCoin } = require("./answer/coinsCalculation");
-const { userAnswerEraHistoryModel } = require("../models/userAnswerEraHistory.model");
+const {
+  userAnswerEraHistoryModel,
+} = require("../models/userAnswerEraHistory.model");
 const ObjectID = require("mongodb").ObjectId;
 
 exports.findUserEra = async (req, res, next) => {
@@ -338,7 +340,7 @@ exports.userAttendingQuestion = async (req, res, next) => {
 
         answerCount = stageFilter({ answerCount, requestBody });
         let earnStars = earnCoins(answerCount, stages["lives"]);
-        
+
         //if user has purchased the lives then give one star
         if (stages["isLivePurchased"] === true) {
           earnStars["germs"] = 0;
@@ -518,53 +520,109 @@ exports.userRetryStage = async (req, res, next) => {
       requestBody,
     });
 
-    if (stage["lives"] <= 0) {
+    if (!isEmpty(stage)) {
       delete stage["histories"];
       delete stage["_id"];
+      if (stage["lives"] <= 0) {
+        // delete stage["histories"];
+        // delete stage["_id"];
 
-      // preparing history
-      userAnswerEraHisotryPayload.earnStars = stage["earnStars"];
-      userAnswerEraHisotryPayload.earnGerms = stage["earnGerms"];
-      userAnswerEraHisotryPayload.questions = stage["question"];
-      userAnswerEraHisotryPayload.startTime = stage["startTime"];
-      userAnswerEraHisotryPayload.endTime = stage["endTime"];
-      userAnswerEraHisotryPayload.stage = stage;
-      userAnswerEraHisotryPayload.stage["tenseEraId"] =
-        requestBody["tenseEraId"];
-      delete userAnswerEraHisotryPayload["stage"]["question"];
+        // preparing history
+        userAnswerEraHisotryPayload.earnStars = stage["earnStars"];
+        userAnswerEraHisotryPayload.earnGerms = stage["earnGerms"];
+        userAnswerEraHisotryPayload.questions = stage["question"];
+        userAnswerEraHisotryPayload.startTime = stage["startTime"];
+        userAnswerEraHisotryPayload.endTime = stage["endTime"];
+        userAnswerEraHisotryPayload.stage = stage;
+        userAnswerEraHisotryPayload.stage["tenseEraId"] =
+          requestBody["tenseEraId"];
+        delete userAnswerEraHisotryPayload["stage"]["question"];
 
-      const retryDetail = await retryGame(
-        userAnswerEraModel,
-        stage,
-        requestBody
-      );
+        const retryDetail = await retryGame(
+          userAnswerEraModel,
+          stage,
+          requestBody
+        );
 
-      //creating history
-      const createdUserEraAnswerHistory = await createUserEraAnswerHistory(
-        userAnswerEraHistoryModel,
-        userAnswerEraHisotryPayload
-      );
+        //creating history
+        const createdUserEraAnswerHistory = await createUserEraAnswerHistory(
+          userAnswerEraHistoryModel,
+          userAnswerEraHisotryPayload
+        );
 
-      let questions = await getRandomQuestions(req, res, next);
-      questions = questions["data"];
+        let questions = await getRandomQuestions(req, res, next);
+        questions = questions["data"];
 
-      return reponseModel(
-        httpStatusCodes.OK,
-        !isEmpty(questions) ? "Questions found" : "Questions not found",
-        !isEmpty(questions) ? true : false,
-        {
-          questions,
-          ...answerResponseFormat,
-          heartLive: 3,
-          isLivePurchased: false,
-        },
-        req,
-        res
-      );
+        return reponseModel(
+          httpStatusCodes.OK,
+          !isEmpty(questions) ? "Questions found" : "Questions not found",
+          !isEmpty(questions) ? true : false,
+          {
+            questions,
+            ...answerResponseFormat,
+            heartLive: 3,
+            isLivePurchased: false,
+          },
+          req,
+          res
+        );
+      } else if (stage["completedStage"] === true) {
+        // delete stage["histories"];
+        // delete stage["_id"];
+
+        // preparing history
+        userAnswerEraHisotryPayload.earnStars = stage["earnStars"];
+        userAnswerEraHisotryPayload.earnGerms = stage["earnGerms"];
+        userAnswerEraHisotryPayload.questions = stage["question"];
+        userAnswerEraHisotryPayload.startTime = stage["startTime"];
+        userAnswerEraHisotryPayload.endTime = stage["endTime"];
+        userAnswerEraHisotryPayload.stage = stage;
+        userAnswerEraHisotryPayload.stage["tenseEraId"] =
+          requestBody["tenseEraId"];
+        delete userAnswerEraHisotryPayload["stage"]["question"];
+
+        const retryDetail = await retryGame(
+          userAnswerEraModel,
+          stage,
+          requestBody
+        );
+
+        //creating history
+        const createdUserEraAnswerHistory = await createUserEraAnswerHistory(
+          userAnswerEraHistoryModel,
+          userAnswerEraHisotryPayload
+        );
+
+        let questions = await getRandomQuestions(req, res, next);
+        questions = questions["data"];
+
+        return reponseModel(
+          httpStatusCodes.OK,
+          !isEmpty(questions) ? "Questions found" : "Questions not found",
+          !isEmpty(questions) ? true : false,
+          {
+            questions,
+            ...answerResponseFormat,
+            heartLive: 3,
+            isLivePurchased: false,
+          },
+          req,
+          res
+        );
+      } else {
+        return reponseModel(
+          httpStatusCodes.OK,
+          `Please do not retry! You have still ${stage["lives"]} lives. Continue with the game`,
+          false,
+          "",
+          req,
+          res
+        );
+      }
     } else {
       return reponseModel(
         httpStatusCodes.OK,
-        `Please do not retry! You have still ${stage["lives"]} lives. Continue with the game`,
+        `Something went wrong! Please try again.`,
         false,
         "",
         req,

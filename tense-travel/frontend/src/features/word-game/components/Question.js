@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import "../../../sass/styles.scss";
 import { useNavigate, useParams } from "react-router-dom";
 import {
@@ -12,6 +12,7 @@ import { userIds } from "../../../utils/constants";
 import { buyLives, reTryStage } from "../../../services/questionAPI";
 import CommonModal from "../common/CommonModal";
 import { actionType, popupTypes } from "../../../utils/commonFunction";
+import stageContext from "../../../context/tenseTravel/StageContext";
 
 let questionsParsed, questionsData, currentQuestionIndex;
 function Question() {
@@ -31,6 +32,7 @@ function Question() {
   const [showModal, setShow] = useState(false); //buy lives modal
   const [modalParams, setModalParams] = useState({});
   const [goldenHeart, setGoldenHeart] = useState(false);
+  const stageCompleteContext = useContext(stageContext)
 
   const handleBuyCoinPopupClose = () => {
     setShow(false);
@@ -199,6 +201,12 @@ function Question() {
       inputRef.current.blur();
       // setPurchaseDialogShow(true);
       // setRetryMsg(userSubmitAnswerResponse["message"]);
+      stageCompleteContext.setStageInfo({
+        userId:userIds.userId,
+        sessionId:userIds.sessionId,
+        stageId: stageId,
+        eraId:eraId
+      })
       navigate('/complete-stage');
     }
   };
