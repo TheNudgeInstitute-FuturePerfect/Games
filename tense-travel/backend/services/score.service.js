@@ -2,6 +2,9 @@ const { eraTenseModel, userAnswerEraModel } = require("../models/index");
 const { reponseModel } = require("../utils/responseHandler");
 const httpStatusCodes = require("../utils/httpStatusCodes");
 const { isEmpty } = require("lodash");
+const {
+  getLivesOfUnlockStage,
+} = require("./global-services/filterEraSatage.service");
 const ObjectID = require("mongodb").ObjectId;
 
 exports.getUserScore = async (req, res, next) => {
@@ -42,7 +45,7 @@ exports.getUserScore = async (req, res, next) => {
               cond: { $ne: ["$$this.stage", []] },
             },
           },
-          earnGerms:1
+          earnGerms: 1,
         },
       },
     ]);
@@ -55,6 +58,39 @@ exports.getUserScore = async (req, res, next) => {
       req,
       res
     );
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.recentStageCompletedScore = async (req, res, next) => {
+  try {
+    const requestBody = req.body;
+
+    let scoreData = await getLivesOfUnlockStage(userAnswerEraModel, requestBody);
+
+    if (!isEmpty(scoreData)) {
+      delete scoreData[0]['tenseEra'][0]['stage'][0]['question'];
+      delete scoreData[0]['tenseEra'][0]['stage'][0]['histories'];
+      
+      return reponseModel(
+        httpStatusCodes.OK,
+        "User score found",
+        true,
+        scoreData,
+        req,
+        res
+      );
+    } else {
+      return reponseModel(
+        httpStatusCodes.OK,
+        "User score not found",
+        false,
+        "",
+        req,
+        res
+      );
+    }
   } catch (err) {
     next(err);
   }
