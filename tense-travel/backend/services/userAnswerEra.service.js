@@ -293,7 +293,11 @@ exports.userAttendingQuestion = async (req, res, next) => {
       }
 
       //checking incorrect answer is three then retry game logic
-      if (stages["numberOfInCorrect"] >= 3 || stages["lives"] <= 0) {
+      // if (stages["numberOfInCorrect"] >= 3 || stages["lives"] <= 0) {
+      if (
+        (!stages["isLivePurchased"] && stages["numberOfInCorrect"] >= 3) ||
+        stages["lives"] <= 0
+      ) {
         answerResponseFormat.completedEra = false;
         answerResponseFormat.completedStage = false;
         answerResponseFormat.nextQuestion = false;
