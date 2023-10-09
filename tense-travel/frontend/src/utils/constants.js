@@ -1,6 +1,6 @@
 const userIds = {
-  userId: "6512d743574d4522062e3f87",
-  sessionId: "b00aadcb-0d22-4707-910e-e8826d591330",
+  userId: "6523ba5e7708707fdec0c2f3",
+  sessionId: "edb0b40a-05ed-4fbe-a9d8-8f08eeb9c069",
 };
 
 const coins = {
