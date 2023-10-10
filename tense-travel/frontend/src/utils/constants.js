@@ -7,6 +7,9 @@ const coins = {
   defaultStars: {
     stars: 3,
   },
+  purchaseLives: {
+    coins: 10,
+  },
 };
 
 const gameOverModalConfig = {

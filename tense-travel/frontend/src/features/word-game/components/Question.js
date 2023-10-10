@@ -13,6 +13,7 @@ import { buyLives, reTryStage } from "../../../services/questionAPI";
 import CommonModal from "../common/CommonModal";
 import { actionType, popupTypes } from "../../../utils/commonFunction";
 import stageContext from "../../../context/tenseTravel/StageContext";
+import ExitStageConfirmPopup from "../common/CommonModal/ExitStageConfirmPopup";
 
 let questionsParsed, questionsData, currentQuestionIndex;
 function Question() {
@@ -33,6 +34,9 @@ function Question() {
   const [modalParams, setModalParams] = useState({});
   const [goldenHeart, setGoldenHeart] = useState(false);
   const stageCompleteContext = useContext(stageContext);
+  const [exitPopupShow, setExitPopupShow] = useState(false);
+  // const [remainingQuestions, setRemainingQuestions] = useState(0);
+  let remainingQuestions = 0;
 
   /*fill in the blank input style*/
   const [inputStyle, setInputStyle] = useState({
@@ -65,8 +69,13 @@ function Question() {
     return;
   };
 
-  const navigateStage = () => {
-    navigate(`/choose-stage/${eraId}`);
+  const handleExitStage = (status) => {
+    // navigate(`/choose-stage/${eraId}`);
+    if (status === true) setExitPopupShow(true);
+    if (status === false) {
+      setExitPopupShow(false);
+      inputRef.current.focus();
+    }
   };
 
   const getStageQuestions = async () => {
@@ -331,10 +340,15 @@ function Question() {
           <div className="question-block">
             <div className="question-slide-line">
               <div className="flex">
-                <button onClick={navigateStage} className="close"></button>
+                <button
+                  onClick={() => handleExitStage(true)}
+                  className="close"
+                ></button>
                 <ul>
                   {questions.length > 0 &&
                     questions.map((ques, index) => {
+                      remainingQuestions =
+                        ques?.isCorrect === null ? remainingQuestions + 1 : 0;
                       return (
                         <li
                           key={index}
@@ -357,15 +371,6 @@ function Question() {
             <div className="input-question">
               <label>{questions[queSequence]?.question.split("__")[0]}</label>{" "}
               <input
-                // style={{
-                //   width: questions[queSequence]?.answer.length * 4 + "%",
-                //   backgroundColor: "transparent",
-                //   color: "white",
-                //   outline: "none",
-                //   border: "none",
-                //   fontSize: "16px",
-                //   fontWeight: "800",
-                // }}
                 style={inputStyle}
                 type="text"
                 onChange={(event) => onChange(event, queSequence)}
@@ -419,6 +424,18 @@ function Question() {
                 Next
               </button>
             </div>
+          </div>
+        )}
+
+        {/* ExitStageConfirmPopup */}
+        {exitPopupShow && (
+          <div>
+            <ExitStageConfirmPopup
+              exitPopup={exitPopupShow}
+              remainingQuestions={remainingQuestions}
+              tenseEra={eraId}
+              handleExitStage={handleExitStage}
+            />
           </div>
         )}
 
