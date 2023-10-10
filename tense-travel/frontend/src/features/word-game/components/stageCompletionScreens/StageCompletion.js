@@ -13,6 +13,7 @@ import { useNavigate } from "react-router-dom";
 import { reTryStagePaylod } from "../../../../utils/payload";
 import { reTryStage } from "../../../../services/questionAPI";
 import { recentCompletedStageScore } from "../../../../services/scoreAPI";
+import { coins } from "../../../../utils/constants";
 
 function StageCompletion() {
   const [showHeart, setShowHeartVisibility] = useState(false);
@@ -25,6 +26,7 @@ function StageCompletion() {
   const [stageData, setStageData] = useState(null);
   const [tenseEraData, setTenseEraData] = useState(null);
   const [error, setError] = useState(null);
+  let defaultStar = coins.defaultStars;
 
   const stageCompleteContext = useContext(stageContext);
   const completedStageData = stageCompleteContext.completeStage;
@@ -129,7 +131,7 @@ function StageCompletion() {
             />
           </div>
 
-          {showHeart && (
+          {showHeart && stageData["isLivePurchased"] === false && (
             <div className="heart-section">
               <img
                 className="heart-img"
@@ -172,11 +174,24 @@ function StageCompletion() {
               {Array(stageData["earnStars"])
                 .fill("")
                 .map((itm, index) => {
+                  defaultStar = coins.defaultStars.stars;
+                  defaultStar = defaultStar - (index + 1);
                   return (
                     <img
                       key={index}
                       src={filledStarImage}
                       alt="filledStarImage"
+                    />
+                  );
+                })}
+              {Array(defaultStar)
+                .fill("")
+                .map((itm, index) => {
+                  return (
+                    <img
+                      key={index}
+                      src={emptyStarImage}
+                      alt="emptyStarImage"
                     />
                   );
                 })}

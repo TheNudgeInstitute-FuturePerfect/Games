@@ -4,6 +4,7 @@ import { actions, popupTypes } from "../../../../utils/commonFunction";
 import { getUserCoins } from "../../../../services/coinAPI";
 import { userIds } from "../../../../utils/constants";
 import { useState } from "react";
+import { coins } from "../../../../utils/constants";
 
 function CommonModal(props) {
   const [totalEarnGerms, setTotalEarnGerms] = useState(null);
@@ -132,14 +133,13 @@ function CommonModal(props) {
         let requestPayload = { userId: userIds.userId };
         const userCoins = await getUserCoins(requestPayload);
         const totalGerms = userCoins["data"]["totalEarnGerms"];
-        // setTotalEarnGerms(null);
-        setTotalEarnGerms(totalGerms > 0 ? totalGerms : null);
+        setTotalEarnGerms(totalGerms);
       };
       checkUserCoins();
       return (
         <>
           {/* with coins */}
-          {totalEarnGerms && (
+          {totalEarnGerms >= coins.purchaseLives.coins && (
             <div className="d-flex align-items-center justify-content-center modalContainer">
               <div className="modalBody">
                 <div className="modalHeading">Game Over!</div>
@@ -246,7 +246,7 @@ function CommonModal(props) {
             </div>
           )}
           {/* without coins */}
-          {totalEarnGerms === null && (
+          {totalEarnGerms < coins.purchaseLives.coins && (
             <div className="d-flex align-items-center justify-content-center modalContainer">
               <div className="modalBody">
                 <div className="modalHeading">Game Over!</div>
@@ -397,7 +397,11 @@ function CommonModal(props) {
                     </span>
                     <span>
                       You have
-                      <span className="coinsCount"> 10/0 </span> coins
+                      <span className="coinsCount">
+                        {" "}
+                        {totalEarnGerms}/{coins.purchaseLives.coins}{" "}
+                      </span>{" "}
+                      coins
                     </span>
                   </Button>
                 </div>

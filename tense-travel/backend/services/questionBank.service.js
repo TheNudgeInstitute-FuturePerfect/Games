@@ -324,7 +324,8 @@ exports.getRandomQuestionByUnlockStage = async (req, res, next) => {
     answerResponseFormat.isLivePurchased = stage["isLivePurchased"];
 
     //checking if user attempts ten questions
-    if (attemptedQuestionArrayLength >= 10) {
+    // if (attemptedQuestionArrayLength >= 10) {
+    if (attemptedQuestionArrayLength >= stageQuestionSize.size) {
       answerResponseFormat.completedStage = true;
       questions = [];
 

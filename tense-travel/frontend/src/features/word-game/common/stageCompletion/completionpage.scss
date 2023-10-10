@@ -183,9 +183,14 @@
 }
 .continue-section{
     display: flex;
-    padding: 60px 17px 7px 17px;
+    padding: 0 0px 0px calc(100% - 92%);
+    // padding-left: calc(100% - 92%);
+    position: absolute;
+    bottom: 8px;
+    justify-content: center;
+    gap: 7px;
     .reload-sec{
-        padding-right: 7px;
+        // padding-right: 7px;
         cursor: pointer;
     }
     .continue-sec{
