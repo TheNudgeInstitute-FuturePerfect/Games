@@ -3,6 +3,7 @@ import React from "react";
 import "../../../sass/styles.scss";
 import spaceship from "../../../assets/images/spaceship.svg";
 import { useNavigate } from "react-router-dom";
+import TourGuideIndex from "../common/TourGuide";
 
 function LandingPage() {
   const navigate = useNavigate();
@@ -30,6 +31,7 @@ function LandingPage() {
           </button>
         </div>
       </div>
+      {/* <TourGuideIndex /> */}
     </div>
   );
 }
