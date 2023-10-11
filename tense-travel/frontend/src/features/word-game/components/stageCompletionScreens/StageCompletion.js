@@ -14,7 +14,10 @@ import { reTryStagePaylod } from "../../../../utils/payload";
 import { reTryStage } from "../../../../services/questionAPI";
 import { recentCompletedStageScore } from "../../../../services/scoreAPI";
 import { coins } from "../../../../utils/constants";
+import celebrateGiphy from "../../../../assets/images/celebrate.gif";
 
+let heartCount = 0;
+let defaultCoins = 0;
 function StageCompletion() {
   const [showHeart, setShowHeartVisibility] = useState(false);
   const [showFillStar, setShowFillStarVisibility] = useState(false);
@@ -26,13 +29,18 @@ function StageCompletion() {
   const [stageData, setStageData] = useState(null);
   const [tenseEraData, setTenseEraData] = useState(null);
   const [error, setError] = useState(null);
+  const [moveHeart, setMoveHeart] = useState(false);
+  const [hearts, setHearts] = useState(0);
+  let [totalEarnGerms, setTotalEarnGerms] = useState(0);
   let defaultStar = coins.defaultStars;
+  let scoreData = null;
 
   const stageCompleteContext = useContext(stageContext);
   const completedStageData = stageCompleteContext.completeStage;
+  let celebrateGif = null;
 
   setTimeout(() => {
-    setCheckImg(true);
+    // setCheckImg(true);
   }, 0);
 
   const recentStageScore = async () => {
@@ -45,18 +53,79 @@ function StageCompletion() {
     reTryStagePaylod.stageId = completedStageData["stageId"];
     reTryStagePaylod.tenseEraId = completedStageData["tenseEraId"];
 
-    const scoreData = await recentCompletedStageScore(reTryStagePaylod);
-
-    console.log(completedStageData);
+    scoreData = await recentCompletedStageScore(reTryStagePaylod);
 
     if (scoreData["success"] === true) {
       setTenseEraData(scoreData["data"][0]["tenseEra"]);
       setStageData(scoreData["data"][0]["tenseEra"][0]["stage"][0]);
+      heartCount = scoreData["data"][0]["tenseEra"][0]["stage"][0]["lives"];
+      setHearts(heartCount);
+      setTotalEarnGerms(
+        scoreData["data"][0]["tenseEra"][0]["stage"][0]["defaultGerms"]
+      );
+      defaultCoins =
+        scoreData["data"][0]["tenseEra"][0]["stage"][0]["defaultGerms"];
+      setCheckImg(true);
+      
+      setVisibility(setShowEmptyStarVisibility, true, 1400);
+      setVisibility(setShowFillStarVisibility, true, 2000);
+      setVisibility(setShowHeartVisibility, true, 3000);
+      setVisibility(setCoinsVisibility, true, 4000);
+      setVisibility(setContinueSec, true, 5000);
+
+      celebrateGif = document.getElementById('celebrateGif');
+      setTimeout(() =>{
+        celebrateGif.style.display='block';
+      }, 1000)
     }
     if (scoreData["success"] === false) {
       setError(scoreData);
     }
   };
+
+  /* heart move animation */
+  const animateHeart = () => {
+    let heartAnimMove = document.getElementById("heartAnimMove");
+    let heartAnimStatic = document.getElementById("heartAnimStatic");
+    let heartTxtAnimMove = document.getElementById("heartTxtAnimMove");
+
+    let top = 34;
+    let right = 16;
+
+    const animateHeartInterval = setInterval(frame, 0.5);
+    if (heartCount === 0) {
+      clearInterval(animateHeartInterval);
+    }
+
+    function frame() {
+      if (heartCount === 0) {
+        clearInterval(animateHeartInterval);
+        heartAnimMove.style.display = "none";
+        heartTxtAnimMove.style.display = "none";
+      } else {
+        if (top < 470) {
+          top++;
+          heartAnimMove.style.top = top + "px";
+
+          heartTxtAnimMove.style.top = top + "px";
+        }
+        if (right < 190) {
+          right = right + 0.395;
+          heartAnimMove.style.right = right + "px";
+          heartTxtAnimMove.style.right = right + 27 + "px";
+        }
+        if (top === 470 && Math.ceil(right) === 190) {
+          heartCount--;
+          top = 34;
+          right = 16;
+          setHearts(heartCount);
+          defaultCoins = defaultCoins + 5;
+          setTotalEarnGerms(defaultCoins);
+        }
+      }
+    }
+  };
+  /* heart move animation end */
 
   useEffect(() => {
     if (
@@ -65,11 +134,6 @@ function StageCompletion() {
       completedStageData !== ""
     ) {
       recentStageScore();
-      setVisibility(setShowEmptyStarVisibility, true, 1000);
-      setVisibility(setShowFillStarVisibility, true, 2000);
-      setVisibility(setShowHeartVisibility, true, 3000);
-      setVisibility(setCoinsVisibility, true, 4000);
-      setVisibility(setContinueSec, true, 5000);
     } else {
       navigate("/");
     }
@@ -78,7 +142,11 @@ function StageCompletion() {
   function setVisibility(functionName, value, timing) {
     setTimeout(() => {
       functionName(value);
-      // setCheckImg(false);
+      if (timing === 5000) {
+        setMoveHeart(true);
+        animateHeart();
+        celebrateGif.style.display='none';
+      } else setMoveHeart(false);
     }, timing);
   }
 
@@ -130,6 +198,7 @@ function StageCompletion() {
               className={checkImg ? "move-up" : ""}
             />
           </div>
+          <img id="celebrateGif" src={celebrateGiphy} alt="" className="celebrate-gif" />
 
           {showHeart && stageData["isLivePurchased"] === false && (
             <div className="heart-section">
@@ -138,9 +207,21 @@ function StageCompletion() {
                 src={heart}
                 align="right"
                 alt="heart-img"
+                id="heartAnimMove"
               />
-              <div className="heart-img-txt">
-                <span>{stageData["lives"]}</span>
+              <div className="heart-img-txt" id="heartTxtAnimMove">
+                <span>{hearts}</span>
+              </div>
+
+              <img
+                className="heart-img-fixed"
+                src={heart}
+                align="right"
+                alt="heart-img"
+                id="heartAnimStatic"
+              />
+              <div className="heart-img-fixed-txt">
+                <span>{hearts}</span>
               </div>
             </div>
           )}
@@ -206,9 +287,7 @@ function StageCompletion() {
                   <div className="coin-logo">
                     <img src={coinImage} alt="coinImage" />
                   </div>
-                  <div className="coinTxt">
-                    {stageData["earnGerms"] + stageData["defaultGerms"]}
-                  </div>
+                  <div className="coinTxt">{totalEarnGerms}</div>
                 </div>
               </div>
               <div className="speed-section">
