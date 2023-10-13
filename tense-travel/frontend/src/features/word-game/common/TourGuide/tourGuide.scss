@@ -1,17 +1,82 @@
 .tourGuideContainer {
     height: 100vh;
-    width: 90%;
+    width: 100%;
     left: 0;
     margin: auto;
     background-color: rgba(0, 0, 0, 0.78);
     position: absolute;
     .tourGuideBody{
-        width: 315px;
-        height: 417px;
+        // width: 315px;
+        width: calc(100% - 44px);
+        // height: 417px;
         flex-shrink: 0;
-        border-radius: 16px;
-        border: 4px solid #4B4B6F;
+        left: 50px;
+        right: 50px;
         // background: var(--BG-colour-completion, #08071B);
-        background: #08071B;
+
+        // border-radius: 7px;
+        // border: 1px solid #FFF;
+        background: #000;
+
+        color: #FFF;
+        text-align: center;
+        font-family: Schoolbell;
+        font-size: 24px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: normal;
+        // padding: 20px 15px;
+        // transition: all 2s;
     }
+    .now-whats-btn, .lets-go-btn {
+        margin: 20px 0 0 0;
+    }
+    .lets-go {
+        display: none;
+        border: 1px solid #FFF;
+        padding: 20px 15px;
+        border-radius: 7px;
+        // visibility: hidden;
+        // opacity: 0;
+        // height: 0;
+        // width: 0;
+        // position: absolute;
+        // z-index: -1;
+    }
+    .now-whats {
+        border: 1px solid #FFF;
+        padding: 20px 15px;
+        border-radius: 7px;
+    }
+
+    .fadeOut{
+        opacity:0;
+        // width:0;
+        // height:0;
+        transition: width 0.5s 0.5s, height 0.5s 0.5s, opacity 0.5s;
+   
+   }
+   .fadeIn{
+        opacity:1;
+        // width:100px;
+        // height:100px;
+        transition: width 0.5s, height 0.5s, opacity 0.5s 0.5s;
+   
+   }
+
+   .fade-in-popup { animation: fadeIn .7s; }
+
+    @keyframes fadeIn {
+        0% { opacity: 0; }
+        100% { opacity: 1; }
+    }
+
+    .fade-out-popup { 
+        animation: fadeOut 0.5s;
+    }
+
+   @keyframes fadeOut {
+    0% { opacity: 1; }
+    100% { opacity: 0; }
+  }
 }
