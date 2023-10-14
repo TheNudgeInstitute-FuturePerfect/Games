@@ -46,12 +46,42 @@
     margin: 0 auto;
   }
 
+  //   &.active {
+  //     // position: static;
+  //     width: 100%;
+  //     height: calc(100vh - 100px);
+  //     .rocket-left,
+  //     .rocket-right,
+  //     .rocket-body,
+  //     .rocket-head {
+  //       animation-name: steper-animation;
+  //       animation-duration: 2s;
+  //       opacity: 1;
+  //       animation-delay: 1s;
+  //     }
+
   .moon-half {
     position: absolute;
     right: 0;
     width: calc(100% - 278px);
     height: 447px;
-   top: 125px;
+    top: 40%;
+    opacity: 0;
+    transform: translateY(-50%);
+    &.active {
+      animation: halfMoonFadeIn 0.5s;
+      animation-duration: 1s;
+      opacity: 1;
+    }
+  }
+
+  @keyframes halfMoonFadeIn {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
   }
 }
 
@@ -77,8 +107,8 @@
   .rocket-body {
     position: absolute;
     transform: rotate(-74deg) scale(1.2);
-    top: calc(100vh - 316px);
-    left: 80px;
+    top: calc(100vh - 400px);
+    left: 50px;
     transition: all 1s;
   }
 
@@ -124,19 +154,19 @@
 
     .rocket-left {
       left: 20px;
-      bottom: 130px;
+      bottom: 90px;
       transform: scale(1);
     }
     .rocket-right {
       left: 150px;
       right: auto;
-      bottom: 130px;
+      bottom: 90px;
       transform: scale(1);
     }
     .rocket-body {
-      transform: rotate(0deg);
-      top: 300px;
-      left: 30px;
+      transform: translateY(-50%);
+      top: 40%;
+      left: 5px;
     }
     .rocket-head {
       top: 12px;
@@ -578,4 +608,49 @@
       text-align: center;
     }
   }
+}
+
+//button css
+.label {
+  width: 86px;
+  height: 11px;
+  display: block;
+}
+
+.label .text-wrapper {
+  max-width: 86px;
+  height: 11px;
+  top: 0;
+  left: 0;
+  font-family: "Montserrat-SemiBold", Helvetica;
+  font-weight: 600;
+  color: #ffffff;
+  font-size: 10px;
+  text-align: center;
+  letter-spacing: 0;
+  line-height: normal;
+  white-space: nowrap;
+}
+
+.tense-btn-container {
+  position: absolute;
+}
+
+.tense-btn {
+  position: absolute;
+}
+
+.future-tense-btn {
+  right: 63px;
+  top: 18px;
+}
+
+.present-tense-btn {
+  left: 6px;
+  bottom: 25px;
+}
+
+.past-tense-btn {
+  left: 11px;
+  bottom: -51px;
 }

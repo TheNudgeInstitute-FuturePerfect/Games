@@ -8,6 +8,8 @@ function TourGuideIndex(props) {
   // let stepsResult = stepsFilter(props["step"]);
   // let stepsResult = ""
 
+  console.log(props);
+
   let currentStep = Number(props["step"]);
   const currentStepNo =
     sessionStorage.getItem("step") !== null
@@ -41,14 +43,15 @@ function TourGuideIndex(props) {
       setFade("now-whats fade-in-popup");
 
       getSteps(Number(cstep) + 1);
-
     }, 700);
+
+    tourGuideCallback();
   };
 
   const getSteps = (stp) => {
     // console.log(stp)
     let stepResult = stepsFilter(stp);
-    console.log("stepsResult", stepResult);
+    // console.log("stepsResult", stepResult);
     setStepsResult(stepResult);
 
     setText(stepResult["text"]);
@@ -69,11 +72,19 @@ function TourGuideIndex(props) {
     getSteps(Number(currentStepNo));
   }, []);
 
+  const tourGuideCallback = () => {
+    let res = {};
+    if (cstep === 2) {
+      res = { showTenseBtn: true };
+    }
+    props?.tourGuideCallback(res);
+  };
+
   return (
     <>
       {stepsResult && (
         <div
-          className="d-flex align-items-center justify-content-center tourGuideContainer"
+          className="align-items-center justify-content-center tourGuideContainer"
           style={{ zIndex: 2 }}
         >
           <div
@@ -93,11 +104,11 @@ function TourGuideIndex(props) {
                 }}
               ></span>
 
-              <div className="now-whats-btn">
-                {buttonText && (
+              {buttonText && (
+                <div className="now-whats-btn">
                   <Button onClick={handleNowWhats}>{buttonText}</Button>
-                )}
-              </div>
+                </div>
+              )}
             </div>
             {/* <div>{buttonText}</div> */}
             {/* <div
