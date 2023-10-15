@@ -8,12 +8,14 @@ import {
   userAnswerSubmitPayload,
   userSubmitAnswerResponse,
 } from "../../../utils/payload";
-import { userIds } from "../../../utils/constants";
+import { tourGuideSteps, userIds } from "../../../utils/constants";
 import { buyLives, reTryStage } from "../../../services/questionAPI";
 import CommonModal from "../common/CommonModal";
 import { actionType, popupTypes } from "../../../utils/commonFunction";
 import stageContext from "../../../context/tenseTravel/StageContext";
 import ExitStageConfirmPopup from "../common/CommonModal/ExitStageConfirmPopup";
+import TourGuideIndex from "../common/TourGuide";
+import { updateTourGuideStep } from "../common/TourGuide/UpdateTourGuideSteps";
 
 let questionsParsed, questionsData, currentQuestionIndex;
 function Question() {
@@ -37,6 +39,9 @@ function Question() {
   const [exitPopupShow, setExitPopupShow] = useState(false);
   // const [remainingQuestions, setRemainingQuestions] = useState(0);
   let remainingQuestions = 0;
+  const [showAnswerBox, setShowAnswerBox] = useState(false
+  );
+  const [showWord, setShowWord] = useState();
 
   /*fill in the blank input style*/
   const [inputStyle, setInputStyle] = useState({
@@ -112,6 +117,10 @@ function Question() {
       setQuestions(questionsParsed["data"]);
 
       filterCurrentQuestion(null);
+    }
+
+    if (questionsParsed["data"].length > 0) {
+      showTourPopup();
     }
   };
 
@@ -326,6 +335,39 @@ function Question() {
     getStageQuestions();
   }, []);
 
+  //tour guide popup settings
+  const tourGuideCallback = (params) => {
+    if (params["showAnswerBox"] === true) {
+      const setShowAnswerBoxTimeOut = setTimeout(()=> {
+        setShowAnswerBox(true);
+        clearTimeout(setShowAnswerBoxTimeOut);
+      }, 500)
+      
+    }
+  };
+
+  const showTourPopup = () => {
+    // tourGuideSteps.steps++;
+    console.log(tourGuideSteps.steps);
+    updateTourGuideStep(tourGuideSteps.steps);
+    const showTourPopupSetTimeOut = setTimeout(() => {
+      if (
+        Number(sessionStorage.getItem("step")) &&
+        Number(sessionStorage.getItem("step")) === 5
+      ) {
+        setShowWord({
+          position: "relative",
+          zIndex: 2,
+        });
+      }
+      clearTimeout(showTourPopupSetTimeOut);
+    }, 500);
+  };
+
+  const inputQuestionClick = (event) => {
+    setShowWord();
+  }
+
   return (
     <>
       <div className="container">
@@ -334,6 +376,12 @@ function Question() {
             modalParams={modalParams}
             handleBuyCoinPopupClose={handleBuyCoinPopupClose}
             handleBuyCoinPopupShow={handleBuyCoinPopupShow}
+          />
+        )}
+        {showWord && (
+          <TourGuideIndex
+            step={tourGuideSteps.steps}
+            tourGuideCallback={tourGuideCallback}
           />
         )}
         <div className="fourth-step">
@@ -366,9 +414,17 @@ function Question() {
                 </div>
               </div>
             </div>
-            <h1>{questions && questions[queSequence]?.stageTitle}</h1>
-            <strong>Word: {questions && questions[queSequence]?.word}</strong>
-            <div className="input-question">
+            <div style={showWord}>
+              <h1>{questions && questions[queSequence]?.stageTitle}</h1>
+              <strong>Word: {questions && questions[queSequence]?.word}</strong>
+            </div>
+            {/* <h1>{questions && questions[queSequence]?.stageTitle}</h1>
+            <strong>Word: {questions && questions[queSequence]?.word}</strong> */}
+            <div
+              className={`input-question ${
+                showAnswerBox ? "input-question-tour-guide" : ""
+              }`}
+            >
               <label>{questions[queSequence]?.question.split("__")[0]}</label>{" "}
               <input
                 style={inputStyle}
@@ -378,6 +434,7 @@ function Question() {
                 autoFocus
                 ref={inputRef}
                 placeholder={"_________"}
+                onClick={(e)=>inputQuestionClick()}
               />{" "}
               <label htmlFor="">
                 {questions[queSequence]?.question.split("__")[1]}

@@ -3,21 +3,25 @@ import "./tourGuide.scss";
 import { Button } from "react-bootstrap";
 import { stepsFilter } from "../../../../utils/tourGuideConfig";
 import { useNavigate } from "react-router-dom";
+import { tourGuideSteps } from "../../../../utils/constants";
 
 function TourGuideIndex(props) {
-  // let stepsResult = stepsFilter(props["step"]);
-  // let stepsResult = ""
+  let fadeInTime = 700;
+  let fadeOutTime = 200;
 
-  console.log(props);
+  const [fadeInTiming, setFadeInTiming] = useState(700);
 
   let currentStep = Number(props["step"]);
-  const currentStepNo =
+  let currentStepNo =
     sessionStorage.getItem("step") !== null
       ? sessionStorage.getItem("step")
       : 1;
 
-  const [show, setShow] = useState(true);
-  let [show1, setShow1] = useState(false);
+  if (currentStep > currentStepNo) {
+    currentStepNo = currentStep;
+    sessionStorage.setItem("step", currentStepNo);
+  }
+
   const [text, setText] = useState("");
   const [buttonText, setButtonText] = useState("");
   const [fade, setFade] = useState("now-whats");
@@ -25,25 +29,31 @@ function TourGuideIndex(props) {
   const [stepsResult, setStepsResult] = useState();
   const navigate = useNavigate();
 
-  // setText(stepsResult["text"]);
-  // setButtonText(stepsResult["buttonText"]);
-
   const handleNowWhats = () => {
-    let ids = "";
-    const handleNowWhats = document.getElementsByClassName("now-whats");
-    const letsGo = document.getElementById("letsGo");
-
     setTimeout(() => {
       setFade("now-whats fade-out-popup");
       setCstep(Number(cstep) + 1);
       sessionStorage.setItem("step", Number(cstep) + 1);
-    }, 200);
+      tourGuideSteps.steps = Number(cstep) + 1;
+      // if (Number(cstep) + 1 === 3) {
+      //   setTimeout(() => {
+      //     // fadeInTime = 000;
+      //     // console.log("fadeInTime", fadeInTime);
+      //     // setFadeInTiming(20000);
+      //     // setFade("now-whats fade-in-popup");
+      //     setFade("now-whats fade-in-popup");
+      //     // console.log("================================================");
+      //   }, 5000);
+      // }
+    }, fadeOutTime);
 
     setTimeout(() => {
       setFade("now-whats fade-in-popup");
 
       getSteps(Number(cstep) + 1);
-    }, 700);
+      // console.log("getSteps");
+      // fadeOutTime = 10000;
+    }, fadeInTime);
 
     tourGuideCallback();
   };
@@ -63,21 +73,39 @@ function TourGuideIndex(props) {
   };
 
   useEffect(() => {
-    const currentStepNo =
-      sessionStorage.getItem("step") !== null
-        ? sessionStorage.getItem("step")
-        : 1;
+    // const currentStepNo =
+    //   sessionStorage.getItem("step") !== null
+    //     ? sessionStorage.getItem("step")
+    //     : 1;
 
     // getSteps(Number(props["step"]));
-    getSteps(Number(currentStepNo));
+      getSteps(Number(currentStepNo));
+
+    tourGuideSteps.steps = currentStepNo;
   }, []);
 
   const tourGuideCallback = () => {
+    console.log(props);
+    tourGuideSteps.steps = Number(sessionStorage.getItem("step"));
+    console.log("tourGuideSteps.steps", tourGuideSteps.steps, cstep);
+
     let res = {};
     if (cstep === 2) {
       res = { showTenseBtn: true };
+      props?.tourGuideCallback(res);
     }
-    props?.tourGuideCallback(res);
+
+    if (cstep === 3) {
+      res = { showTenseBtn: true, showPresentBtn: true };
+      props?.tourGuideCallback(res);
+    }
+
+    if (tourGuideSteps.steps === 5) {
+      console.log("=====================");
+      res = { showAnswerBox: true };
+      props?.tourGuideCallback(res);
+      tourGuideSteps.steps++;
+    }
   };
 
   return (
@@ -95,7 +123,8 @@ function TourGuideIndex(props) {
           >
             <div
               // className={show ? "now-whats" : "fade-out-popup now-whats"}
-              className={fade}
+              className={`${fade}`}
+              style={{ "--fadeInTime": fadeInTiming }}
               id={currentStep}
             >
               <span

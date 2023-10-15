@@ -3,17 +3,6 @@
 @import "utilities/global";
 
 // step first css start
-.image-block {
-  text-align: center;
-  position: absolute;
-  // width: 100%;
-  left: 0;
-  bottom: 100px;
-  width: 300px;
-  height: 300px;
-  right: 0;
-  margin: 0 auto;
-}
 
 .first-step {
   text-align: center;
@@ -45,20 +34,6 @@
     right: 0;
     margin: 0 auto;
   }
-
-  //   &.active {
-  //     // position: static;
-  //     width: 100%;
-  //     height: calc(100vh - 100px);
-  //     .rocket-left,
-  //     .rocket-right,
-  //     .rocket-body,
-  //     .rocket-head {
-  //       animation-name: steper-animation;
-  //       animation-duration: 2s;
-  //       opacity: 1;
-  //       animation-delay: 1s;
-  //     }
 
   .moon-half {
     position: absolute;
@@ -185,13 +160,13 @@
   //     opacity: 0.4;
   //   }
   50% {
-    opacity: 0.61;
+    opacity: 0.6;
   }
-  //   75% {
-  //     opacity: 0.2;
-  //   }
+  75% {
+    opacity: 0.4;
+  }
   100% {
-    opacity: 0;
+    opacity: 0.7;
   }
 }
 // step first css end
@@ -215,10 +190,16 @@
   background: url(../../src/assets/images/moon.svg) center bottom no-repeat;
   background-size: 100% 180px;
   height: 100%;
+  margin-left: -15px;
+  width: calc(100% + 30px);
 }
 .step-list {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    height: calc(100vh - 264px);
   li {
-    padding-bottom: 64px;
+    padding-bottom: 20%;
     .image-block {
       position: relative;
       background: url(../../src/assets/images/globe-disable.svg) left top
@@ -234,61 +215,61 @@
     &.line1 {
       padding-right: 26px;
       .image-block {
-        //   &::before{
-        //         background: url(../../src/assets/images/line1.png) left top no-repeat;
-        //         width: 62px;
-        //         height: 105px;
-        //         position: absolute;
-        //         left: -63px;
-        //         top: 32px;
-        //         content: '';
-        //    }
+          &::before{
+                background: url(../../src/assets/images/line1.png) left top no-repeat;
+                width: 62px;
+                height: 105px;
+                position: absolute;
+                left: -63px;
+                top: 32px;
+                content: '';
+           }
       }
     }
 
     &.line2 {
       padding: 0 0 35px 0;
       .image-block {
-        // &::before{
-        //       background: url(../../src/assets/images/line2.png) left top no-repeat;
-        //       width: 95px;
-        //       height: 82px;
-        //       position: absolute;
-        //       right: -74px;
-        //       top: 31px;
-        //       content: '';
-        //       z-index: -1;
-        //  }
+        &::before{
+              background: url(../../src/assets/images/line2.png) left top no-repeat;
+              width: 95px;
+              height: 82px;
+              position: absolute;
+              right: -74px;
+              top: 31px;
+              content: '';
+            //   z-index: -1;
+         }
       }
     }
     &.line3 {
       padding: 0 0 10px;
       .image-block {
-        // &::before{
-        //       background: url(../../src/assets/images/line3.png) left top no-repeat;
-        //       width: 109px;
-        //       height: 56px;
-        //       position: absolute;
-        //       left: -74px;
-        //       top: 31px;
-        //       content: '';
-        //       z-index: -1;
-        //  }
+        &::before{
+              background: url(../../src/assets/images/line3.png) left top no-repeat;
+              width: 109px;
+              height: 56px;
+              position: absolute;
+              left: -74px;
+              top: 31px;
+              content: '';
+            //   z-index: -1;
+         }
       }
     }
     &.line4 {
       padding: 0;
       .image-block {
-        // &::before{
-        //       background: url(../../src/assets/images/line4.png) left top no-repeat;
-        //       width: 35px;
-        //       height: 70px;
-        //       position: absolute;
-        //       right: -35px;
-        //       top: 31px;
-        //       content: '';
-        //       z-index: -1;
-        //  }
+        &::before{
+              background: url(../../src/assets/images/line4.png) left top no-repeat;
+              width: 35px;
+              height: 70px;
+              position: absolute;
+              right: -35px;
+              top: 31px;
+              content: '';
+            //   z-index: -1;
+         }
       }
     }
     .text-block {
@@ -648,9 +629,39 @@
 .present-tense-btn {
   left: 6px;
   bottom: 25px;
+  opacity: 0;
+  transition: all 3s;
 }
 
 .past-tense-btn {
   left: 11px;
   bottom: -51px;
+}
+
+.rocket-body-line {
+  position: absolute;
+  left: 94px;
+  bottom: -22px;
+}
+.rocket-right-line {
+  position: absolute;
+  transform: scale(6.5);
+  left: 140px;
+  top: -41px;
+}
+
+.rocket-head-line {
+  position: absolute;
+  transform: scale(3.5);
+  top: 140px;
+  left: 63px;
+}
+
+.input-question-tour-guide {
+  border-top: 5px solid #8f87e9;
+  border-right: 5px solid #8f87e9;
+  background-color: #08061a;
+  border-radius: 15px;
+  position: relative;
+  z-index: 2;
 }

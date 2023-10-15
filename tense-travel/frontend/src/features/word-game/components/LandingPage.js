@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../../../sass/styles.scss";
 import spaceship from "../../../assets/images/spaceship.svg";
 import { useNavigate } from "react-router-dom";
@@ -19,8 +19,10 @@ import rightLine from "../../../assets/images/line1.svg";
 import headLine from "../../../assets/images/line3.svg";
 import bodyLine from "../../../assets/images/line2.svg";
 import { ProgressBar } from "react-bootstrap";
+import { tourGuideSteps } from "../../../utils/constants";
 
 function LandingPage() {
+  tourGuideSteps.steps = 1;
   // const navigate = useNavigate();
   const [show, setShow] = useState({
     display: "block",
@@ -41,13 +43,17 @@ function LandingPage() {
   });
 
   const [showHalfMoon, setShowShowHalfMoon] = useState("");
+  const [showPresentBtn, setShowPresentBtn] = useState("");
+  const [firstStepOpacity, setFirstStepOpacity] = useState();
+  const [allPartsOpacity, setAllPartsOpacity] = useState();
+  // const [, setAllPartsOpacity] = useState();
 
   const navigateChooseEra = () => {
     setShowStartBtn({
       opacity: 0,
     });
     setTimeout(() => {
-      setShowDotted({ display: "block" });
+      setShowDotted({ display: "block", zIndex: 1 });
       setShowFilledRocketImage({
         opacity: 0,
       });
@@ -68,18 +74,52 @@ function LandingPage() {
   const tourGuideCallback = (params) => {
     if (params["showTenseBtn"] === true) {
       setShowTenseBtn({
+        opacity: 0.2,
+      });
+
+      setFirstStepOpacity({
+        zIndex: 2,
         opacity: 1,
       });
+
+      setAllPartsOpacity({
+        opacity: 0.2,
+      });
+    }
+
+    if (params["showPresentBtn"] === true) {
+      console.log("showPresentBtn");
+      setShowTenseBtn({});
     }
   };
+
+  const [eraData, setEraData] = useState([]);
+  const navigate = useNavigate();
+
+  const getTenseEra = async () => {
+    const tenseEraData = await fetch(
+      `${process.env.REACT_APP_API_URL}/era/all-eras`
+    );
+
+    const tenseEraParsed = await tenseEraData.json();
+    setEraData(tenseEraParsed["data"]);
+  };
+
+  const handleNavigateStage = (eraId) => {
+    tourGuideSteps.steps++;
+    navigate(`/choose-stage/${eraId}`);
+  };
+
+  useEffect(() => {
+    getTenseEra();
+  }, []);
 
   return (
     <div>
       <div className="container">
         {spaceShipBrok && (
           <TourGuideIndex
-            step={1}
-            style={{ zIndex: 2 }}
+            step={tourGuideSteps.steps}
             tourGuideCallback={tourGuideCallback}
           />
         )}
@@ -98,8 +138,9 @@ function LandingPage() {
             className={
               isActive ? `steper-image-block active` : "steper-image-block"
             }
+            style={firstStepOpacity}
           >
-            <div className="rocket-head">
+            <div className="rocket-head" style={allPartsOpacity}>
               <img src={rocketHead} alt="" style={showFilledRocketImage} />
               <img
                 src={dotedRocketHead}
@@ -110,18 +151,14 @@ function LandingPage() {
               <img
                 src={headLine}
                 alt=""
-                style={{
-                  position: "absolute",
-                  transform: "scale(3.5)",
-                  top: "140px",
-                  left: "63px",
-                }}
+                className="rocket-head-line"
+                style={showTenseBtn}
               />
-              <div className="tense-btn future-tense-btn">
+              <div className="tense-btn future-tense-btn" style={showTenseBtn}>
                 <button className="default-blue-btn">Future</button>
               </div>
             </div>
-            <div className="rocket-left">
+            <div className="rocket-left" style={allPartsOpacity}>
               <img src={rocketLeft} alt="" style={showFilledRocketImage} />
               <img
                 src={dotedRocketLeft}
@@ -129,7 +166,7 @@ function LandingPage() {
                 className="dotted-rocket-left"
                 style={showDotted}
               />
-              <div className="tense-btn past-tense-btn">
+              <div className="tense-btn past-tense-btn" style={showTenseBtn}>
                 <button className="default-blue-btn">Past</button>
                 <span className="label">
                   {/* <label className="text-wrapper"> */}
@@ -141,16 +178,12 @@ function LandingPage() {
               <img
                 src={rightLine}
                 alt=""
-                style={{
-                  position: "absolute",
-                  transform: "scale(6.5)",
-                  left: "140px",
-                  top: "-41px",
-                }}
+                className="rocket-right-line"
+                style={showTenseBtn}
               />
             </div>
 
-            <div className="rocket-right">
+            <div className="rocket-right" style={allPartsOpacity}>
               <img src={rocketRight} alt="" style={showFilledRocketImage} />
               <img
                 src={dotedRocketRight}
@@ -170,10 +203,28 @@ function LandingPage() {
               <img
                 src={bodyLine}
                 alt=""
-                style={{ position: "absolute", left: "94px", bottom: "-22px" }}
+                className="rocket-body-line"
+                style={showTenseBtn}
               />
-              <div className="tense-btn present-tense-btn">
-                <button className="default-blue-btn">Present</button>
+              <div
+                className="tense-btn present-tense-btn"
+                style={firstStepOpacity}
+              >
+                <button
+                  className="default-blue-btn"
+                  onClick={() => handleNavigateStage(eraData[0]?._id)}
+                >
+                  {eraData[0]?.title}
+                </button>
+                <ProgressBar
+                  now={40}
+                  label={`${40}%`}
+                  style={{
+                    position: "absolute",
+                    width: "98%",
+                    bottom: "-20px",
+                  }}
+                />
               </div>
             </div>
           </div>

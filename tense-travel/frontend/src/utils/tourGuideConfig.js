@@ -1,7 +1,8 @@
 import smileyEmoji from "../assets/images/smiley-emoji.svg";
-import astronaut from "../assets/images/astronaut1.png";
+import astronaut from "../assets/images/astronaut-what-now.png";
 import astronautOhNo from "../assets/images/astrotnaut-oh-no.png";
 import astronautThink from "../assets/images/astronaut-think.png";
+import astronautOk from "../assets/images/astronaut-ok.png";
 
 const stepsJson = [
   {
@@ -44,7 +45,7 @@ const stepsJson = [
     },
     style: {
       imgStyle: { position: "absolute", bottom: 0, right: "0px" },
-      "z-index": 2,
+      // "z-index": 2,
     },
     buttonText: "Now whats?",
     routePath: "",
@@ -60,7 +61,7 @@ const stepsJson = [
     },
     style: {
       imgStyle: { position: "absolute", bottom: 0, right: "0px" },
-      "z-index": 2,
+      // "z-index": 2,
     },
     buttonText: "Ok, lets go",
     routePath: "",
@@ -79,24 +80,116 @@ const stepsJson = [
       tourGuideBody: {
         position: "relative",
         width: "calc(100% - 177px)",
-        "flexShrink": "0",
+        flexShrink: "0",
         left: "70px",
         // right: "50px",
         background: "#000",
         color: "#FFF",
-        "textAlign": "center",
-        "fontFamily": "Schoolbell",
-        "fontSize": "24px",
-        "fontStyle": "normal",
-        "fontWeight": 400,
-        "lineHeight": "normal",
-        'marginTop': '120px',
+        textAlign: "center",
+        fontFamily: "Schoolbell",
+        fontSize: "24px",
+        fontStyle: "normal",
+        fontWeight: 400,
+        lineHeight: "normal",
+        marginTop: "120px",
       },
     },
     buttonText: "",
     // routePath: "/choose-era",
     routePath: "",
     screenName: "choose-era",
+  },
+  {
+    step: 4,
+    text: `And let’s try Simple Tense`,
+    img: astronaut,
+    imgDimension: {
+      height: "281px",
+      width: "234px",
+    },
+    style: {
+      imgStyle: { position: "absolute", bottom: 0, right: "0px" },
+      tourGuideBody: {
+        position: "relative",
+        width: "calc(100% - 94px)",
+        flexShrink: "0",
+        left: "20px",
+        background: "#000",
+        color: "#FFF",
+        textAlign: "center",
+        fontFamily: "Schoolbell",
+        fontSize: "24px",
+        fontStyle: "normal",
+        fontWeight: 400,
+        lineHeight: "normal",
+        top: '87px'
+      },
+    },
+    buttonText: "",
+    // routePath: "/choose-era",
+    routePath: "",
+    screenName: "",
+  },
+  {
+    step: 5,
+    text: `Fill in the blanks with the given word. Remember to follow the tense rules when you answer!`,
+    img: astronautOk,
+    imgDimension: {
+      width: " 281px",
+    },
+    style: {
+      imgStyle: { position: "absolute", bottom: '190px', right: "" },
+      tourGuideBody: {
+        position: "relative",
+        width: '86%',
+        flexShrink: "0",
+        left: "20px",
+        background: "#000",
+        color: "#FFF",
+        textAlign: "center",
+        fontFamily: "Schoolbell",
+        fontSize: "24px",
+        fontStyle: "normal",
+        fontWeight: 400,
+        lineHeight: "normal",
+        bottom: "116px",
+      },
+    },
+    buttonText: "Ok",
+    routePath: "",
+    screenName: "",
+  },
+  {
+    step: 6,
+    text: `Click here to type your answer!`,
+    img: astronaut,
+    imgDimension: {
+      height: "281px",
+      width: "234px",
+    },
+    style: {
+      imgStyle: { position: "absolute", bottom: 0, right: "0px" },
+      tourGuideBody: {
+        position: "relative",
+        width: "calc(100% - 117px)",
+        flexShrink: "0",
+        left: "20px",
+        background: "#000",
+        color: "#FFF",
+        textAlign: "center",
+        fontFamily: "Schoolbell",
+        fontSize: "24px",
+        fontStyle: "normal",
+        fontWeight: 400,
+        lineHeight: "normal",
+        bottom: "0px",
+        top:'-50px'
+      },
+    },
+    buttonText: "",
+    // routePath: "/choose-era",
+    routePath: "",
+    screenName: "",
   },
 ];
 

@@ -74,21 +74,23 @@
     border-radius: 7px;
   }
 
-  .fadeOut {
-    opacity: 0;
-    // width:0;
-    // height:0;
-    transition: width 0.5s 0.5s, height 0.5s 0.5s, opacity 0.5s;
-  }
-  .fadeIn {
-    opacity: 1;
-    // width:100px;
-    // height:100px;
-    transition: width 0.5s, height 0.5s, opacity 0.5s 0.5s;
-  }
+  //   .fadeOut {
+  //     opacity: 0;
+  //     // width:0;
+  //     // height:0;
+  //     transition: width 0.5s 0.5s, height 0.5s 0.5s, opacity 0.5s;
+  //   }
+  //   .fadeIn {
+  //     opacity: 1;
+  //     // width:100px;
+  //     // height:100px;
+  //     transition: width 0.5s, height 0.5s, opacity 0.5s 0.5s;
+  //   }
 
   .fade-in-popup {
     animation: fadeIn 0.7s;
+    // --fadeInTime: 0.7s;
+    // animation: fadeIn var(--fadeInTime) "s";
   }
 
   @keyframes fadeIn {
