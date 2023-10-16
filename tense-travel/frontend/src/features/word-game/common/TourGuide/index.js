@@ -4,6 +4,7 @@ import { Button } from "react-bootstrap";
 import { stepsFilter } from "../../../../utils/tourGuideConfig";
 import { useNavigate } from "react-router-dom";
 import { tourGuideSteps } from "../../../../utils/constants";
+import { showTourGuidePopup } from "./UpdateTourGuideSteps";
 
 function TourGuideIndex(props) {
   let fadeInTime = 700;
@@ -49,6 +50,8 @@ function TourGuideIndex(props) {
       setFadeInTiming(".7s");
 
       getSteps(Number(cstep) + 1);
+
+      // getSteps(Number(cstep) + 1);
       // fadeOutTime = 10000;
       if (tourGuideSteps.steps === 3) {
         setFadeInTiming("3s");
@@ -61,16 +64,16 @@ function TourGuideIndex(props) {
   };
 
   const getSteps = (stp) => {
-    // console.log(stp)
     let stepResult = stepsFilter(stp);
-    // console.log("stepsResult", stepResult);
+    
     setStepsResult(stepResult);
+    if (stepResult) {
+      setText(stepResult["text"]);
+      setButtonText(stepResult["buttonText"]);
 
-    setText(stepResult["text"]);
-    setButtonText(stepResult["buttonText"]);
-
-    if (stepResult["routePath"]) {
-      navigate(stepResult["routePath"]);
+      if (stepResult["routePath"]) {
+        navigate(stepResult["routePath"]);
+      }
     }
   };
 
@@ -92,6 +95,7 @@ function TourGuideIndex(props) {
     // console.log("tourGuideSteps.steps", tourGuideSteps.steps, cstep);
 
     let res = {};
+    props?.tourGuideCallback(res);
     if (cstep === 2) {
       res = { showTenseBtn: true };
       props?.tourGuideCallback(res);
@@ -118,7 +122,9 @@ function TourGuideIndex(props) {
           className={`align-items-center justify-content-center ${tourGuideContainer}`}
           style={{ zIndex: 2 }}
         >
-          <div style={stepsResult["arrowImg"]?.style}><img src={stepsResult["arrowImg"]?.arrowImg} alt="" /></div>
+          <div style={stepsResult["arrowImg"]?.style}>
+            <img src={stepsResult["arrowImg"]?.arrowImg} alt="" />
+          </div>
           <div
             className="tourGuideBody"
             style={

@@ -26,6 +26,7 @@ const gameOverModalConfig = {
 
 const tourGuideSteps = {
   steps: 1,
+  show: false,
 };
 
 module.exports = { userIds, coins, gameOverModalConfig, tourGuideSteps };
