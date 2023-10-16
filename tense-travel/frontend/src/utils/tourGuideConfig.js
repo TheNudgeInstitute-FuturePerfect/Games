@@ -6,6 +6,7 @@ import astronautOk from "../assets/images/astronaut-ok.png";
 import astronautGreatJob from "../assets/images/astronaut-great-job.png";
 import wordPopupUpArrow from "../assets/images/word-popup-up-arrow.svg";
 import answerBoxPopupUpArrow from "../assets/images/answer-box-popup-up-arrow .svg";
+import greatJobPopupUpArrow from "../assets/images/great-job-popup-up-arrow.svg";
 
 const stepsJson = [
   {
@@ -215,14 +216,14 @@ const stepsJson = [
     text: `Great job! Answer 10 questions to finish this level!`,
     img: astronautGreatJob,
     imgDimension: {
-      height: "281px",
-      width: "234px",
+      width: "100%",
+      height: "100%",
     },
     style: {
       imgStyle: { position: "absolute", bottom: 0, right: "0px" },
       tourGuideBody: {
         position: "relative",
-        width: "calc(100% - 117px)",
+        width: "calc(100% - 72px)",
         flexShrink: "0",
         left: "20px",
         background: "#000",
@@ -233,14 +234,62 @@ const stepsJson = [
         fontStyle: "normal",
         fontWeight: 400,
         lineHeight: "normal",
-        bottom: "0px",
-        top: "-50px",
+        bottom: "185px",
+        top: "",
       },
     },
     buttonText: "Ok",
     // routePath: "/choose-era",
     routePath: "",
     screenName: "",
+    arrowImg: {
+      arrowImg: greatJobPopupUpArrow,
+      style: {
+        position: "absolute",
+        top: "8%",
+        right: "12%",
+      },
+    },
+  },
+  {
+    step: 8,
+    text: `Good try! Answer 10 questions to finish this level!`,
+    img: astronautThink,
+    imgDimension: {
+      width: "100%",
+      height: "100%",
+    },
+    style: {
+      imgStyle: { position: "absolute", bottom: 0, right: "0px" },
+      tourGuideBody: {
+        position: "relative",
+        width: "calc(100% - 72px)",
+        flexShrink: "0",
+        left: "20px",
+        background: "#000",
+        color: "#FFF",
+        textAlign: "center",
+        fontFamily: "Schoolbell",
+        fontSize: "24px",
+        fontStyle: "normal",
+        fontWeight: 400,
+        lineHeight: "normal",
+        bottom: "185px",
+        top: "",
+      },
+    },
+    buttonText: "Ok",
+    // routePath: "/choose-era",
+    routePath: "",
+    screenName: "",
+    arrowImg: {
+      arrowImg: greatJobPopupUpArrow,
+      style: {
+        position: "absolute",
+        top: "8%",
+        right: "12%",
+      },
+    },
   },
 ];
 

@@ -15,7 +15,10 @@ import { actionType, popupTypes } from "../../../utils/commonFunction";
 import stageContext from "../../../context/tenseTravel/StageContext";
 import ExitStageConfirmPopup from "../common/CommonModal/ExitStageConfirmPopup";
 import TourGuideIndex from "../common/TourGuide";
-import { showTourGuidePopup, updateTourGuideStep } from "../common/TourGuide/UpdateTourGuideSteps";
+import {
+  showTourGuidePopup,
+  updateTourGuideStep,
+} from "../common/TourGuide/UpdateTourGuideSteps";
 
 let questionsParsed, questionsData, currentQuestionIndex;
 function Question() {
@@ -39,9 +42,10 @@ function Question() {
   const [exitPopupShow, setExitPopupShow] = useState(false);
   // const [remainingQuestions, setRemainingQuestions] = useState(0);
   let remainingQuestions = 0;
-  const [showAnswerBox, setShowAnswerBox] = useState(false
-  );
+  const [showAnswerBox, setShowAnswerBox] = useState(false);
   const [showWord, setShowWord] = useState();
+  const [progressBarZIndex, setProgressBarZIndex] = useState();
+  const [showTourGuide, setShowTourGuide] = useState(false);
 
   /*fill in the blank input style*/
   const [inputStyle, setInputStyle] = useState({
@@ -253,6 +257,8 @@ function Question() {
 
       navigate("/complete-stage");
     }
+
+    showTourPopup();
   };
 
   const answerRWPopup = (userSubmitAnswerResponse) => {
@@ -338,38 +344,79 @@ function Question() {
   //tour guide popup settings
   const tourGuideCallback = (params) => {
     if (params["showAnswerBox"] === true) {
-      const setShowAnswerBoxTimeOut = setTimeout(()=> {
+      const setShowAnswerBoxTimeOut = setTimeout(() => {
         setShowAnswerBox(true);
         clearTimeout(setShowAnswerBoxTimeOut);
-      }, 500)
-      
+      }, 500);
+    }
+
+    if (tourGuideSteps.steps === 7 || tourGuideSteps.steps === 8) {
+      console.log('===================', tourGuideSteps.steps)
+      // if(userSubmitAnswerResponse["isCorrect"]){
+      //   tourGuideSteps.steps++;
+      // }
+      showTourGuidePopup(false);
+      updateTourGuideStep(tourGuideSteps.steps);
+      setShowTourGuide(tourGuideSteps.show);
+      if(tourGuideSteps.steps === 7){
+        tourGuideSteps.steps = tourGuideSteps.steps+2;
+        updateTourGuideStep(tourGuideSteps.steps);
+      }
+      console.log('===================', tourGuideSteps.steps)
     }
   };
 
   const showTourPopup = () => {
     // tourGuideSteps.steps++;
-    console.log(tourGuideSteps.steps);
     updateTourGuideStep(tourGuideSteps.steps);
     const showTourPopupSetTimeOut = setTimeout(() => {
       if (
         Number(sessionStorage.getItem("step")) &&
         Number(sessionStorage.getItem("step")) === 5
       ) {
-        setShowWord
-        ({
+        setShowWord({
           position: "relative",
           zIndex: 2,
         });
-        showTourGuidePopup(true)
+        showTourGuidePopup(true);
+        setShowTourGuide(tourGuideSteps.show);
       }
       clearTimeout(showTourPopupSetTimeOut);
     }, 500);
+    setShowTourGuide(tourGuideSteps.show);
+
+    if (tourGuideSteps.steps === 6) {
+      if (userSubmitAnswerResponse["isCorrect"]) {
+        tourGuideSteps.steps++;
+        showTourGuidePopup(true);
+      } else if (!userSubmitAnswerResponse["isCorrect"]) {
+        tourGuideSteps.steps = tourGuideSteps.steps + 2;
+        showTourGuidePopup(true);
+      }
+      setProgressBarZIndex({
+        zIndex: 2,
+      });
+    }
+
+    if (tourGuideSteps.steps === 7 || tourGuideSteps.steps === 8) {
+      // if(userSubmitAnswerResponse["isCorrect"]){
+      //   tourGuideSteps.steps++;
+      // }
+      showTourGuidePopup(true);
+      updateTourGuideStep(tourGuideSteps.steps);
+      setShowTourGuide(tourGuideSteps.show);
+
+      console.log(tourGuideSteps.show);
+    }
+
+    setShowTourGuide(tourGuideSteps.show);
   };
 
   const inputQuestionClick = (event) => {
     setShowWord();
-    showTourGuidePopup(false)
-  }
+    showTourGuidePopup(false);
+    setShowTourGuide(tourGuideSteps.show);
+  };
 
   return (
     <>
@@ -381,7 +428,7 @@ function Question() {
             handleBuyCoinPopupShow={handleBuyCoinPopupShow}
           />
         )}
-        {showWord && (
+        {showTourGuide && (
           <TourGuideIndex
             step={tourGuideSteps.steps}
             tourGuideCallback={tourGuideCallback}
@@ -395,7 +442,7 @@ function Question() {
                   onClick={() => handleExitStage(true)}
                   className="close"
                 ></button>
-                <ul>
+                <ul style={progressBarZIndex}>
                   {questions.length > 0 &&
                     questions.map((ques, index) => {
                       remainingQuestions =
@@ -412,6 +459,7 @@ function Question() {
                   className={
                     !goldenHeart ? "count-question" : "count-question-golden"
                   }
+                  style={progressBarZIndex}
                 >
                   {lives}
                 </div>
@@ -425,7 +473,7 @@ function Question() {
             <strong>Word: {questions && questions[queSequence]?.word}</strong> */}
             <div
               className={`input-question ${
-                showAnswerBox ? "input-question-tour-guide" : ""
+                tourGuideSteps.steps === 6 ? "input-question-tour-guide" : ""
               }`}
             >
               <label>{questions[queSequence]?.question.split("__")[0]}</label>{" "}
@@ -437,7 +485,7 @@ function Question() {
                 autoFocus
                 ref={inputRef}
                 placeholder={"_________"}
-                onClick={(e)=>inputQuestionClick()}
+                onClick={(e) => inputQuestionClick()}
               />{" "}
               <label htmlFor="">
                 {questions[queSequence]?.question.split("__")[1]}
