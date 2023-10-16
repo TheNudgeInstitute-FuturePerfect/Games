@@ -9,7 +9,7 @@ function TourGuideIndex(props) {
   let fadeInTime = 700;
   let fadeOutTime = 200;
 
-  const [fadeInTiming, setFadeInTiming] = useState(700);
+  const [fadeInTiming, setFadeInTiming] = useState(".7s");
 
   let currentStep = Number(props["step"]);
   let currentStepNo =
@@ -27,32 +27,34 @@ function TourGuideIndex(props) {
   const [fade, setFade] = useState("now-whats");
   const [cstep, setCstep] = useState(currentStepNo);
   const [stepsResult, setStepsResult] = useState();
+  const [tourGuideContainer, setTourGuideContainer] =
+    useState("tourGuideContainer");
   const navigate = useNavigate();
 
   const handleNowWhats = () => {
-    setTimeout(() => {
-      setFade("now-whats fade-out-popup");
+    //fade out settimeout
+    const fadeOutSetTime = setTimeout(() => {
+      // setFade("now-whats fade-out-popup");
+      setFade("fade-out-popup");
+
       setCstep(Number(cstep) + 1);
       sessionStorage.setItem("step", Number(cstep) + 1);
       tourGuideSteps.steps = Number(cstep) + 1;
-      // if (Number(cstep) + 1 === 3) {
-      //   setTimeout(() => {
-      //     // fadeInTime = 000;
-      //     // console.log("fadeInTime", fadeInTime);
-      //     // setFadeInTiming(20000);
-      //     // setFade("now-whats fade-in-popup");
-      //     setFade("now-whats fade-in-popup");
-      //     // console.log("================================================");
-      //   }, 5000);
-      // }
+      clearTimeout(fadeOutSetTime);
     }, fadeOutTime);
 
-    setTimeout(() => {
-      setFade("now-whats fade-in-popup");
+    const fadeInSetTime = setTimeout(() => {
+      // setFade("now-whats fade-in-popup");
+      setFade("fade-in-popup");
+      setFadeInTiming(".7s");
 
       getSteps(Number(cstep) + 1);
-      // console.log("getSteps");
       // fadeOutTime = 10000;
+      if (tourGuideSteps.steps === 3) {
+        setFadeInTiming("3s");
+      }
+
+      clearTimeout(fadeInSetTime);
     }, fadeInTime);
 
     tourGuideCallback();
@@ -79,15 +81,15 @@ function TourGuideIndex(props) {
     //     : 1;
 
     // getSteps(Number(props["step"]));
-      getSteps(Number(currentStepNo));
+    getSteps(Number(currentStepNo));
 
     tourGuideSteps.steps = currentStepNo;
   }, []);
 
   const tourGuideCallback = () => {
-    console.log(props);
+    // console.log(props);
     tourGuideSteps.steps = Number(sessionStorage.getItem("step"));
-    console.log("tourGuideSteps.steps", tourGuideSteps.steps, cstep);
+    // console.log("tourGuideSteps.steps", tourGuideSteps.steps, cstep);
 
     let res = {};
     if (cstep === 2) {
@@ -101,7 +103,7 @@ function TourGuideIndex(props) {
     }
 
     if (tourGuideSteps.steps === 5) {
-      console.log("=====================");
+      // console.log("=====================");
       res = { showAnswerBox: true };
       props?.tourGuideCallback(res);
       tourGuideSteps.steps++;
@@ -112,9 +114,11 @@ function TourGuideIndex(props) {
     <>
       {stepsResult && (
         <div
-          className="align-items-center justify-content-center tourGuideContainer"
+          // className="align-items-center justify-content-center tourGuideContainer"
+          className={`align-items-center justify-content-center ${tourGuideContainer}`}
           style={{ zIndex: 2 }}
         >
+          <div style={stepsResult["arrowImg"]?.style}><img src={stepsResult["arrowImg"]?.arrowImg} alt="" /></div>
           <div
             className="tourGuideBody"
             style={
@@ -123,7 +127,10 @@ function TourGuideIndex(props) {
           >
             <div
               // className={show ? "now-whats" : "fade-out-popup now-whats"}
-              className={`${fade}`}
+              className={`now-whats ${fade}`}
+              // className="now-whats"
+              // className={tourGuideSteps.steps===3?"fade active-tense-step":fade}
+              // style={{ animation: 'fadeIn 3s' }}
               style={{ "--fadeInTime": fadeInTiming }}
               id={currentStep}
             >

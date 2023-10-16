@@ -3,6 +3,9 @@ import astronaut from "../assets/images/astronaut-what-now.png";
 import astronautOhNo from "../assets/images/astrotnaut-oh-no.png";
 import astronautThink from "../assets/images/astronaut-think.png";
 import astronautOk from "../assets/images/astronaut-ok.png";
+import astronautGreatJob from "../assets/images/astronaut-great-job.png";
+import wordPopupUpArrow from "../assets/images/word-popup-up-arrow.svg";
+import answerBoxPopupUpArrow from "../assets/images/answer-box-popup-up-arrow .svg";
 
 const stepsJson = [
   {
@@ -122,7 +125,7 @@ const stepsJson = [
         fontStyle: "normal",
         fontWeight: 400,
         lineHeight: "normal",
-        top: '87px'
+        top: "87px",
       },
     },
     buttonText: "",
@@ -138,10 +141,10 @@ const stepsJson = [
       width: " 281px",
     },
     style: {
-      imgStyle: { position: "absolute", bottom: '190px', right: "" },
+      imgStyle: { position: "absolute", bottom: "0px", right: "", left: "0px" },
       tourGuideBody: {
         position: "relative",
-        width: '86%',
+        width: "86%",
         flexShrink: "0",
         left: "20px",
         background: "#000",
@@ -158,6 +161,14 @@ const stepsJson = [
     buttonText: "Ok",
     routePath: "",
     screenName: "",
+    arrowImg: {
+      arrowImg: wordPopupUpArrow,
+      style: {
+        position: "absolute",
+        top: "16%",
+        right: "16%",
+      },
+    },
   },
   {
     step: 6,
@@ -183,10 +194,50 @@ const stepsJson = [
         fontWeight: 400,
         lineHeight: "normal",
         bottom: "0px",
-        top:'-50px'
+        top: "-50px",
       },
     },
     buttonText: "",
+    // routePath: "/choose-era",
+    routePath: "",
+    screenName: "",
+    arrowImg: {
+      arrowImg: answerBoxPopupUpArrow,
+      style: {
+        position: "absolute",
+        top: "34%",
+        right: "48%",
+      },
+    },
+  },
+  {
+    step: 7,
+    text: `Great job! Answer 10 questions to finish this level!`,
+    img: astronautGreatJob,
+    imgDimension: {
+      height: "281px",
+      width: "234px",
+    },
+    style: {
+      imgStyle: { position: "absolute", bottom: 0, right: "0px" },
+      tourGuideBody: {
+        position: "relative",
+        width: "calc(100% - 117px)",
+        flexShrink: "0",
+        left: "20px",
+        background: "#000",
+        color: "#FFF",
+        textAlign: "center",
+        fontFamily: "Schoolbell",
+        fontSize: "24px",
+        fontStyle: "normal",
+        fontWeight: 400,
+        lineHeight: "normal",
+        bottom: "0px",
+        top: "-50px",
+      },
+    },
+    buttonText: "Ok",
     // routePath: "/choose-era",
     routePath: "",
     screenName: "",

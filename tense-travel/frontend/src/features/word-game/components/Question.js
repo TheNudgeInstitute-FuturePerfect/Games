@@ -15,7 +15,7 @@ import { actionType, popupTypes } from "../../../utils/commonFunction";
 import stageContext from "../../../context/tenseTravel/StageContext";
 import ExitStageConfirmPopup from "../common/CommonModal/ExitStageConfirmPopup";
 import TourGuideIndex from "../common/TourGuide";
-import { updateTourGuideStep } from "../common/TourGuide/UpdateTourGuideSteps";
+import { showTourGuidePopup, updateTourGuideStep } from "../common/TourGuide/UpdateTourGuideSteps";
 
 let questionsParsed, questionsData, currentQuestionIndex;
 function Question() {
@@ -355,10 +355,12 @@ function Question() {
         Number(sessionStorage.getItem("step")) &&
         Number(sessionStorage.getItem("step")) === 5
       ) {
-        setShowWord({
+        setShowWord
+        ({
           position: "relative",
           zIndex: 2,
         });
+        showTourGuidePopup(true)
       }
       clearTimeout(showTourPopupSetTimeOut);
     }, 500);
@@ -366,6 +368,7 @@ function Question() {
 
   const inputQuestionClick = (event) => {
     setShowWord();
+    showTourGuidePopup(false)
   }
 
   return (

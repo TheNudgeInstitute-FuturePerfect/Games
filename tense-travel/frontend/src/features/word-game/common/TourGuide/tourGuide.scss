@@ -88,9 +88,9 @@
   //   }
 
   .fade-in-popup {
-    animation: fadeIn 0.7s;
-    // --fadeInTime: 0.7s;
-    // animation: fadeIn var(--fadeInTime) "s";
+    // animation: fadeIn 3s;
+    --fadeInTime: 0.7s;
+    animation: fadeIn var(--fadeInTime);
   }
 
   @keyframes fadeIn {
@@ -113,5 +113,10 @@
     100% {
       opacity: 0;
     }
+  }
+
+  .active-tense-step {
+    // transition-delay: 3s;
+    animation: fadeIn 3s;
   }
 }

@@ -392,6 +392,8 @@
   padding: 22px 10px;
   margin-bottom: 20px;
   text-align: center;
+  border-top: 5px solid #8f87e9;
+  border-right: 5px solid #8f87e9;
 }
 .input-question::-webkit-input-placeholder {
   color: $white;
@@ -658,8 +660,6 @@
 }
 
 .input-question-tour-guide {
-  border-top: 5px solid #8f87e9;
-  border-right: 5px solid #8f87e9;
   background-color: #08061a;
   border-radius: 15px;
   position: relative;

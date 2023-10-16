@@ -2,4 +2,8 @@ const updateTourGuideStep = (step) => {
   sessionStorage.setItem("step", step);
 };
 
-export { updateTourGuideStep };
+const showTourGuidePopup = (show = false) => {
+  return show;
+};
+
+export { updateTourGuideStep, showTourGuidePopup };
