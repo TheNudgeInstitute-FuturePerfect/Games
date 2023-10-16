@@ -5,12 +5,21 @@ import { useParams } from "react-router";
 import { getUserCurrentEra } from "../../../utils/payload";
 import { userIds } from "../../../utils/constants";
 import { coins } from "../../../utils/constants";
+import TourGuideIndex from "../common/TourGuide";
+import { tourGuideSteps } from "../../../utils/constants";
+import line1 from "../../../assets/images/line1.png";
+import line2 from "../../../assets/images/line2.png";
+import line3 from "../../../assets/images/line3.png";
+import line4 from "../../../assets/images/line4.png";
+import { updateTourGuideStep } from "../common/TourGuide/UpdateTourGuideSteps";
 
 function ChooseStage() {
   const navigate = useNavigate();
   const [stage, setStage] = useState([]);
+  const [showSimpleTense, setShowSimpleTense] = useState();
 
   const navigateQuestion = (params) => {
+    tourGuideSteps.steps++;
     navigate(`/question/${eraId}/${params["stageId"]}`);
   };
   let defaultStar = coins.defaultStars.stars;
@@ -33,15 +42,33 @@ function ChooseStage() {
 
     const tenseStageDataParsed = await tenseStageData.json();
     setStage(tenseStageDataParsed["data"]["stage"]);
+
+    if (
+      Number(sessionStorage.getItem("step")) &&
+      Number(sessionStorage.getItem("step")) === 4
+    ) {
+      setShowSimpleTense({
+        position: "relative",
+        zIndex: 2,
+      });
+    }
   };
 
   useEffect(() => {
     getStageOfEra();
   }, []);
 
+  const tourGuideCallback = (params) => {
+    console.log("params", params);
+  };
+
   return (
     <>
       <div className="container">
+        <TourGuideIndex
+          step={tourGuideSteps.steps}
+          tourGuideCallback={tourGuideCallback}
+        />
         <div className="moon-bg">
           <div className="third-step">
             <Link to={"/choose-era"} className="back-arr">
@@ -59,7 +86,7 @@ function ChooseStage() {
                       {" "}
                     </div>
                   ) : (
-                    <div className="image-block"> </div>
+                    <div className="image-block"></div>
                   )}
                   <div className="text-block">
                     <strong>{stage.length > 0 && stage[3]?.stageTitle}</strong>
@@ -106,8 +133,7 @@ function ChooseStage() {
                           .map((itm, index) => {
                             defaultStar = coins.defaultStars.stars;
                             return <span key={index} className=""></span>;
-                          })
-                          }
+                          })}
                     </div>
                   </div>
                   {stage.length > 0 && !stage[2]?.isLocked ? (
@@ -162,7 +188,7 @@ function ChooseStage() {
                 </div>
               </li>
 
-              <li className="line4">
+              <li className="line4" style={showSimpleTense}>
                 <div className="flex">
                   <div className="text-block">
                     <strong>

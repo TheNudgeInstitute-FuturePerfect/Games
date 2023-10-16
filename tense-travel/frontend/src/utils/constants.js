@@ -24,4 +24,8 @@ const gameOverModalConfig = {
   UNDEFINED: "null",
 };
 
-module.exports = { userIds, coins, gameOverModalConfig };
+const tourGuideSteps = {
+  steps: 1,
+};
+
+module.exports = { userIds, coins, gameOverModalConfig, tourGuideSteps };

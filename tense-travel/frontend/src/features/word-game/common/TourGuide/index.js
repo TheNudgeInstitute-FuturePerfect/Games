@@ -1,14 +1,172 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./tourGuide.scss";
+import { Button } from "react-bootstrap";
+import { stepsFilter } from "../../../../utils/tourGuideConfig";
+import { useNavigate } from "react-router-dom";
+import { tourGuideSteps } from "../../../../utils/constants";
 
-function TourGuideIndex() {
+function TourGuideIndex(props) {
+  let fadeInTime = 700;
+  let fadeOutTime = 200;
+
+  const [fadeInTiming, setFadeInTiming] = useState(".7s");
+
+  let currentStep = Number(props["step"]);
+  let currentStepNo =
+    sessionStorage.getItem("step") !== null
+      ? sessionStorage.getItem("step")
+      : 1;
+
+  if (currentStep > currentStepNo) {
+    currentStepNo = currentStep;
+    sessionStorage.setItem("step", currentStepNo);
+  }
+
+  const [text, setText] = useState("");
+  const [buttonText, setButtonText] = useState("");
+  const [fade, setFade] = useState("now-whats");
+  const [cstep, setCstep] = useState(currentStepNo);
+  const [stepsResult, setStepsResult] = useState();
+  const [tourGuideContainer, setTourGuideContainer] =
+    useState("tourGuideContainer");
+  const navigate = useNavigate();
+
+  const handleNowWhats = () => {
+    //fade out settimeout
+    const fadeOutSetTime = setTimeout(() => {
+      // setFade("now-whats fade-out-popup");
+      setFade("fade-out-popup");
+
+      setCstep(Number(cstep) + 1);
+      sessionStorage.setItem("step", Number(cstep) + 1);
+      tourGuideSteps.steps = Number(cstep) + 1;
+      clearTimeout(fadeOutSetTime);
+    }, fadeOutTime);
+
+    const fadeInSetTime = setTimeout(() => {
+      // setFade("now-whats fade-in-popup");
+      setFade("fade-in-popup");
+      setFadeInTiming(".7s");
+
+      getSteps(Number(cstep) + 1);
+      // fadeOutTime = 10000;
+      if (tourGuideSteps.steps === 3) {
+        setFadeInTiming("3s");
+      }
+
+      clearTimeout(fadeInSetTime);
+    }, fadeInTime);
+
+    tourGuideCallback();
+  };
+
+  const getSteps = (stp) => {
+    // console.log(stp)
+    let stepResult = stepsFilter(stp);
+    // console.log("stepsResult", stepResult);
+    setStepsResult(stepResult);
+
+    setText(stepResult["text"]);
+    setButtonText(stepResult["buttonText"]);
+
+    if (stepResult["routePath"]) {
+      navigate(stepResult["routePath"]);
+    }
+  };
+
+  useEffect(() => {
+    // const currentStepNo =
+    //   sessionStorage.getItem("step") !== null
+    //     ? sessionStorage.getItem("step")
+    //     : 1;
+
+    // getSteps(Number(props["step"]));
+    getSteps(Number(currentStepNo));
+
+    tourGuideSteps.steps = currentStepNo;
+  }, []);
+
+  const tourGuideCallback = () => {
+    // console.log(props);
+    tourGuideSteps.steps = Number(sessionStorage.getItem("step"));
+    // console.log("tourGuideSteps.steps", tourGuideSteps.steps, cstep);
+
+    let res = {};
+    if (cstep === 2) {
+      res = { showTenseBtn: true };
+      props?.tourGuideCallback(res);
+    }
+
+    if (cstep === 3) {
+      res = { showTenseBtn: true, showPresentBtn: true };
+      props?.tourGuideCallback(res);
+    }
+
+    if (tourGuideSteps.steps === 5) {
+      // console.log("=====================");
+      res = { showAnswerBox: true };
+      props?.tourGuideCallback(res);
+      tourGuideSteps.steps++;
+    }
+  };
+
   return (
     <>
-      <div className="d-flex align-items-center justify-content-center tourGuideContainer">
-        <div className="tourGuideBody">
-          Oh no!! The Chandrayaan broke down---
+      {stepsResult && (
+        <div
+          // className="align-items-center justify-content-center tourGuideContainer"
+          className={`align-items-center justify-content-center ${tourGuideContainer}`}
+          style={{ zIndex: 2 }}
+        >
+          <div style={stepsResult["arrowImg"]?.style}><img src={stepsResult["arrowImg"]?.arrowImg} alt="" /></div>
+          <div
+            className="tourGuideBody"
+            style={
+              stepsResult["style"] ? stepsResult["style"]?.tourGuideBody : ""
+            }
+          >
+            <div
+              // className={show ? "now-whats" : "fade-out-popup now-whats"}
+              className={`now-whats ${fade}`}
+              // className="now-whats"
+              // className={tourGuideSteps.steps===3?"fade active-tense-step":fade}
+              // style={{ animation: 'fadeIn 3s' }}
+              style={{ "--fadeInTime": fadeInTiming }}
+              id={currentStep}
+            >
+              <span
+                dangerouslySetInnerHTML={{
+                  __html: text ? text : stepsResult["text"],
+                }}
+              ></span>
+
+              {buttonText && (
+                <div className="now-whats-btn">
+                  <Button onClick={handleNowWhats}>{buttonText}</Button>
+                </div>
+              )}
+            </div>
+            {/* <div>{buttonText}</div> */}
+            {/* <div
+            className={show1 ? "fade-in-popup lets-go" : "lets-go"}
+            id="letsGo"
+          >
+            We have to go to and collect all the 3 pieces-
+            <div className="lets-go-btn">
+              <Button>Lets go</Button>
+            </div>
+          </div> */}
+          </div>
+          <div style={stepsResult["style"]?.imgStyle}>
+            <img
+              src={stepsResult["img"]}
+              alt=""
+              height={stepsResult["imgDimension"]?.height}
+              width={stepsResult["imgDimension"]?.width}
+            />
+          </div>
         </div>
-      </div>
+      )}
     </>
   );
 }
