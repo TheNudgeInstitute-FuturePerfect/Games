@@ -24,4 +24,19 @@ const gameOverModalConfig = {
   UNDEFINED: "null",
 };
 
-module.exports = { userIds, coins, gameOverModalConfig };
+const tourGuideSteps = {
+  steps: 1,
+  show: false,
+};
+
+const setTimeOutFn = {
+  status: false,
+};
+
+module.exports = {
+  userIds,
+  coins,
+  gameOverModalConfig,
+  tourGuideSteps,
+  setTimeOutFn,
+};

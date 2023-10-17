@@ -65,6 +65,11 @@ body {
 	
     height:100vh;
     width:100%;
+	background-image: url(../../../src/assets/images/bg.svg); 
+	background-repeat: no-repeat; 
+    background-position: center;
+    background-attachment: fixed;       
+    background-size: cover;
   }
 html {
     scroll-behavior: smooth;
@@ -73,13 +78,13 @@ html {
     max-width: 370px;
     width: 100%;
     margin: 0 auto;
-	background-image: url(../../../src/assets/images/bg.svg); 
-    background-repeat: no-repeat; 
-    background-position: center;
-    background-attachment: fixed;       
-    background-size: contain;
+	// background-image: url(../../../src/assets/images/bg.svg); 
+    // background-repeat: no-repeat; 
+    // background-position: center;
+    // background-attachment: fixed;       
+    // background-size: contain;
 	height: 100vh;
-	position: relative;
+	// position: relative;
 }  
 .align-center{
 	text-align: center;

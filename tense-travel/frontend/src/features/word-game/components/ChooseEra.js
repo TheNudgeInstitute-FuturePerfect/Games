@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 // import "../../../css/styles.css";
 import "../../../sass/styles.scss"
 import { useNavigate } from "react-router-dom";
+import TourGuideIndex from "../common/TourGuide";
 
 function ChooseEra() {
   const navigate = useNavigate();
@@ -27,6 +28,7 @@ function ChooseEra() {
   return (
     <>
       <div className="container">
+      <TourGuideIndex step={3} />
         <div className="second-step">
           {eraData.length > 0 &&
             eraData.map((era, index) => {
@@ -35,8 +37,10 @@ function ChooseEra() {
                   key={index}
                   onClick={() => navigateStage(era._id)}
                   className="default-blue-btn"
+                  style={{zIndex: era.title==='Present'?'1':'initial'}}
                 >
                   {era.title}
+                  {/* <span style={{zIndex: era.title==='Present'?'1':'initial'}}>{era.title}</span> */}
                 </button>
               );
             })}

@@ -8,12 +8,25 @@ import {
   userAnswerSubmitPayload,
   userSubmitAnswerResponse,
 } from "../../../utils/payload";
-import { userIds } from "../../../utils/constants";
+import {
+  setTimeOutFn,
+  tourGuideSteps,
+  userIds,
+} from "../../../utils/constants";
 import { buyLives, reTryStage } from "../../../services/questionAPI";
 import CommonModal from "../common/CommonModal";
-import { actionType, popupTypes } from "../../../utils/commonFunction";
+import {
+  actionType,
+  popupTypes,
+  setTimeOut,
+} from "../../../utils/commonFunction";
 import stageContext from "../../../context/tenseTravel/StageContext";
 import ExitStageConfirmPopup from "../common/CommonModal/ExitStageConfirmPopup";
+import TourGuideIndex from "../common/TourGuide";
+import {
+  showTourGuidePopup,
+  updateTourGuideStep,
+} from "../common/TourGuide/UpdateTourGuideSteps";
 
 let questionsParsed, questionsData, currentQuestionIndex;
 function Question() {
@@ -37,6 +50,10 @@ function Question() {
   const [exitPopupShow, setExitPopupShow] = useState(false);
   // const [remainingQuestions, setRemainingQuestions] = useState(0);
   let remainingQuestions = 0;
+  const [showAnswerBox, setShowAnswerBox] = useState(false);
+  const [showWord, setShowWord] = useState();
+  const [progressBarZIndex, setProgressBarZIndex] = useState();
+  const [showTourGuide, setShowTourGuide] = useState(false);
 
   /*fill in the blank input style*/
   const [inputStyle, setInputStyle] = useState({
@@ -112,6 +129,10 @@ function Question() {
       setQuestions(questionsParsed["data"]);
 
       filterCurrentQuestion(null);
+    }
+
+    if (questionsParsed["data"].length > 0) {
+      showTourPopup();
     }
   };
 
@@ -242,8 +263,15 @@ function Question() {
         tenseEraId: eraId,
       });
 
-      navigate("/complete-stage");
+      tourGuideSteps.steps++;
+      // updateTourGuideStep(tourGuideSteps.steps);
+      showTourGuidePopup(true);
+      setShowTourGuide(tourGuideSteps.show);
+      // navigate("/complete-stage");
+    
     }
+
+    showTourPopup();
   };
 
   const answerRWPopup = (userSubmitAnswerResponse) => {
@@ -326,6 +354,70 @@ function Question() {
     getStageQuestions();
   }, []);
 
+  //tour guide popup settings
+  const tourGuideCallback = (params) => {
+    if (params["showAnswerBox"] === true) {
+      const setShowAnswerBoxTimeOut = setTimeout(() => {
+        setShowAnswerBox(true);
+        clearTimeout(setShowAnswerBoxTimeOut);
+      }, 500);
+    }
+
+    if (tourGuideSteps.steps === 7 || tourGuideSteps.steps === 8) {
+      showTourGuidePopup(false);
+      updateTourGuideStep(tourGuideSteps.steps);
+      setShowTourGuide(tourGuideSteps.show);
+      if (tourGuideSteps.steps === 7) {
+        updateTourGuideStep(tourGuideSteps.steps);
+      }
+    }
+
+    if(tourGuideSteps.steps === 9){
+      navigate("/complete-stage");
+    }
+    inputRef.current.focus();
+  };
+
+  const showTourPopup = () => {
+    // tourGuideSteps.steps++;
+    updateTourGuideStep(tourGuideSteps.steps);
+    const showTourPopupSetTimeOut = setTimeout(() => {
+      if (
+        Number(sessionStorage.getItem("step")) &&
+        Number(sessionStorage.getItem("step")) === 5
+      ) {
+        setShowWord({
+          position: "relative",
+          zIndex: 2,
+        });
+        showTourGuidePopup(true);
+        setShowTourGuide(tourGuideSteps.show);
+      }
+      clearTimeout(showTourPopupSetTimeOut);
+    }, 500);
+    setShowTourGuide(tourGuideSteps.show);
+
+    if (tourGuideSteps.steps === 6) {
+      if (userSubmitAnswerResponse["isCorrect"]) {
+        tourGuideSteps.steps++;
+        showTourGuidePopup(true);
+      } else if (!userSubmitAnswerResponse["isCorrect"]) {
+        tourGuideSteps.steps = tourGuideSteps.steps + 1;
+        showTourGuidePopup(true);
+      }
+      setProgressBarZIndex({
+        zIndex: 2,
+      });
+    }
+    setShowTourGuide(tourGuideSteps.show);
+  };
+
+  const inputQuestionClick = (event) => {
+    setShowWord();
+    showTourGuidePopup(false);
+    setShowTourGuide(tourGuideSteps.show);
+  };
+
   return (
     <>
       <div className="container">
@@ -336,6 +428,12 @@ function Question() {
             handleBuyCoinPopupShow={handleBuyCoinPopupShow}
           />
         )}
+        {showTourGuide && (
+          <TourGuideIndex
+            step={tourGuideSteps.steps}
+            tourGuideCallback={tourGuideCallback}
+          />
+        )}
         <div className="fourth-step">
           <div className="question-block">
             <div className="question-slide-line">
@@ -344,7 +442,7 @@ function Question() {
                   onClick={() => handleExitStage(true)}
                   className="close"
                 ></button>
-                <ul>
+                <ul style={progressBarZIndex}>
                   {questions.length > 0 &&
                     questions.map((ques, index) => {
                       remainingQuestions =
@@ -361,14 +459,23 @@ function Question() {
                   className={
                     !goldenHeart ? "count-question" : "count-question-golden"
                   }
+                  style={progressBarZIndex}
                 >
                   {lives}
                 </div>
               </div>
             </div>
-            <h1>{questions && questions[queSequence]?.stageTitle}</h1>
-            <strong>Word: {questions && questions[queSequence]?.word}</strong>
-            <div className="input-question">
+            <div style={showWord}>
+              <h1>{questions && questions[queSequence]?.stageTitle}</h1>
+              <strong>Word: {questions && questions[queSequence]?.word}</strong>
+            </div>
+            {/* <h1>{questions && questions[queSequence]?.stageTitle}</h1>
+            <strong>Word: {questions && questions[queSequence]?.word}</strong> */}
+            <div
+              className={`input-question ${
+                tourGuideSteps.steps === 6 ? "input-question-tour-guide" : ""
+              }`}
+            >
               <label>{questions[queSequence]?.question.split("__")[0]}</label>{" "}
               <input
                 style={inputStyle}
@@ -378,6 +485,7 @@ function Question() {
                 autoFocus
                 ref={inputRef}
                 placeholder={"_________"}
+                onClick={(e) => inputQuestionClick()}
               />{" "}
               <label htmlFor="">
                 {questions[queSequence]?.question.split("__")[1]}
