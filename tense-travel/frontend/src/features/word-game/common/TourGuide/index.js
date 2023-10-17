@@ -18,7 +18,10 @@ function TourGuideIndex(props) {
       ? sessionStorage.getItem("step")
       : 1;
 
-  if (currentStep > currentStepNo) {
+  if (
+    currentStep > Number(currentStepNo) ||
+    currentStep === Number(currentStepNo)
+  ) {
     currentStepNo = currentStep;
     sessionStorage.setItem("step", currentStepNo);
   }
@@ -65,7 +68,7 @@ function TourGuideIndex(props) {
 
   const getSteps = (stp) => {
     let stepResult = stepsFilter(stp);
-    
+
     setStepsResult(stepResult);
     if (stepResult) {
       setText(stepResult["text"]);
@@ -90,9 +93,7 @@ function TourGuideIndex(props) {
   }, []);
 
   const tourGuideCallback = () => {
-    // console.log(props);
     tourGuideSteps.steps = Number(sessionStorage.getItem("step"));
-    // console.log("tourGuideSteps.steps", tourGuideSteps.steps, cstep);
 
     let res = {};
     props?.tourGuideCallback(res);
@@ -107,7 +108,6 @@ function TourGuideIndex(props) {
     }
 
     if (tourGuideSteps.steps === 5) {
-      // console.log("=====================");
       res = { showAnswerBox: true };
       props?.tourGuideCallback(res);
       tourGuideSteps.steps++;
