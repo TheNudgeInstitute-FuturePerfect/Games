@@ -8,10 +8,18 @@ import {
   userAnswerSubmitPayload,
   userSubmitAnswerResponse,
 } from "../../../utils/payload";
-import { tourGuideSteps, userIds } from "../../../utils/constants";
+import {
+  setTimeOutFn,
+  tourGuideSteps,
+  userIds,
+} from "../../../utils/constants";
 import { buyLives, reTryStage } from "../../../services/questionAPI";
 import CommonModal from "../common/CommonModal";
-import { actionType, popupTypes } from "../../../utils/commonFunction";
+import {
+  actionType,
+  popupTypes,
+  setTimeOut,
+} from "../../../utils/commonFunction";
 import stageContext from "../../../context/tenseTravel/StageContext";
 import ExitStageConfirmPopup from "../common/CommonModal/ExitStageConfirmPopup";
 import TourGuideIndex from "../common/TourGuide";
@@ -255,7 +263,12 @@ function Question() {
         tenseEraId: eraId,
       });
 
-      navigate("/complete-stage");
+      tourGuideSteps.steps++;
+      // updateTourGuideStep(tourGuideSteps.steps);
+      showTourGuidePopup(true);
+      setShowTourGuide(tourGuideSteps.show);
+      // navigate("/complete-stage");
+    
     }
 
     showTourPopup();
@@ -358,6 +371,11 @@ function Question() {
         updateTourGuideStep(tourGuideSteps.steps);
       }
     }
+
+    if(tourGuideSteps.steps === 9){
+      navigate("/complete-stage");
+    }
+    inputRef.current.focus();
   };
 
   const showTourPopup = () => {
