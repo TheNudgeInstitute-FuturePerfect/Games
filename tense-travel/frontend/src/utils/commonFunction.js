@@ -1,4 +1,4 @@
-import { gameOverModalConfig } from "./constants";
+import { gameOverModalConfig, setTimeOutFn } from "./constants";
 
 // const popupTypes = [
 //   "purchasePopup",
@@ -28,4 +28,11 @@ const actionType = (action) => {
   }
 };
 
-export { actionType, popupTypes, actions };
+const setTimeOut = (time, navigate, url) => {
+  const timeOut = setTimeout(() => {
+    navigate(url);
+  }, time);
+  clearTimeout(timeOut);
+};
+
+export { actionType, popupTypes, actions, setTimeOut };

@@ -29,4 +29,14 @@ const tourGuideSteps = {
   show: false,
 };
 
-module.exports = { userIds, coins, gameOverModalConfig, tourGuideSteps };
+const setTimeOutFn = {
+  status: false,
+};
+
+module.exports = {
+  userIds,
+  coins,
+  gameOverModalConfig,
+  tourGuideSteps,
+  setTimeOutFn,
+};
