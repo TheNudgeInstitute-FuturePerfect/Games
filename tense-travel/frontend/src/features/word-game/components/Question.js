@@ -351,18 +351,12 @@ function Question() {
     }
 
     if (tourGuideSteps.steps === 7 || tourGuideSteps.steps === 8) {
-      console.log('===================', tourGuideSteps.steps)
-      // if(userSubmitAnswerResponse["isCorrect"]){
-      //   tourGuideSteps.steps++;
-      // }
       showTourGuidePopup(false);
       updateTourGuideStep(tourGuideSteps.steps);
       setShowTourGuide(tourGuideSteps.show);
-      if(tourGuideSteps.steps === 7){
-        tourGuideSteps.steps = tourGuideSteps.steps+2;
+      if (tourGuideSteps.steps === 7) {
         updateTourGuideStep(tourGuideSteps.steps);
       }
-      console.log('===================', tourGuideSteps.steps)
     }
   };
 
@@ -390,25 +384,13 @@ function Question() {
         tourGuideSteps.steps++;
         showTourGuidePopup(true);
       } else if (!userSubmitAnswerResponse["isCorrect"]) {
-        tourGuideSteps.steps = tourGuideSteps.steps + 2;
+        tourGuideSteps.steps = tourGuideSteps.steps + 1;
         showTourGuidePopup(true);
       }
       setProgressBarZIndex({
         zIndex: 2,
       });
     }
-
-    if (tourGuideSteps.steps === 7 || tourGuideSteps.steps === 8) {
-      // if(userSubmitAnswerResponse["isCorrect"]){
-      //   tourGuideSteps.steps++;
-      // }
-      showTourGuidePopup(true);
-      updateTourGuideStep(tourGuideSteps.steps);
-      setShowTourGuide(tourGuideSteps.show);
-
-      console.log(tourGuideSteps.show);
-    }
-
     setShowTourGuide(tourGuideSteps.show);
   };
 
