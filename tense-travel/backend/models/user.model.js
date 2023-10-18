@@ -37,6 +37,14 @@ const userSchema = new Schema(
     },
     password: { type: String },
     educationQualification: [qualificationSchema],
+    tourGuide: {
+      type: Boolean,
+      default: false,
+    },
+    tourGuideStep: {
+      type: Number,
+      default: 0,
+    },
   },
   { timestamps: true }
 );
