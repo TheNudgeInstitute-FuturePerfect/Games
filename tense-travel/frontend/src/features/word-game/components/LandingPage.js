@@ -19,8 +19,11 @@ import rightLine from "../../../assets/images/line1.svg";
 import headLine from "../../../assets/images/line3.svg";
 import bodyLine from "../../../assets/images/line2.svg";
 import { ProgressBar } from "react-bootstrap";
-import { tourGuideSteps } from "../../../utils/constants";
+import { tourGuideSteps, userIds } from "../../../utils/constants";
+import { userTourStatus } from "../../../services/userAPI";
+import { removeTourGuideStep } from "../common/TourGuide/UpdateTourGuideSteps";
 
+let userTourData;
 function LandingPage() {
   tourGuideSteps.steps = 1;
   // const navigate = useNavigate();
@@ -47,6 +50,7 @@ function LandingPage() {
   const [firstStepOpacity, setFirstStepOpacity] = useState();
   const [allPartsOpacity, setAllPartsOpacity] = useState();
   // const [, setAllPartsOpacity] = useState();
+  const [tourStatusData, setTourStatusData] = useState();
 
   const navigateChooseEra = () => {
     setShowStartBtn({
@@ -69,6 +73,20 @@ function LandingPage() {
     setIsActive((current) => !current);
 
     setShowShowHalfMoon("active");
+
+    if (userTourData["data"]?.tourGuide) {
+      removeTourGuideStep();
+      setTimeout(() => {
+        setShowTenseBtn({
+          opacity: 1,
+        });
+
+        setFirstStepOpacity({
+          // zIndex: 2,
+          opacity: 1,
+        });
+      }, 3500);
+    }
   };
 
   const tourGuideCallback = (params) => {
@@ -106,12 +124,21 @@ function LandingPage() {
   };
 
   const handleNavigateStage = (eraId) => {
+    // console.log(`eraId`, eraId);
+    // return;
     tourGuideSteps.steps++;
     navigate(`/choose-stage/${eraId}`);
   };
 
+  const userTourStaus = async () => {
+    const userId = userIds.userId;
+    userTourData = await userTourStatus(userId);
+    setTourStatusData(userTourData);
+  };
+
   useEffect(() => {
     getTenseEra();
+    userTourStaus();
   }, []);
 
   return (
@@ -155,7 +182,30 @@ function LandingPage() {
                 style={showTenseBtn}
               />
               <div className="tense-btn future-tense-btn" style={showTenseBtn}>
-                <button className="default-blue-btn">Future</button>
+                <button
+                  className="default-blue-btn"
+                  onClick={() => handleNavigateStage(eraData[2]?._id)}
+                >
+                  {eraData[2]?.title}
+                </button>
+                <div
+                  className="progress position-relative"
+                  style={{ background: "#9B9EA1", top: "3px" }}
+                >
+                  <div
+                    className="progress-bar"
+                    role="progressbar"
+                    style={{ width: "10%" }}
+                    aria-valuenow="60"
+                    aria-valuemin="0"
+                    aria-valuemax="100"
+                  ></div>
+                  <small
+                    className="justify-content-center d-flex position-absolute w-100 progress-bar-font-weight"
+                  >
+                    60%
+                  </small>
+                </div>
               </div>
             </div>
             <div className="rocket-left" style={allPartsOpacity}>
@@ -167,13 +217,30 @@ function LandingPage() {
                 style={showDotted}
               />
               <div className="tense-btn past-tense-btn" style={showTenseBtn}>
-                <button className="default-blue-btn">Past</button>
-                <span className="label">
-                  {/* <label className="text-wrapper"> */}
-                  {/* <ProgressBar now={70}></ProgressBar>; */}
-                  <ProgressBar now={20} label={`${20}%`} />
-                  {/* </label> */}
-                </span>
+                <button
+                  className="default-blue-btn"
+                  onClick={() => handleNavigateStage(eraData[1]?._id)}
+                >
+                  {eraData[1]?.title}
+                </button>
+                <div
+                  className="progress position-relative"
+                  style={{ background: "#9B9EA1", top: "3px" }}
+                >
+                  <div
+                    className="progress-bar"
+                    role="progressbar"
+                    style={{ width: "10%" }}
+                    aria-valuenow="60"
+                    aria-valuemin="0"
+                    aria-valuemax="100"
+                  ></div>
+                  <small
+                    className="justify-content-center d-flex position-absolute w-100 progress-bar-font-weight"
+                  >
+                    40%
+                  </small>
+                </div>
               </div>
               <img
                 src={rightLine}
@@ -216,15 +283,24 @@ function LandingPage() {
                 >
                   {eraData[0]?.title}
                 </button>
-                <ProgressBar
-                  now={40}
-                  label={`${40}%`}
-                  style={{
-                    position: "absolute",
-                    width: "98%",
-                    bottom: "-20px",
-                  }}
-                />
+                <div
+                  className="progress position-relative"
+                  style={{ background: "#9B9EA1", top: "3px" }}
+                >
+                  <div
+                    className="progress-bar"
+                    role="progressbar"
+                    style={{ width: "10%" }}
+                    aria-valuenow="60"
+                    aria-valuemin="0"
+                    aria-valuemax="100"
+                  ></div>
+                  <small
+                    className="justify-content-center d-flex position-absolute w-100 progress-bar-font-weight"
+                  >
+                    50%
+                  </small>
+                </div>
               </div>
             </div>
           </div>
