@@ -2,7 +2,7 @@
   "projectName": "Tense Travel",
   "development": {
     "server": {
-      "port": 8080
+      "port": 3001
     },
     "environment": {
       "APPLICATION_ENV": "development"
@@ -22,11 +22,11 @@
       "JWT_ACCESS_EXPIRY": "1d",
       "JWT_REFRESH_EXPIRY": "8d"
     },
-    "api": { "API_BASE_URL": "game/tense-travel/api", "API_VERSION": "v1" }
+    "api": { "API_BASE_URL": "tense-travel-game-api", "API_VERSION": "v1" }
   },
   "uat": {
     "server": {
-      "port": 8080
+      "port": 3004
     },
     "environment": {
       "APPLICATION_ENV": "uat"
@@ -46,20 +46,20 @@
       "JWT_ACCESS_EXPIRY": "1d",
       "JWT_REFRESH_EXPIRY": "8d"
     },
-    "api": { "API_BASE_URL": "game/tense-travel/api", "API_VERSION": "v1" }
+    "api": { "API_BASE_URL": "tense-travel-game-api", "API_VERSION": "v1" }
   },
-  "production": {
+  "prod": {
     "server": {
-      "port": 8080
+      "port": 3004
     },
     "environment": {
-      "APPLICATION_ENV": "production"
+      "APPLICATION_ENV": "prod"
     },
     "databaseSettings": {
-      "dialect": "mongodb+srv://",
+      "dialect": "mongodb://",
       "username": "admin:",
       "password": "",
-      "host": "",
+      "host": "localhost:27017/game-tense-travel",
       "params": ""
     },
     "log": {
@@ -74,5 +74,5 @@
   "winiston": {
     "logpath": "/nodeJS-postgresql-with-swagger/logs/"
   },
-  "api": { "API_BASE_URL": "game/tense-travel/api", "API_VERSION": "v1" }
+  "api": { "API_BASE_URL": "tense-travel-game-api", "API_VERSION": "v1" }
 }
