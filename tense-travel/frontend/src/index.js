@@ -12,7 +12,7 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   // <React.StrictMode>
   <StageState>
-    <Router basename={"/game/tense-travel"}>
+    <Router basename={"/games/tense-travel"}>
       <App />
     </Router>
   </StageState>
