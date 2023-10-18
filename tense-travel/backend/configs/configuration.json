@@ -22,7 +22,7 @@
       "JWT_ACCESS_EXPIRY": "1d",
       "JWT_REFRESH_EXPIRY": "8d"
     },
-    "api": { "API_BASE_URL": "game/tense-travel/api", "API_VERSION": "v1" }
+    "api": { "API_BASE_URL": "tense-travel-game-api", "API_VERSION": "v1" }
   },
   "uat": {
     "server": {
@@ -46,7 +46,7 @@
       "JWT_ACCESS_EXPIRY": "1d",
       "JWT_REFRESH_EXPIRY": "8d"
     },
-    "api": { "API_BASE_URL": "game/tense-travel/api", "API_VERSION": "v1" }
+    "api": { "API_BASE_URL": "tense-travel-game-api", "API_VERSION": "v1" }
   },
   "prod": {
     "server": {
@@ -74,5 +74,5 @@
   "winiston": {
     "logpath": "/nodeJS-postgresql-with-swagger/logs/"
   },
-  "api": { "API_BASE_URL": "game/tense-travel/api", "API_VERSION": "v1" }
+  "api": { "API_BASE_URL": "tense-travel-game-api", "API_VERSION": "v1" }
 }
