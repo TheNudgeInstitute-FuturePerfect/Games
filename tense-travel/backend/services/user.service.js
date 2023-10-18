@@ -26,3 +26,26 @@ exports.findEra = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.getTourStatus = async (req, res, next) => {
+  try {
+    const userId = req.params.userId;
+    let tourInfo = await userModel.findOne(
+      {
+        _id: userId,
+      },
+      { tourGuide: 1, tourGuideStep:1 }
+    );
+
+    return reponseModel(
+      httpStatusCodes.OK,
+      !isEmpty(tourInfo) ? "Record found" : "Record not found",
+      !isEmpty(tourInfo) ? true : false,
+      tourInfo,
+      req,
+      res
+    );
+  } catch (err) {
+    next(err);
+  }
+};

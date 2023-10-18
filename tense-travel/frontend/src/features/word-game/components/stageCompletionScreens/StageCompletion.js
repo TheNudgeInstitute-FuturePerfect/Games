@@ -34,6 +34,7 @@ function StageCompletion() {
   let [totalEarnGerms, setTotalEarnGerms] = useState(0);
   let defaultStar = coins.defaultStars;
   let scoreData = null;
+  const [heartCounter, setHeartCounter] = useState(0);
 
   const stageCompleteContext = useContext(stageContext);
   const completedStageData = stageCompleteContext.completeStage;
@@ -60,23 +61,24 @@ function StageCompletion() {
       setStageData(scoreData["data"][0]["tenseEra"][0]["stage"][0]);
       heartCount = scoreData["data"][0]["tenseEra"][0]["stage"][0]["lives"];
       setHearts(heartCount);
+      setHeartCounter(heartCount);
       setTotalEarnGerms(
         scoreData["data"][0]["tenseEra"][0]["stage"][0]["defaultGerms"]
       );
       defaultCoins =
         scoreData["data"][0]["tenseEra"][0]["stage"][0]["defaultGerms"];
       setCheckImg(true);
-      
+
       setVisibility(setShowEmptyStarVisibility, true, 1400);
       setVisibility(setShowFillStarVisibility, true, 2000);
       setVisibility(setShowHeartVisibility, true, 3000);
       setVisibility(setCoinsVisibility, true, 4000);
       setVisibility(setContinueSec, true, 5000);
 
-      celebrateGif = document.getElementById('celebrateGif');
-      setTimeout(() =>{
-        celebrateGif.style.display='block';
-      }, 1000)
+      celebrateGif = document.getElementById("celebrateGif");
+      setTimeout(() => {
+        celebrateGif.style.display = "block";
+      }, 1000);
     }
     if (scoreData["success"] === false) {
       setError(scoreData);
@@ -92,10 +94,22 @@ function StageCompletion() {
     let top = 34;
     let right = 16;
 
-    const animateHeartInterval = setInterval(frame, 0.5);
-    if (heartCount === 0) {
-      clearInterval(animateHeartInterval);
-    }
+    // const animateHeartInterval = setInterval(frame, 0.5);
+    const animateHeartInterval = setInterval(0.5);
+    const animateHeartInterval1 = setInterval(() => {
+      if (heartCount > 0) {
+        // console.log(heartCount);
+        heartCount--;
+        setHeartCounter(heartCount);
+        defaultCoins = defaultCoins + 5;
+        setTotalEarnGerms(defaultCoins);
+      }
+      if (heartCount === 0) clearInterval(animateHeartInterval1);
+    }, 1000);
+
+    // if (heartCount === 0) {
+    //   clearInterval(animateHeartInterval);
+    // }
 
     function frame() {
       if (heartCount === 0) {
@@ -145,7 +159,7 @@ function StageCompletion() {
       if (timing === 5000) {
         setMoveHeart(true);
         animateHeart();
-        celebrateGif.style.display='none';
+        celebrateGif.style.display = "none";
       } else setMoveHeart(false);
     }, timing);
   }
@@ -198,20 +212,31 @@ function StageCompletion() {
               className={checkImg ? "move-up" : ""}
             />
           </div>
-          <img id="celebrateGif" src={celebrateGiphy} alt="" className="celebrate-gif" />
+          <img
+            id="celebrateGif"
+            src={celebrateGiphy}
+            alt=""
+            className="celebrate-gif"
+          />
 
           {showHeart && stageData["isLivePurchased"] === false && (
             <div className="heart-section">
+              <div className="heart-img-txt" style={{ "--coinCount": hearts }}>
               <img
-                className="heart-img"
+                // className="heart-img"
                 src={heart}
                 align="right"
                 alt="heart-img"
                 id="heartAnimMove"
               />
-              <div className="heart-img-txt" id="heartTxtAnimMove">
-                <span>{hearts}</span>
+              <span
+                className=""
+                id="heartTxtAnimMove"
+                // style={{ "--coinCount": hearts }}
+              >{heartCounter}
+              </span>
               </div>
+              
 
               <img
                 className="heart-img-fixed"
@@ -221,7 +246,7 @@ function StageCompletion() {
                 id="heartAnimStatic"
               />
               <div className="heart-img-fixed-txt">
-                <span>{hearts}</span>
+                <span>{heartCounter}</span>
               </div>
             </div>
           )}
