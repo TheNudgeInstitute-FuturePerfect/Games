@@ -27,6 +27,7 @@ const {
   recentStageCompletedScore,
 } = require("../controller/score.controller");
 const { getUserCoins, buyLives } = require("../controller/coin.controller");
+const {getTourStatus} = require('../controller/user.controller')
 
 module.exports = {
   login,
@@ -52,4 +53,5 @@ module.exports = {
   getUserCoins,
   buyLives,
   recentStageCompletedScore,
+  getTourStatus
 };
