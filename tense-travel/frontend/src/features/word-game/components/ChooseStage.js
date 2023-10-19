@@ -83,7 +83,7 @@ function ChooseStage() {
                   {stage.length > 0 && !stage[3]?.isLocked ? (
                     <div
                       // onClick={() => navigateQuestion(stage[3])}
-                      className="image-block active"
+                      className="image-block"
                     >
                       {" "}
                     </div>

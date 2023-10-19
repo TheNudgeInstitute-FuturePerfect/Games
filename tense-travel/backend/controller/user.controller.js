@@ -1,4 +1,8 @@
-const { getTourStatus, updateTourStatus } = require("../services/user.service");
+const {
+  getTourStatus,
+  updateTourStatus,
+  getUserCompletedLevels,
+} = require("../services/user.service");
 const { handleSuccess } = require("../utils/responseHandler");
 
 exports.getTourStatus = async (req, res, next) => {
@@ -7,8 +11,11 @@ exports.getTourStatus = async (req, res, next) => {
 };
 
 exports.updateTourStatus = async (req, res, next) => {
-  console.log('controller');
   const response = await updateTourStatus(req, res, next);
-  console.log('response', response);
+  handleSuccess(response, req, res);
+};
+
+exports.getUserCompletedLevels = async (req, res, next) => {
+  const response = await getUserCompletedLevels(req, res, next);
   handleSuccess(response, req, res);
 };
