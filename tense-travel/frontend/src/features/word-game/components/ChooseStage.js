@@ -12,6 +12,7 @@ import line2 from "../../../assets/images/line2.png";
 import line3 from "../../../assets/images/line3.png";
 import line4 from "../../../assets/images/line4.png";
 import { updateTourGuideStep } from "../common/TourGuide/UpdateTourGuideSteps";
+import CommingSoonToolTip from "../common/popups/CommingSoonToolTip";
 
 function ChooseStage() {
   const navigate = useNavigate();
@@ -76,12 +77,13 @@ function ChooseStage() {
             </Link>
             <ul className="step-list">
               <li className="line1">
+                <CommingSoonToolTip />
                 <div className="flex">
                   {/* <div className="image-block"> </div> */}
                   {stage.length > 0 && !stage[3]?.isLocked ? (
                     <div
-                      onClick={() => navigateQuestion(stage[3])}
-                      className="image-block active"
+                      // onClick={() => navigateQuestion(stage[3])}
+                      className="image-block"
                     >
                       {" "}
                     </div>
@@ -97,7 +99,7 @@ function ChooseStage() {
                           .map((itm, index) => {
                             defaultStar = coins.defaultStars.stars;
                             defaultStar = defaultStar - (index + 1);
-                            return <span key={index} className="active"></span>;
+                            return <span key={index} className=""></span>;
                           })}
                       {stage.length > 0 &&
                         Array(coins.defaultStars.stars)

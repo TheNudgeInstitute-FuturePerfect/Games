@@ -134,6 +134,44 @@ function LandingPage() {
     const userId = userIds.userId;
     userTourData = await userTourStatus(userId);
     setTourStatusData(userTourData);
+
+    whenUserCompletedTourGuide(userTourData);
+  };
+
+  const whenUserCompletedTourGuide = async (userTourData) => {
+    if (userTourData["data"]?.tourGuide) {
+      setShowStartBtn({
+        opacity: 0,
+      });
+      setTimeout(() => {
+        setShowDotted({ display: "block", zIndex: 1 });
+        setShowFilledRocketImage({
+          opacity: 0,
+        });
+      }, 2000);
+
+      setTimeout(() => {
+        setSpaceShipBrok(true);
+      }, 5000);
+
+      setShow({
+        display: "none",
+      });
+      setIsActive((current) => !current);
+
+      setShowShowHalfMoon("active");
+
+      removeTourGuideStep();
+      setTimeout(() => {
+        setShowTenseBtn({
+          opacity: 1,
+        });
+
+        setFirstStepOpacity({
+          opacity: 1,
+        });
+      }, 3500);
+    }
   };
 
   useEffect(() => {
@@ -200,9 +238,7 @@ function LandingPage() {
                     aria-valuemin="0"
                     aria-valuemax="100"
                   ></div>
-                  <small
-                    className="justify-content-center d-flex position-absolute w-100 progress-bar-font-weight"
-                  >
+                  <small className="justify-content-center d-flex position-absolute w-100 progress-bar-font-weight">
                     60%
                   </small>
                 </div>
@@ -235,9 +271,7 @@ function LandingPage() {
                     aria-valuemin="0"
                     aria-valuemax="100"
                   ></div>
-                  <small
-                    className="justify-content-center d-flex position-absolute w-100 progress-bar-font-weight"
-                  >
+                  <small className="justify-content-center d-flex position-absolute w-100 progress-bar-font-weight">
                     40%
                   </small>
                 </div>
@@ -295,9 +329,7 @@ function LandingPage() {
                     aria-valuemin="0"
                     aria-valuemax="100"
                   ></div>
-                  <small
-                    className="justify-content-center d-flex position-absolute w-100 progress-bar-font-weight"
-                  >
+                  <small className="justify-content-center d-flex position-absolute w-100 progress-bar-font-weight">
                     50%
                   </small>
                 </div>
