@@ -6,6 +6,8 @@ const API_END_POINT = {
   BUY_STAGE_LIVES: "coin/buy-stage-lives",
   GET_USER_COINS: `coin/get-user-coins`,
   RECENT_STAGE_COMPLETED_SCORE: `score/recent-stage-completed-score`,
+  USER_TOUR_STATUS: `user/user-tour-status`,
+  UPDATE_USER_TOUR_STATUS: `user/update-user-tour-status`,
 };
 
 export { API_END_POINT };

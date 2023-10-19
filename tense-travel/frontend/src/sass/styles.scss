@@ -631,14 +631,15 @@
 
 .present-tense-btn {
   left: 6px;
-  bottom: 25px;
+  bottom: 0px;
   opacity: 0;
-  transition: all 3s;
+  z-index: 2;
+  // transition: all 3s;
 }
 
 .past-tense-btn {
   left: 11px;
-  bottom: -51px;
+  top: 78px;
 }
 
 .rocket-body-line {
@@ -665,4 +666,9 @@
   border-radius: 15px;
   position: relative;
   z-index: 2;
+}
+
+
+.progress-bar-font-weight {
+  font-weight: 600;
 }

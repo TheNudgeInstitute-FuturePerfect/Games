@@ -51,6 +51,13 @@ const API_ERROR_ESPONSE = {
   success: null,
 };
 
+const updateUserTourStatusPayload = {
+  userId: "",
+  sessionId: "",
+  tourGuideStep: "",
+  tourGuide: "",
+};
+
 module.exports = {
   getUserCurrentEra,
   getStageQuestion,
@@ -58,5 +65,6 @@ module.exports = {
   reTryStagePaylod,
   userSubmitAnswerResponse,
   buyLivesPaylod,
-  API_ERROR_ESPONSE
+  API_ERROR_ESPONSE,
+  updateUserTourStatusPayload,
 };

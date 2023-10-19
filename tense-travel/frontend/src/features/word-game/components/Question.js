@@ -27,8 +27,9 @@ import {
   showTourGuidePopup,
   updateTourGuideStep,
 } from "../common/TourGuide/UpdateTourGuideSteps";
+import { userTourStatus } from "../../../services/userAPI";
 
-let questionsParsed, questionsData, currentQuestionIndex;
+let questionsParsed, questionsData, currentQuestionIndex, userTourData;
 function Question() {
   const navigate = useNavigate();
   const [questions, setQuestions] = useState([]);
@@ -54,6 +55,7 @@ function Question() {
   const [showWord, setShowWord] = useState();
   const [progressBarZIndex, setProgressBarZIndex] = useState();
   const [showTourGuide, setShowTourGuide] = useState(false);
+  const [tourStatusData, setTourStatusData] = useState();
 
   /*fill in the blank input style*/
   const [inputStyle, setInputStyle] = useState({
@@ -132,7 +134,9 @@ function Question() {
     }
 
     if (questionsParsed["data"].length > 0) {
-      showTourPopup();
+      //checking user tour guide completed
+      console.log(userTourData);
+      if (!userTourData["data"]?.tourGuide) showTourPopup();
     }
   };
 
@@ -263,15 +267,24 @@ function Question() {
         tenseEraId: eraId,
       });
 
-      tourGuideSteps.steps++;
-      // updateTourGuideStep(tourGuideSteps.steps);
-      showTourGuidePopup(true);
-      setShowTourGuide(tourGuideSteps.show);
+      if (!userTourData["data"]?.tourGuide){
+        tourGuideSteps.steps++;
+        // updateTourGuideStep(tourGuideSteps.steps);
+        showTourGuidePopup(true);
+        setShowTourGuide(tourGuideSteps.show);
+      }else {
+        navigate("/complete-stage");
+      }
+      // tourGuideSteps.steps++;
+      // // updateTourGuideStep(tourGuideSteps.steps);
+      // showTourGuidePopup(true);
+      // setShowTourGuide(tourGuideSteps.show);
       // navigate("/complete-stage");
-    
     }
 
-    showTourPopup();
+    //checking user tour guide completed
+    if (!userTourData["data"]?.tourGuide) showTourPopup();
+    // else navigate("/complete-stage");
   };
 
   const answerRWPopup = (userSubmitAnswerResponse) => {
@@ -350,8 +363,17 @@ function Question() {
     navigate(`/choose-stage/${eraId}`);
   };
 
+  //getting user tour detail
+  const userTourStaus = async () => {
+    const userId = userIds.userId;
+    userTourData = await userTourStatus(userId);
+    setTourStatusData(userTourData);
+    if (userTourData) getStageQuestions();
+  };
+
   useEffect(() => {
-    getStageQuestions();
+    // getStageQuestions();
+    userTourStaus();
   }, []);
 
   //tour guide popup settings
@@ -372,7 +394,7 @@ function Question() {
       }
     }
 
-    if(tourGuideSteps.steps === 9){
+    if (tourGuideSteps.steps === 9) {
       navigate("/complete-stage");
     }
     inputRef.current.focus();

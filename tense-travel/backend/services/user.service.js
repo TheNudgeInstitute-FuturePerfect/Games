@@ -34,7 +34,7 @@ exports.getTourStatus = async (req, res, next) => {
       {
         _id: userId,
       },
-      { tourGuide: 1, tourGuideStep:1 }
+      { tourGuide: 1, tourGuideStep: 1 }
     );
 
     return reponseModel(
@@ -42,6 +42,36 @@ exports.getTourStatus = async (req, res, next) => {
       !isEmpty(tourInfo) ? "Record found" : "Record not found",
       !isEmpty(tourInfo) ? true : false,
       tourInfo,
+      req,
+      res
+    );
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.updateTourStatus = async (req, res, next) => {
+  try {
+    const requestBody = req.body;
+    const filter = { _id: requestBody["userId"] };
+    const update = {
+      $set: {
+        tourGuideStep: requestBody["tourGuideStep"],
+        tourGuide: requestBody["tourGuide"],
+      },
+    };
+    const options = { upsert: true };
+    let updateTourInfo = await userModel.updateOne(
+      filter,
+      update,
+      options
+    );
+
+    return reponseModel(
+      httpStatusCodes.OK,
+      !isEmpty(updateTourInfo) ? "State updated" : "State not updated",
+      !isEmpty(updateTourInfo) ? true : false,
+      updateTourInfo,
       req,
       res
     );

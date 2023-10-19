@@ -71,7 +71,7 @@ function ChooseStage() {
         />
         <div className="moon-bg">
           <div className="third-step">
-            <Link to={"/choose-era"} className="back-arr">
+            <Link to={"/"} className="back-arr">
               Change Era
             </Link>
             <ul className="step-list">

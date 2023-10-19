@@ -10,13 +10,6 @@ const StageState = (props) => {
   //   stageId: "650139b8e09d909e795e2515",
   // });
 
-  // const [completeStage, setCompleteStage] = useState({
-  //   userId: "6512d743574d4522062e3f87",
-  //   sessionId: "b00aadcb-0d22-4707-910e-e8826d591330",
-  //   tenseEraId: "650139b8e09d909e795e2527",
-  //   stageId: "650139b8e09d909e795e251b",
-  // });
-
   const setStageInfo = (stageInfo) => {
     setCompleteStage(stageInfo);
   };

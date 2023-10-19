@@ -10,11 +10,19 @@ import emptyStarImage from "../../../../assets/stageCmpletionImages/empty-star.s
 import filledStarImage from "../../../../assets/images/filled-star.svg";
 import stageContext from "../../../../context/tenseTravel/StageContext";
 import { useNavigate } from "react-router-dom";
-import { reTryStagePaylod } from "../../../../utils/payload";
+import {
+  reTryStagePaylod,
+  updateUserTourStatusPayload,
+} from "../../../../utils/payload";
 import { reTryStage } from "../../../../services/questionAPI";
 import { recentCompletedStageScore } from "../../../../services/scoreAPI";
-import { coins } from "../../../../utils/constants";
+import { coins, tourGuideSteps } from "../../../../utils/constants";
 import celebrateGiphy from "../../../../assets/images/celebrate.gif";
+import {
+  updateUserTourStatus,
+  userTourStatus,
+} from "../../../../services/userAPI";
+import { removeTourGuideStep } from "../../common/TourGuide/UpdateTourGuideSteps";
 
 let heartCount = 0;
 let defaultCoins = 0;
@@ -39,6 +47,7 @@ function StageCompletion() {
   const stageCompleteContext = useContext(stageContext);
   const completedStageData = stageCompleteContext.completeStage;
   let celebrateGif = null;
+  let userTourData;
 
   setTimeout(() => {
     // setCheckImg(true);
@@ -141,6 +150,21 @@ function StageCompletion() {
   };
   /* heart move animation end */
 
+  const userTourStaus = async () => {
+    userTourData = await userTourStatus(completedStageData["userId"]);
+    if (!userTourData["data"]?.tourGuide) {
+      updateUserTourStatusPayload.sessionId = completedStageData["sessionId"];
+      updateUserTourStatusPayload.userId = completedStageData["userId"];
+      updateUserTourStatusPayload.tourGuideStep = tourGuideSteps.steps;
+      updateUserTourStatusPayload.tourGuide = true;
+
+      await updateUserTourStatus(updateUserTourStatusPayload);
+      tourGuideSteps.steps = 0;
+      tourGuideSteps.show = false;
+      removeTourGuideStep("step");
+    }
+  };
+
   useEffect(() => {
     if (
       completedStageData !== null &&
@@ -151,6 +175,7 @@ function StageCompletion() {
     } else {
       navigate("/");
     }
+    userTourStaus();
   }, []);
 
   function setVisibility(functionName, value, timing) {
@@ -222,21 +247,21 @@ function StageCompletion() {
           {showHeart && stageData["isLivePurchased"] === false && (
             <div className="heart-section">
               <div className="heart-img-txt" style={{ "--coinCount": hearts }}>
-              <img
-                // className="heart-img"
-                src={heart}
-                align="right"
-                alt="heart-img"
-                id="heartAnimMove"
-              />
-              <span
-                className=""
-                id="heartTxtAnimMove"
-                // style={{ "--coinCount": hearts }}
-              >{heartCounter}
-              </span>
+                <img
+                  // className="heart-img"
+                  src={heart}
+                  align="right"
+                  alt="heart-img"
+                  id="heartAnimMove"
+                />
+                <span
+                  className=""
+                  id="heartTxtAnimMove"
+                  // style={{ "--coinCount": hearts }}
+                >
+                  {heartCounter}
+                </span>
               </div>
-              
 
               <img
                 className="heart-img-fixed"
