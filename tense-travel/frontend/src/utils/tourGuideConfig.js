@@ -1,6 +1,6 @@
 import smileyEmoji from "../assets/images/smiley-emoji.svg";
 import astronaut from "../assets/images/astronaut-what-now.png";
-import astronautOhNo from "../assets/images/astrotnaut-oh-no.png";
+import astronautOhNo from "../assets/images/astrotnaut-oh-no.svg";
 import astronautThink from "../assets/images/astronaut-think.png";
 import astronautOk from "../assets/images/astronaut-ok.png";
 import astronautGreatJob from "../assets/images/astronaut-great-job.png";

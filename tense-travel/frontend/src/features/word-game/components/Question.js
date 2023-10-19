@@ -135,7 +135,6 @@ function Question() {
 
     if (questionsParsed["data"].length > 0) {
       //checking user tour guide completed
-      console.log(userTourData);
       if (!userTourData["data"]?.tourGuide) showTourPopup();
     }
   };
