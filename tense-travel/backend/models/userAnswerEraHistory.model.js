@@ -131,16 +131,16 @@ const UserAnswerEraHistorySchema = new Schema(
       default: null,
     },
     tenseEraId: {
-      type: String,
+      type: Schema.Types.ObjectId,
       require: true,
       ref: "Tense_Era",
     },
     tenseEraTitle: {
-      type: Schema.Types.Boolean,
-      default: false,
+      type: Schema.Types.String,
+      default: "",
     },
     stageId: {
-      type: String,
+      type: Schema.Types.ObjectId,
       ref: "Tense_Era.stage",
       required: true,
     },
@@ -152,8 +152,16 @@ const UserAnswerEraHistorySchema = new Schema(
       type: Number,
       default: 0,
     },
+    eraEarnGerms: {
+      type: Number,
+      default: 0,
+    },
     stage: TenseStageSchema,
     questions: [questionSchema],
+    completedEra: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,

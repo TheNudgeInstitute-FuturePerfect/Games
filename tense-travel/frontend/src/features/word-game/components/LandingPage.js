@@ -22,6 +22,7 @@ import { ProgressBar } from "react-bootstrap";
 import { tourGuideSteps, userIds } from "../../../utils/constants";
 import { userTourStatus } from "../../../services/userAPI";
 import { removeTourGuideStep } from "../common/TourGuide/UpdateTourGuideSteps";
+import { API_END_POINT } from "../../../utils/endpoints";
 
 let userTourData;
 function LandingPage() {
@@ -106,7 +107,7 @@ function LandingPage() {
     }
 
     if (params["showPresentBtn"] === true) {
-      console.log("showPresentBtn");
+      // console.log("showPresentBtn");
       setShowTenseBtn({});
     }
   };
@@ -115,11 +116,28 @@ function LandingPage() {
   const navigate = useNavigate();
 
   const getTenseEra = async () => {
+    // const tenseEraData = await fetch(
+    //   `${process.env.REACT_APP_API_URL}/era/all-eras`
+    // );
     const tenseEraData = await fetch(
-      `${process.env.REACT_APP_API_URL}/era/all-eras`
+      `${process.env.REACT_APP_API_URL}/${API_END_POINT.TENSE_ERA_PERCENTAGE}`,
+      {
+        method: "POST",
+        body: JSON.stringify({ userId: userIds.userId }),
+        headers: { "Content-Type": "application/json" },
+      }
     );
 
     const tenseEraParsed = await tenseEraData.json();
+    tenseEraParsed["data"].map((era, item) => {
+      if (era["stage"].length > 0) {
+        let totalMarks = 0;
+        era["stage"].map((stage, indx) => {
+          totalMarks = totalMarks + stage["gotStageMarks"];
+        });
+        era["totalMarks"] = totalMarks;
+      }
+    });
     setEraData(tenseEraParsed["data"]);
   };
 
@@ -233,13 +251,14 @@ function LandingPage() {
                   <div
                     className="progress-bar"
                     role="progressbar"
-                    style={{ width: "10%" }}
+                    // style={{ width: "10%" }}
+                    style={{ width: `${Math.ceil(eraData[2]?.totalMarks)}%` }}
                     aria-valuenow="60"
                     aria-valuemin="0"
                     aria-valuemax="100"
                   ></div>
                   <small className="justify-content-center d-flex position-absolute w-100 progress-bar-font-weight">
-                    60%
+                    {`${Math.ceil(eraData[2]?.totalMarks)}%`}
                   </small>
                 </div>
               </div>
@@ -266,13 +285,14 @@ function LandingPage() {
                   <div
                     className="progress-bar"
                     role="progressbar"
-                    style={{ width: "10%" }}
+                    // style={{ width: "10%" }}
+                    style={{ width: `${Math.ceil(eraData[1]?.totalMarks)}%` }}
                     aria-valuenow="60"
                     aria-valuemin="0"
                     aria-valuemax="100"
                   ></div>
                   <small className="justify-content-center d-flex position-absolute w-100 progress-bar-font-weight">
-                    40%
+                    {`${Math.ceil(eraData[1]?.totalMarks)}%`}
                   </small>
                 </div>
               </div>
@@ -324,13 +344,14 @@ function LandingPage() {
                   <div
                     className="progress-bar"
                     role="progressbar"
-                    style={{ width: "10%" }}
+                    // style={{ width: "10%" }}
+                    style={{ width: `${Math.ceil(eraData[0]?.totalMarks)}%` }}
                     aria-valuenow="60"
                     aria-valuemin="0"
                     aria-valuemax="100"
                   ></div>
                   <small className="justify-content-center d-flex position-absolute w-100 progress-bar-font-weight">
-                    50%
+                    {`${Math.ceil(eraData[0]?.totalMarks)}%`}
                   </small>
                 </div>
               </div>

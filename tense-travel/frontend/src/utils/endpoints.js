@@ -8,6 +8,7 @@ const API_END_POINT = {
   RECENT_STAGE_COMPLETED_SCORE: `score/recent-stage-completed-score`,
   USER_TOUR_STATUS: `user/user-tour-status`,
   UPDATE_USER_TOUR_STATUS: `user/update-user-tour-status`,
+  TENSE_ERA_PERCENTAGE: "era/all-era-its-percentage",
 };
 
 export { API_END_POINT };
