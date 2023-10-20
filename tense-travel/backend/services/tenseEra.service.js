@@ -60,7 +60,7 @@ exports.getAllEraItsPercentage = async (req, res, next) => {
     //   },
     //   { _id: 1, title: 1, description: 1, sequence: 1, type: 1, stage: 1 }
     // );
-    console.log(req.body);
+    // console.log(req.body);
     // let userAnswerData = await eraTenseModel.aggregate([
     //   {
     //     $lookup: {
