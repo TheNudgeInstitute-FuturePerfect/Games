@@ -234,6 +234,16 @@ const checkAttendingQuestionIsAnswered = async (model, requestBody) => {
   return answerExists;
 };
 
+const getRecentUserAnswerDetail = async(model, requestBody)=> {
+  const tenseStageDetail = await model.findOne({
+    userId: requestBody["userId"],
+    sessionId: requestBody["sessionId"],
+    "tenseEra.tenseEraId": requestBody["tenseEraId"],
+    "tenseEra.stage.stageId": requestBody["stageId"],
+  });
+  return tenseStageDetail;
+}
+
 module.exports = {
   getLivesOfUnlockStage,
   filterStage,
@@ -241,4 +251,5 @@ module.exports = {
   getUserDetails,
   updateUserDetails,
   checkAttendingQuestionIsAnswered,
+  getRecentUserAnswerDetail
 };

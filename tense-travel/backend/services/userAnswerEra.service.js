@@ -34,12 +34,18 @@ const {
   getUserDetails,
   updateUserDetails,
   checkAttendingQuestionIsAnswered,
+  getRecentUserAnswerDetail,
+  getLivesOfUnlockStage,
 } = require("./global-services/filterEraSatage.service");
 const { updateCoin } = require("./answer/coinsCalculation");
 const {
   userAnswerEraHistoryModel,
 } = require("../models/userAnswerEraHistory.model");
 const ObjectID = require("mongodb").ObjectId;
+const {
+  userAnswerEraHisotryPayloadReset,
+  userAnswerEraHisotryPayloadPrepare,
+} = require("../utils/resetPayload");
 
 exports.findUserEra = async (req, res, next) => {
   try {
@@ -313,7 +319,7 @@ exports.userAttendingQuestion = async (req, res, next) => {
         );
       }
 
-      //checking user completed ten questions of a stage
+      //checking user completed ten(10) questions of a stage
       let answerCount = null;
       if (stages["attemptQuestions"] === stageQuestionSize.size) {
         answerCount = await getGermsDetails(userAnswerEraModel, requestBody);
@@ -412,11 +418,31 @@ exports.userAttendingQuestion = async (req, res, next) => {
         answerResponseFormat.nextQuestion = false;
         answerResponseFormat.isGameOver = false;
 
+        /* preparig and creating user answer history */
+        userAnswerEraHisotryPayloadReset();
+        const tenseStageDetail = await getLivesOfUnlockStage(
+          userAnswerEraModel,
+          requestBody
+        );
+        const hisotryPayload = await userAnswerEraHisotryPayloadPrepare(
+          tenseStageDetail,
+          requestBody
+        );
+        //creating history
+        const createdUserEraAnswerHistory = await createUserEraAnswerHistory(
+          userAnswerEraHistoryModel,
+          userAnswerEraHisotryPayload
+        );
+        /* preparig and creating user answer history end */
+
         return reponseModel(
           httpStatusCodes.OK,
           "Stage has been completed",
           true,
-          { answerResponseFormat },
+          {
+            answerResponseFormat,
+            hisotryPayload,
+          },
           req,
           res
         );

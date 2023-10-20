@@ -36,6 +36,8 @@ const userAnswerEraHisotryPayload = {
   questions: [],
   startTime: "",
   endTime: "",
+  eraEarnGerms:0,
+  completedEra: false,
 };
 
 const heartLives = {

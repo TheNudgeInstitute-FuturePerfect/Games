@@ -1,5 +1,10 @@
 const { login, register } = require("../controller/auth.controller");
-const { getAllEra: findAllEra } = require("../controller/tenseEra.controller");
+
+const {
+  getAllEra: findAllEra,
+  getAllEraItsPercentage,
+} = require("../controller/tenseEra.controller");
+
 const {
   create: createQuestion,
   find: findAllQuestion,
@@ -58,4 +63,5 @@ module.exports = {
   recentStageCompletedScore,
   getTourStatus,
   updateTourStatus,
+  getAllEraItsPercentage,
 };

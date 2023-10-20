@@ -4,6 +4,7 @@ const {
   findOne,
   update,
   deleteRole,
+  getAllEraItsPercentage,
 } = require("../services/tenseEra.service");
 const { handleSuccess } = require("../utils/responseHandler");
 
@@ -24,5 +25,10 @@ exports.update = async (req, res, next) => {
 
 exports.deleteRole = async (req, res, next) => {
   const response = await deleteRole (req, res, next);
+  handleSuccess(response, req, res);
+};
+
+exports.getAllEraItsPercentage = async (req, res, next) => {
+  const response = await getAllEraItsPercentage(req, res, next);
   handleSuccess(response, req, res);
 };
