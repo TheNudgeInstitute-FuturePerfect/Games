@@ -312,6 +312,7 @@ const addNewStageSessionIdInUserAnswer = async (model, requestBody) => {
     {
       $set: {
         sessionId: sessionId,
+        startTime: new Date(Date.now()).toISOString()
       },
     }
   );
