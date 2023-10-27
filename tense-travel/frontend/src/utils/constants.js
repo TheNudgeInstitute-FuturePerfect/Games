@@ -1,6 +1,8 @@
+const { getStorage } = require("./payload");
+
 const userIds = {
-  userId: "6523ba5e7708707fdec0c2f3",
-  sessionId: "edb0b40a-05ed-4fbe-a9d8-8f08eeb9c069",
+  userId: "6512d743574d4522062e3f87",
+  sessionId: getStorage()["sessionId"],
 };
 
 const coins = {

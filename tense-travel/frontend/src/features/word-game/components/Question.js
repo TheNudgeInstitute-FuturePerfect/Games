@@ -5,6 +5,7 @@ import {
   buyLivesPaylod,
   getStageQuestion,
   reTryStagePaylod,
+  setStorage,
   userAnswerSubmitPayload,
   userSubmitAnswerResponse,
 } from "../../../utils/payload";
@@ -19,11 +20,7 @@ import {
   resetUserRecentStage,
 } from "../../../services/questionAPI";
 import CommonModal from "../common/CommonModal";
-import {
-  actionType,
-  popupTypes,
-  setTimeOut,
-} from "../../../utils/commonFunction";
+import { actionType, popupTypes } from "../../../utils/commonFunction";
 import stageContext from "../../../context/tenseTravel/StageContext";
 import ExitStageConfirmPopup from "../common/CommonModal/ExitStageConfirmPopup";
 import TourGuideIndex from "../common/TourGuide";
@@ -126,6 +123,9 @@ function Question() {
       setRetryMsg("Something went wrong");
       return;
     }
+    const session = { sessionId };
+    setStorage(session);
+
     setPurchaseDialogShow(false);
     setRetryMsg("Something went wrong");
 

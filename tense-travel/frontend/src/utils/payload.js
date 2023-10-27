@@ -58,6 +58,16 @@ const updateUserTourStatusPayload = {
   tourGuide: "",
 };
 
+const setStorage = (data) => {
+  data = JSON.stringify(data);
+  sessionStorage.setItem("tesne-travel", data);
+};
+
+const getStorage = () => {
+  const storageData = sessionStorage.getItem("tesne-travel");
+  return JSON.parse(storageData);
+};
+
 module.exports = {
   getUserCurrentEra,
   getStageQuestion,
@@ -67,4 +77,6 @@ module.exports = {
   buyLivesPaylod,
   API_ERROR_ESPONSE,
   updateUserTourStatusPayload,
+  setStorage,
+  getStorage
 };
