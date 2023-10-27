@@ -2,6 +2,7 @@ const {
   userAnswerEraModel,
   questoinBankModel,
   userModel,
+  eraTenseModel,
 } = require("../models/index");
 const { reponseModel } = require("../utils/responseHandler");
 const httpStatusCodes = require("../utils/httpStatusCodes");
@@ -36,6 +37,11 @@ const {
   checkAttendingQuestionIsAnswered,
   getRecentUserAnswerDetail,
   getLivesOfUnlockStage,
+  checkUserIsInUserAnswerModel,
+  getHighestStarsStage,
+  preparingHighestStarsResponse,
+  checkCurrentStageIsInUserAnswerModel,
+  filterStageWithoutSession,
 } = require("./global-services/filterEraSatage.service");
 const { updateCoin } = require("./answer/coinsCalculation");
 const {
@@ -419,7 +425,7 @@ exports.userAttendingQuestion = async (req, res, next) => {
         answerResponseFormat.isGameOver = false;
 
         /* preparig and creating user answer history */
-        userAnswerEraHisotryPayloadReset();
+        userAnswerEraHisotryPayloadReset(); //reset history payload
         const tenseStageDetail = await getLivesOfUnlockStage(
           userAnswerEraModel,
           requestBody
@@ -989,6 +995,186 @@ exports.getCurrentUserAndSessionId = async (req, res, next) => {
       req,
       res
     );
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.userHighStarsStagesOfEra = async (req, res, next) => {
+  try {
+    const requestBody = req.body;
+    req.params["id"] = requestBody["tenseEraId"];
+    const userAndSessionInUserAnswer = await checkUserIsInUserAnswerModel(
+      req,
+      res,
+      next
+    );
+
+    //check if user and session are already
+    if (!isEmpty(userAndSessionInUserAnswer)) {
+      let getHighestStarStage = await getHighestStarsStage(req, res, next);
+
+      let checkCurrentStageIsInUserAnswerData =
+        await checkCurrentStageIsInUserAnswerModel(req, res, next);
+
+      if (!isEmpty(getHighestStarStage)) {
+        getHighestStarStage = preparingHighestStarsResponse(
+          getHighestStarStage,
+          checkCurrentStageIsInUserAnswerData
+        );
+      }
+
+      let userEras = await userAnswerEraModel.findOne({
+        userId: requestBody["userId"],
+        "tenseEra.tenseEraId": new ObjectID(requestBody["tenseEraId"]),
+      });
+
+      //check if stage and era are already
+      if (!isEmpty(userEras)) {
+        const currentEra = eraFilter({
+          tenseEra: userEras["tenseEra"],
+          requestBody: requestBody,
+        });
+
+        //track the locked stage and update it to unlocked stage
+        let filterStages = await filterStageWithoutSession(
+          userAnswerEraModel,
+          requestBody
+        );
+
+        filterStages = filterStages[0]["tenseEra"][0]["stage"];
+        let unLockedStage = [];
+        let lockedStage = [];
+        filterStages.map((item, index) => {
+          if (item?.completedStage) {
+            delete item?.question;
+            unLockedStage.push(item);
+          } else {
+            lockedStage.push(item);
+          }
+        });
+
+        if (lockedStage.length > 0) {
+          requestBody["stageId"] = lockedStage[0]["stageId"];
+          await unlockStage(userAnswerEraModel, requestBody, false);
+
+          currentEra["stage"].forEach((element) => {
+            if (element?.stageId === requestBody["stageId"].toString()) {
+              element.isLocked = false;
+            }
+          });
+        }
+
+        return reponseModel(
+          httpStatusCodes.OK,
+          "User era found",
+          true,
+          !isEmpty(getHighestStarStage) ? getHighestStarStage : currentEra,
+          req,
+          res
+        );
+      } else {
+        //check if stage and era are not already
+        let eraStages = await findEra(req, res, next);
+        const tenseEraTitle = eraStages["data"]?.title;
+        eraStages = eraStages["data"]["stage"];
+        const eraStagesPayload = eraStages.map((stage, indx) => {
+          return {
+            stageId: stage._id,
+            sequence: stage.sequence,
+            stageTitle: stage.title,
+          };
+        });
+
+        const tenseEraPayload = {
+          tenseEraId: requestBody["tenseEraId"],
+          tenseEraTitle,
+          attempt: 1,
+          stage: eraStagesPayload,
+        };
+        let createUserErasPayload = await new userAnswerEraModel({
+          tenseEra: tenseEraPayload,
+        });
+        createUserErasPayload = createUserErasPayload["tenseEra"];
+
+        const savedUserEra = await userAnswerEraModel.updateOne(
+          {
+            userId: new ObjectID(requestBody["userId"]),
+          },
+          {
+            $push: {
+              tenseEra: createUserErasPayload,
+            },
+          }
+        );
+
+        let userEras = await userAnswerEraModel.findOne({
+          userId: new ObjectID(requestBody["userId"]),
+          "tenseEra.tenseEraId": new ObjectID(requestBody["tenseEraId"]),
+        });
+
+        const currentEra = eraFilter({
+          tenseEra: userEras["tenseEra"],
+          requestBody: requestBody,
+        });
+
+        requestBody["stageId"] = currentEra["stage"][0]["stageId"];
+        await unlockStage(userAnswerEraModel, requestBody, false);
+
+        return reponseModel(
+          httpStatusCodes.OK,
+          "User era found",
+          true,
+          !isEmpty(getHighestStarStage) ? getHighestStarStage : currentEra,
+          req,
+          res
+        );
+      }
+    } else {
+      let eraStages = await findEra(req, res, next);
+      const tenseEraTitle = eraStages["data"]?.title;
+      eraStages = eraStages["data"]["stage"];
+      const eraStagesPayload = eraStages.map((stage, indx) => {
+        return {
+          stageId: stage._id,
+          sequence: stage.sequence,
+          stageTitle: stage.title,
+        };
+      });
+
+      const tenseEraPayload = {
+        tenseEraId: requestBody["tenseEraId"],
+        tenseEraTitle,
+        attempt: 1,
+        stage: eraStagesPayload,
+      };
+      const createUserEras = await new userAnswerEraModel({
+        userId: new ObjectID(requestBody["userId"]),
+        tenseEra: tenseEraPayload,
+      });
+      const createdUserEras = await createUserEras.save();
+
+      requestBody["stageId"] =
+        createdUserEras["tenseEra"][0]["stage"][0]["stageId"];
+
+      createdUserEras["tenseEra"][0]["stage"][0]["isLocked"] = false;
+
+      const currentEra = eraFilter({
+        tenseEra: createdUserEras["tenseEra"],
+        requestBody: requestBody,
+      });
+
+      await unlockStage(userAnswerEraModel, requestBody, false);
+
+      return reponseModel(
+        httpStatusCodes.OK,
+        "User era found",
+        true,
+        !isEmpty(getHighestStarStage) ? getHighestStarStage : currentEra,
+        req,
+        res
+      );
+    }
   } catch (err) {
     next(err);
   }

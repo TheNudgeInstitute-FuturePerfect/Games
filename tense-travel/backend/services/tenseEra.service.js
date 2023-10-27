@@ -1,7 +1,11 @@
-const { eraTenseModel } = require("../models/index");
+const { eraTenseModel, userAnswerEraModel } = require("../models/index");
 const { reponseModel } = require("../utils/responseHandler");
 const httpStatusCodes = require("../utils/httpStatusCodes");
 const { isEmpty, result } = require("lodash");
+const {
+  checkStageIsAnswered,
+} = require("./global-services/filterEraSatage.service");
+const { resetStageInUserAnswer } = require("./answer/retryAttempt");
 const ObjectID = require("mongodb").ObjectId;
 
 exports.getAllEra = async (req, res, next) => {
@@ -122,10 +126,11 @@ exports.getAllEraItsPercentage = async (req, res, next) => {
             {
               $match: {
                 $expr: {
-                  $eq: ["$userId", new ObjectID(req.body["userId"])],
-                }, // Match user ID
+                  $eq: ["$userId", new ObjectID(req.body["userId"])], // Match user ID
+                },
               },
             },
+            { $limit: 3 },
           ],
         },
       },
@@ -235,6 +240,67 @@ exports.getAllEraItsPercentage = async (req, res, next) => {
       req,
       res
     );
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.resetUserRecentStage = async (req, res, next) => {
+  try {
+    const requestBody = req.body;
+    let stageData = await checkStageIsAnswered(userAnswerEraModel, requestBody);
+
+    if (!isEmpty(stageData)) {
+      let resetRecentStage;
+
+      if (stageData[0]["tenseEra"][0]["stage"][0]?.completedStage) {
+        resetRecentStage = await resetStageInUserAnswer(
+          userAnswerEraModel,
+          requestBody
+        );
+        if (
+          !isEmpty(resetRecentStage) &&
+          resetRecentStage?.acknowledged &&
+          resetRecentStage?.modifiedCount === 1
+        ) {
+          return reponseModel(
+            httpStatusCodes.OK,
+            "Stage reset successfully",
+            true,
+            resetRecentStage,
+            req,
+            res
+          );
+        } else {
+          return reponseModel(
+            httpStatusCodes.OK,
+            "Stage reset not successfully",
+            false,
+            resetRecentStage,
+            req,
+            res
+          );
+        }
+      } else {
+        return reponseModel(
+          httpStatusCodes.OK,
+          "Stage is already reseted",
+          true,
+          resetRecentStage,
+          req,
+          res
+        );
+      }
+    } else {
+      return reponseModel(
+        httpStatusCodes.OK,
+        "Something went wrong",
+        false,
+        resetRecentStage,
+        req,
+        res
+      );
+    }
   } catch (err) {
     next(err);
   }

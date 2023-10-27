@@ -30,7 +30,7 @@ const userAnswerEraHisotryPayloadPrepare = async (
   userAnswerEraHisotryPayload.tenseEraId = requestBody["tenseEraId"];
   userAnswerEraHisotryPayload.stageId = requestBody["stageId"];
   userAnswerEraHisotryPayload.earnStars =
-    tenseStageDetail[0]["tenseEra"][0]["stage"]["earnStars"];
+    tenseStageDetail[0]["tenseEra"][0]["stage"][0]["earnStars"];
   userAnswerEraHisotryPayload.eraEarnGerms =
     tenseStageDetail[0]["tenseEra"][0]["earnGerms"];
   userAnswerEraHisotryPayload.questions =

@@ -13,6 +13,7 @@ import line3 from "../../../assets/images/line3.png";
 import line4 from "../../../assets/images/line4.png";
 import { updateTourGuideStep } from "../common/TourGuide/UpdateTourGuideSteps";
 import CommingSoonToolTip from "../common/popups/CommingSoonToolTip";
+import { API_END_POINT } from "../../../utils/endpoints";
 
 function ChooseStage() {
   const navigate = useNavigate();
@@ -33,7 +34,8 @@ function ChooseStage() {
     getUserCurrentEra.tenseEraId = eraId;
 
     const tenseStageData = await fetch(
-      `${process.env.REACT_APP_API_URL}/userEra/get-user-current-era`,
+      // `${process.env.REACT_APP_API_URL}/userEra/get-user-current-era`,
+      `${process.env.REACT_APP_API_URL}/${API_END_POINT.HIGHEST_STARS_STAGE_OF_ERA}`,
       {
         method: "POST",
         body: JSON.stringify(getUserCurrentEra),

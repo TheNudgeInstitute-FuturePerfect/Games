@@ -7,6 +7,7 @@ const {
   getUserCurrentEra,
   getCurrentUserAndSessionId,
   eraseUserStageAttempts,
+  userHighStarsStagesOfEra,
 } = require("../services/userAnswerEra.service");
 const { handleSuccess } = require("../utils/responseHandler");
 
@@ -104,5 +105,22 @@ exports.getCurrentUserAndSessionId = async (req, res, next) => {
 
 exports.eraseUserStageAttempts = async (req, res, next) => {
   const response = await eraseUserStageAttempts(req, res, next);
+  handleSuccess(response, req, res);
+};
+
+
+ /**
+ *
+ * @param {
+ *  requestBody: {
+ *  "userId": "",
+ *  "tenseEraId":""
+ * }
+ *  } req
+ * @param {*} res
+ * @param {*} next
+ */
+exports.userHighStarsStagesOfEra = async (req, res, next) => {
+  const response = await userHighStarsStagesOfEra(req, res, next);
   handleSuccess(response, req, res);
 };

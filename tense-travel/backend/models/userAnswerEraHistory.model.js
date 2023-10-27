@@ -3,6 +3,7 @@ const {
   heartLives,
 } = require("../utils/constants/payloadInterface/payload.interface");
 const { Schema } = mongoose;
+const { v4: uuidv4 } = require("uuid");
 
 const TenseStageSchema = new Schema({
   stageId: {
@@ -161,6 +162,10 @@ const UserAnswerEraHistorySchema = new Schema(
     completedEra: {
       type: Boolean,
       default: false,
+    },
+    transactionNumber: {
+      type: String, // Use a string type for UUID
+      default: uuidv4, // Generate a UUID using uuidv4 as the default value
     },
   },
   {

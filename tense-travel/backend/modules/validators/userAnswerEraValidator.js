@@ -69,8 +69,30 @@ const getUserCurrentEraValidator = async (req, res, next) => {
   }
 };
 
+/*user highest stars stage of era validator*/
+const highStarsStageObj = {
+  userId: Joi.string().required(),
+  sessionId: Joi.string().optional().allow(null),
+  tenseEraId: Joi.string().required(),
+};
+
+const highStarsStageSchema = Joi.object(highStarsStageObj);
+highStarsStageSchema.validate({});
+
+const userHighStarsStageOfEraValidator = async (req, res, next) => {
+  try {
+    let payload = req.body;
+    await highStarsStageSchema.validateAsync(payload, { abortEarly: false });
+    next();
+  } catch (error) {
+    const errMsg = error["details"][0]?.message || "";
+    errorHandler.handle(httpStatusCodes.BAD_REQUEST, errMsg, false, req, res);
+  }
+};
+
 module.exports = {
   userRetryStageValidator,
   userAnswerValidator,
   getUserCurrentEraValidator,
+  userHighStarsStageOfEraValidator,
 };
