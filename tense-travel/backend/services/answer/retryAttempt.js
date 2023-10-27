@@ -218,9 +218,51 @@ const createUserEraAnswerHistory = async (
   return createdUserHistory;
 };
 
+const resetStageInUserAnswer = async (model, requestBody) => {
+  // let retryCount = parseInt(historyPayload["retryCount"]);
+  // retryCount++;
+
+  // let attemptCount = parseInt(historyPayload["attemptCount"]);
+  // attemptCount++;
+
+  const resetData = await model.updateOne(
+    {
+      userId: requestBody["userId"],
+      "tenseEra.tenseEraId": requestBody["tenseEraId"],
+      "tenseEra.stage.stageId": requestBody["stageId"],
+    },
+    {
+      $set: {
+        // "tenseEra.$[].stage.$[isCorrect].attempt": attemptCount,
+        "tenseEra.$[].stage.$[isCorrect].earnStars": 0,
+        "tenseEra.$[].stage.$[isCorrect].defaultGerms": 0,
+        "tenseEra.$[].stage.$[isCorrect].earnGerms": 0,
+        "tenseEra.$[].stage.$[isCorrect].completedStage": false,
+        "tenseEra.$[].stage.$[isCorrect].numberOfCorrect": 0,
+        "tenseEra.$[].stage.$[isCorrect].numberOfInCorrect": 0,
+        "tenseEra.$[].stage.$[isCorrect].attemptQuestions": 0,
+        "tenseEra.$[].stage.$[isCorrect].lives": heartLives.live,
+        "tenseEra.$[].stage.$[isCorrect].question": [],
+        "tenseEra.$[].stage.$[isCorrect].histories": [],
+        "tenseEra.$[].stage.$[isCorrect].isLivePurchased": false,
+      },
+    },
+    {
+      arrayFilters: [
+        {
+          "isCorrect.stageId": requestBody["stageId"],
+        },
+      ],
+    }
+  );
+
+  return resetData;
+};
+
 module.exports = {
   retryGame,
   unlockStage,
   buyLives,
   createUserEraAnswerHistory,
+  resetStageInUserAnswer,
 };

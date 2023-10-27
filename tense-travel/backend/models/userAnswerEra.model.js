@@ -147,6 +147,10 @@ const TenseEraSchema = new Schema({
           ],
         },
         histories: { type: Array, default: [] },
+        attempt: {
+          type: Number,
+          default: 0,
+        },
       },
     ],
   },

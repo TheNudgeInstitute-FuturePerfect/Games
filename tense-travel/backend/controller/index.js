@@ -3,6 +3,7 @@ const { login, register } = require("../controller/auth.controller");
 const {
   getAllEra: findAllEra,
   getAllEraItsPercentage,
+  resetUserRecentStage
 } = require("../controller/tenseEra.controller");
 
 const {
@@ -25,6 +26,7 @@ const {
   getUserCurrentEra,
   getCurrentUserAndSessionId,
   eraseUserStageAttempts,
+  userHighStarsStagesOfEra
 } = require("../controller/userAnswerEra.controller");
 
 const {
@@ -64,4 +66,6 @@ module.exports = {
   getTourStatus,
   updateTourStatus,
   getAllEraItsPercentage,
+  userHighStarsStagesOfEra,
+  resetUserRecentStage
 };
