@@ -29,7 +29,11 @@ function ChooseStage() {
   const { eraId } = useParams();
 
   const getStageOfEra = async () => {
-    getUserCurrentEra["sessionId"] = userIds.sessionId;
+    getUserCurrentEra["sessionId"] = "";
+    getUserCurrentEra.userId = "";
+    getUserCurrentEra.tenseEraId = "";
+    // getUserCurrentEra["sessionId"] = userIds.sessionId;
+    delete getUserCurrentEra["sessionId"];
     getUserCurrentEra.userId = userIds.userId;
     getUserCurrentEra.tenseEraId = eraId;
 

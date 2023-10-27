@@ -5,7 +5,7 @@ const httpStatusCodes = require("../../utils/httpStatusCodes");
 /* get user recent stage completed score */
 const userRecentStageObj = {
   userId: Joi.string().required(),
-  sessionId: Joi.string().optional().allow(""),
+  sessionId: Joi.string().optional().allow(null),
   tenseEraId: Joi.string().required(),
   stageId: Joi.string().required(),
 };

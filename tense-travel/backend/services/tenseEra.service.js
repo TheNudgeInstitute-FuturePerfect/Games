@@ -5,7 +5,11 @@ const { isEmpty, result } = require("lodash");
 const {
   checkStageIsAnswered,
 } = require("./global-services/filterEraSatage.service");
-const { resetStageInUserAnswer } = require("./answer/retryAttempt");
+const {
+  resetStageInUserAnswer,
+  getStageSessionId,
+  addNewStageSessionIdInUserAnswer,
+} = require("./answer/retryAttempt");
 const ObjectID = require("mongodb").ObjectId;
 
 exports.getAllEra = async (req, res, next) => {
@@ -249,20 +253,30 @@ exports.resetUserRecentStage = async (req, res, next) => {
   try {
     const requestBody = req.body;
     let stageData = await checkStageIsAnswered(userAnswerEraModel, requestBody);
-
+    let sessionId;
+    let resetRecentStage = {};
     if (!isEmpty(stageData)) {
-      let resetRecentStage;
-
       if (stageData[0]["tenseEra"][0]["stage"][0]?.completedStage) {
         resetRecentStage = await resetStageInUserAnswer(
           userAnswerEraModel,
           requestBody
         );
+
         if (
           !isEmpty(resetRecentStage) &&
           resetRecentStage?.acknowledged &&
           resetRecentStage?.modifiedCount === 1
         ) {
+          //generating new session
+          await addNewStageSessionIdInUserAnswer(
+            userAnswerEraModel,
+            requestBody
+          );
+          //getting new session
+          sessionId = await getStageSessionId(userAnswerEraModel, requestBody);
+          sessionId = sessionId["sessionId"];
+          resetRecentStage["sessionId"] = sessionId;
+
           return reponseModel(
             httpStatusCodes.OK,
             "Stage reset successfully",
@@ -272,9 +286,14 @@ exports.resetUserRecentStage = async (req, res, next) => {
             res
           );
         } else {
+          //getting old session
+          sessionId = await getStageSessionId(userAnswerEraModel, requestBody);
+          sessionId = sessionId["sessionId"];
+          resetRecentStage["sessionId"] = sessionId;
+
           return reponseModel(
-            httpStatusCodes.OK,
-            "Stage reset not successfully",
+            httpStatusCodes.INTERNAL_SERVER,
+            "Stage reset not successfully. Please try again",
             false,
             resetRecentStage,
             req,
@@ -282,6 +301,24 @@ exports.resetUserRecentStage = async (req, res, next) => {
           );
         }
       } else {
+        //fetching old session
+        sessionId = await getStageSessionId(userAnswerEraModel, requestBody);
+        sessionId = sessionId["sessionId"];
+
+        if (!isEmpty(sessionId)) {
+          resetRecentStage["sessionId"] = sessionId;
+        } else {
+          //generating new session
+          await addNewStageSessionIdInUserAnswer(
+            userAnswerEraModel,
+            requestBody
+          );
+          //getting new session
+          sessionId = await getStageSessionId(userAnswerEraModel, requestBody);
+          sessionId = sessionId["sessionId"];
+          resetRecentStage["sessionId"] = sessionId;
+        }
+
         return reponseModel(
           httpStatusCodes.OK,
           "Stage is already reseted",
@@ -292,9 +329,10 @@ exports.resetUserRecentStage = async (req, res, next) => {
         );
       }
     } else {
+      resetRecentStage["sessionId"] = "";
       return reponseModel(
         httpStatusCodes.OK,
-        "Something went wrong",
+        "This stage is not answered",
         false,
         resetRecentStage,
         req,

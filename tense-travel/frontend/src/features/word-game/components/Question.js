@@ -13,7 +13,11 @@ import {
   tourGuideSteps,
   userIds,
 } from "../../../utils/constants";
-import { buyLives, reTryStage } from "../../../services/questionAPI";
+import {
+  buyLives,
+  reTryStage,
+  resetUserRecentStage,
+} from "../../../services/questionAPI";
 import CommonModal from "../common/CommonModal";
 import {
   actionType,
@@ -97,11 +101,33 @@ function Question() {
     }
   };
 
-  const getStageQuestions = async () => {
-    getStageQuestion["sessionId"] = userIds.sessionId;
+  const resetRecentStage = async () => {
     getStageQuestion.userId = userIds.userId;
     getStageQuestion.tenseEraId = eraId;
     getStageQuestion.stageId = stageId;
+    getStageQuestion["sessionId"] = "";
+
+    const resetRecentStage = await resetUserRecentStage(getStageQuestion);
+    if (resetRecentStage["success"] === true) {
+      getStageQuestion["sessionId"] = resetRecentStage["data"]?.sessionId;
+    }
+    return getStageQuestion["sessionId"];
+  };
+
+  const getStageQuestions = async () => {
+    // getStageQuestion["sessionId"] = userIds.sessionId;
+    getStageQuestion.userId = userIds.userId;
+    getStageQuestion.tenseEraId = eraId;
+    getStageQuestion.stageId = stageId;
+    let sessionId = await resetRecentStage();
+
+    if (sessionId === null || sessionId === "") {
+      setPurchaseDialogShow(true);
+      setRetryMsg("Something went wrong");
+      return;
+    }
+    setPurchaseDialogShow(false);
+    setRetryMsg("Something went wrong");
 
     questionsData = await fetch(
       `${process.env.REACT_APP_API_URL}/question/get-random-question-byunlock-stage`,
@@ -193,7 +219,8 @@ function Question() {
   const checkAnswer = async () => {
     const currentQues = questionsParsed["data"][currentQuestionIndex];
 
-    userAnswerSubmitPayload.sessionId = userIds.sessionId;
+    // userAnswerSubmitPayload.sessionId = userIds.sessionId;
+    userAnswerSubmitPayload.sessionId = getStageQuestion["sessionId"];
     userAnswerSubmitPayload.userId = userIds.userId;
     userAnswerSubmitPayload.questionId = currentQues?._id;
     userAnswerSubmitPayload.tenseEraId = currentQues?.tenseEraId;
@@ -261,17 +288,18 @@ function Question() {
       // setRetryMsg(userSubmitAnswerResponse["message"]);
       stageCompleteContext.setStageInfo({
         userId: userIds.userId,
-        sessionId: userIds.sessionId,
+        // sessionId: userIds.sessionId,
+        sessionId: getStageQuestion["sessionId"],
         stageId: stageId,
         tenseEraId: eraId,
       });
 
-      if (!userTourData["data"]?.tourGuide){
+      if (!userTourData["data"]?.tourGuide) {
         tourGuideSteps.steps++;
         // updateTourGuideStep(tourGuideSteps.steps);
         showTourGuidePopup(true);
         setShowTourGuide(tourGuideSteps.show);
-      }else {
+      } else {
         navigate("/complete-stage");
       }
       // tourGuideSteps.steps++;
@@ -331,7 +359,8 @@ function Question() {
     setPurchaseDialogShow(false);
     setUserAnswer("");
 
-    reTryStagePaylod.sessionId = userIds.sessionId;
+    // reTryStagePaylod.sessionId = userIds.sessionId;
+    reTryStagePaylod.sessionId = getStageQuestion["sessionId"];
     reTryStagePaylod.userId = userIds.userId;
     reTryStagePaylod.tenseEraId = eraId;
     reTryStagePaylod.stageId = stageId;
@@ -345,7 +374,8 @@ function Question() {
 
   const buyHeart = async () => {
     setUserAnswer("");
-    buyLivesPaylod.sessionId = userIds.sessionId;
+    // buyLivesPaylod.sessionId = userIds.sessionId;
+    buyLivesPaylod.sessionId = getStageQuestion["sessionId"];
     buyLivesPaylod.userId = userIds.userId;
     buyLivesPaylod.stageId = stageId;
     buyLivesPaylod.tenseEraId = eraId;
@@ -573,7 +603,7 @@ function Question() {
           <div className="purchase-coins-modal active">
             <div className="flex">
               {/* <div className="icon"></div> */}
-              <div className="ques-ans-info">
+              <div className="ques-ans-info" style={{ margin: "auto" }}>
                 <strong>{retryMsg && retryMsg}</strong>
                 {/* <strong>Explanation: He eats his food</strong> */}
               </div>
@@ -601,6 +631,20 @@ function Question() {
                 </button>
               </div>
             )}
+            <div
+              style={{
+                margin: "auto",
+                left: "10%",
+                position: "absolute",
+                display: "flex",
+                justifyContent: "center",
+                right: "10%",
+              }}
+            >
+              <button className="" onClick={gameCompleted}>
+                Ok
+              </button>
+            </div>
           </div>
         )}
       </div>
