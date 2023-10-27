@@ -5,6 +5,7 @@ const {
 const { userAnswerEraModel } = require("../../models");
 
 const ObjectID = require("mongodb").ObjectId;
+const { v4: uuidv4 } = require("uuid");
 
 const getLivesOfUnlockStage = async (model, requestBody) => {
   const unlockStageLives = await model.aggregate([
@@ -468,6 +469,11 @@ const filterStageWithoutSession = async (model, requestBody) => {
   return unlockStageLives;
 };
 
+const generateSessionId = async () => {
+  const sessionId = await uuidv4();
+  return sessionId;
+};
+
 module.exports = {
   getLivesOfUnlockStage,
   filterStage,
@@ -481,5 +487,6 @@ module.exports = {
   getHighestStarsStage,
   preparingHighestStarsResponse,
   checkCurrentStageIsInUserAnswerModel,
-  filterStageWithoutSession
+  filterStageWithoutSession,
+  generateSessionId
 };

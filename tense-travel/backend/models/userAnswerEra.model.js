@@ -165,10 +165,19 @@ const UserAnswerEraSchema = new Schema(
     sessionId: {
       type: String,
       default: null,
+      unique: true,
     },
     earnGerms: {
       type: Number,
       default: 0,
+    },
+    startTime: {
+      type: Date,
+      default: null,
+    },
+    endTime: {
+      type: Date,
+      default: null,
     },
   },
   {

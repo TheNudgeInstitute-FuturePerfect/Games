@@ -10,6 +10,7 @@ const API_END_POINT = {
   UPDATE_USER_TOUR_STATUS: `user/update-user-tour-status`,
   TENSE_ERA_PERCENTAGE: "era/all-era-its-percentage",
   HIGHEST_STARS_STAGE_OF_ERA: "userEra/user-high-stars-stages-of-era",
+  RESET_USER_RECENT_STAGE: "era/reset-user-recent-stage",
 };
 
 export { API_END_POINT };

@@ -28,6 +28,7 @@ const {
   retryGame,
   unlockStage,
   createUserEraAnswerHistory,
+  unlockStageWithoutSessionId,
 } = require("./answer/retryAttempt");
 const {
   filterStage,
@@ -1010,9 +1011,11 @@ exports.userHighStarsStagesOfEra = async (req, res, next) => {
       next
     );
 
+    let getHighestStarStage;
+
     //check if user and session are already
     if (!isEmpty(userAndSessionInUserAnswer)) {
-      let getHighestStarStage = await getHighestStarsStage(req, res, next);
+      getHighestStarStage = await getHighestStarsStage(req, res, next);
 
       let checkCurrentStageIsInUserAnswerData =
         await checkCurrentStageIsInUserAnswerModel(req, res, next);
@@ -1022,6 +1025,9 @@ exports.userHighStarsStagesOfEra = async (req, res, next) => {
           getHighestStarStage,
           checkCurrentStageIsInUserAnswerData
         );
+      } else if (!isEmpty(checkCurrentStageIsInUserAnswerData)) {
+        getHighestStarStage =
+          checkCurrentStageIsInUserAnswerData["tenseEra"][0];
       }
 
       let userEras = await userAnswerEraModel.findOne({
@@ -1042,7 +1048,8 @@ exports.userHighStarsStagesOfEra = async (req, res, next) => {
           requestBody
         );
 
-        filterStages = filterStages[0]["tenseEra"][0]["stage"];
+        // filterStages = filterStages[0]["tenseEra"][0]["stage"];
+        filterStages = getHighestStarStage["stage"];
         let unLockedStage = [];
         let lockedStage = [];
         filterStages.map((item, index) => {
@@ -1056,10 +1063,22 @@ exports.userHighStarsStagesOfEra = async (req, res, next) => {
 
         if (lockedStage.length > 0) {
           requestBody["stageId"] = lockedStage[0]["stageId"];
-          await unlockStage(userAnswerEraModel, requestBody, false);
+          // await unlockStage(userAnswerEraModel, requestBody, false);
+          await unlockStageWithoutSessionId(
+            userAnswerEraModel,
+            requestBody,
+            false
+          );
 
-          currentEra["stage"].forEach((element) => {
-            if (element?.stageId === requestBody["stageId"].toString()) {
+          // currentEra["stage"].forEach((element) => {
+          //   if (element?.stageId === requestBody["stageId"].toString()) {
+          //     element.isLocked = false;
+          //   }
+          // });
+          getHighestStarStage["stage"].forEach((element) => {
+            if (
+              element?.stageId.toString() === requestBody["stageId"].toString()
+            ) {
               element.isLocked = false;
             }
           });
@@ -1108,18 +1127,38 @@ exports.userHighStarsStagesOfEra = async (req, res, next) => {
           }
         );
 
-        let userEras = await userAnswerEraModel.findOne({
-          userId: new ObjectID(requestBody["userId"]),
-          "tenseEra.tenseEraId": new ObjectID(requestBody["tenseEraId"]),
-        });
+        // let userEras = await userAnswerEraModel.findOne({
+        //   userId: new ObjectID(requestBody["userId"]),
+        //   "tenseEra.tenseEraId": new ObjectID(requestBody["tenseEraId"]),
+        // });
 
-        const currentEra = eraFilter({
-          tenseEra: userEras["tenseEra"],
-          requestBody: requestBody,
-        });
+        let userEras = await checkCurrentStageIsInUserAnswerModel(
+          req,
+          res,
+          next
+        );
+
+        // const currentEra = eraFilter({
+        //   tenseEra: userEras["tenseEra"],
+        //   requestBody: requestBody,
+        // });
+        const currentEra = userEras["tenseEra"][0];
 
         requestBody["stageId"] = currentEra["stage"][0]["stageId"];
-        await unlockStage(userAnswerEraModel, requestBody, false);
+
+        currentEra["stage"].forEach((element) => {
+          if (
+            element?.stageId.toString() === requestBody["stageId"].toString()
+          ) {
+            element.isLocked = false;
+          }
+        });
+
+        await unlockStageWithoutSessionId(
+          userAnswerEraModel,
+          requestBody,
+          false
+        );
 
         return reponseModel(
           httpStatusCodes.OK,
@@ -1164,7 +1203,7 @@ exports.userHighStarsStagesOfEra = async (req, res, next) => {
         requestBody: requestBody,
       });
 
-      await unlockStage(userAnswerEraModel, requestBody, false);
+      await unlockStageWithoutSessionId(userAnswerEraModel, requestBody, false);
 
       return reponseModel(
         httpStatusCodes.OK,

@@ -36,7 +36,6 @@ exports.getAllEraItsPercentage = async (req, res, next) => {
 };
 
 exports.resetUserRecentStage = async (req, res, next) => {
-  console.log('call');
   const response = await resetUserRecentStage(req, res, next);
   handleSuccess(response, req, res);
 };

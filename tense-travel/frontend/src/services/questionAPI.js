@@ -31,4 +31,19 @@ const reTryStage = async (requestPayload) => {
   return questionsData;
 };
 
-export { buyLives, reTryStage };
+const resetUserRecentStage = async (requestPayload) => {
+  delete requestPayload['sessionId'];
+  let resetStage = await fetch(
+    `${process.env.REACT_APP_API_URL}/${API_END_POINT.RESET_USER_RECENT_STAGE}`,
+    {
+      method: "POST",
+      body: JSON.stringify(requestPayload),
+      headers: { "Content-Type": "application/json" },
+    }
+  );
+  
+  resetStage = await resetStage.json();
+  return resetStage;
+};
+
+export { buyLives, reTryStage, resetUserRecentStage };

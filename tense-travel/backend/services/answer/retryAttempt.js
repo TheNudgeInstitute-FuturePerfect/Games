@@ -4,6 +4,9 @@ const {
 } = require("../../utils/constants/payloadInterface/payload.interface");
 const ObjectID = require("mongodb").ObjectId;
 const { mongoose } = require("../../configs/dbConnection");
+const {
+  generateSessionId,
+} = require("../global-services/filterEraSatage.service");
 
 const retryGame = async (model, historyPayload, requestBody) => {
   let retryCount = parseInt(historyPayload["retryCount"]);
@@ -68,6 +71,29 @@ const unlockStage = async (model, requestBody, locked) => {
     {
       userId: requestBody["userId"],
       sessionId: requestBody["sessionId"],
+      "tenseEra.tenseEraId": requestBody["tenseEraId"],
+      "tenseEra.stage.stageId": requestBody["stageId"],
+    },
+    {
+      $set: {
+        "tenseEra.$[].stage.$[coins].isLocked": locked,
+      },
+    },
+    {
+      arrayFilters: [
+        {
+          "coins.stageId": requestBody["stageId"],
+        },
+      ],
+    }
+  );
+  return unlockStage;
+};
+
+const unlockStageWithoutSessionId = async (model, requestBody, locked) => {
+  const unlockStage = await model.updateOne(
+    {
+      userId: requestBody["userId"],
       "tenseEra.tenseEraId": requestBody["tenseEraId"],
       "tenseEra.stage.stageId": requestBody["stageId"],
     },
@@ -245,6 +271,7 @@ const resetStageInUserAnswer = async (model, requestBody) => {
         "tenseEra.$[].stage.$[isCorrect].question": [],
         "tenseEra.$[].stage.$[isCorrect].histories": [],
         "tenseEra.$[].stage.$[isCorrect].isLivePurchased": false,
+        sessionId: await generateSessionId(),
       },
     },
     {
@@ -259,10 +286,46 @@ const resetStageInUserAnswer = async (model, requestBody) => {
   return resetData;
 };
 
+const getStageSessionId = async (model, requestBody) => {
+  const sessionId = await model.findOne(
+    {
+      userId: requestBody["userId"],
+      "tenseEra.tenseEraId": requestBody["tenseEraId"],
+      "tenseEra.stage.stageId": requestBody["stageId"],
+    },
+    {
+      sessionId: 1,
+    }
+  );
+
+  return sessionId;
+};
+
+const addNewStageSessionIdInUserAnswer = async (model, requestBody) => {
+  const sessionId = await generateSessionId();
+  const newSessionId = await model.updateOne(
+    {
+      userId: requestBody["userId"],
+      "tenseEra.tenseEraId": requestBody["tenseEraId"],
+      "tenseEra.stage.stageId": requestBody["stageId"],
+    },
+    {
+      $set: {
+        sessionId: sessionId,
+      },
+    }
+  );
+
+  return newSessionId;
+};
+
 module.exports = {
   retryGame,
   unlockStage,
   buyLives,
   createUserEraAnswerHistory,
   resetStageInUserAnswer,
+  unlockStageWithoutSessionId,
+  getStageSessionId,
+  addNewStageSessionIdInUserAnswer
 };
