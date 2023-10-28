@@ -23,9 +23,11 @@ import { tourGuideSteps, userIds } from "../../../utils/constants";
 import { userTourStatus } from "../../../services/userAPI";
 import { removeTourGuideStep } from "../common/TourGuide/UpdateTourGuideSteps";
 import { API_END_POINT } from "../../../utils/endpoints";
+import validator from 'validator' 
 
 let userTourData;
-function LandingPage() {
+function LandingPage(props) {
+
   tourGuideSteps.steps = 1;
   // const navigate = useNavigate();
   const [show, setShow] = useState({
@@ -142,8 +144,6 @@ function LandingPage() {
   };
 
   const handleNavigateStage = (eraId) => {
-    // console.log(`eraId`, eraId);
-    // return;
     tourGuideSteps.steps++;
     navigate(`/choose-stage/${eraId}`);
   };

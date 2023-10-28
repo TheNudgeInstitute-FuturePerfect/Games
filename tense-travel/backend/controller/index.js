@@ -1,4 +1,4 @@
-const { login, register } = require("../controller/auth.controller");
+const { login, register, checkUserByMobile } = require("../controller/auth.controller");
 
 const {
   getAllEra: findAllEra,
@@ -67,5 +67,6 @@ module.exports = {
   updateTourStatus,
   getAllEraItsPercentage,
   userHighStarsStagesOfEra,
-  resetUserRecentStage
+  resetUserRecentStage,
+  checkUserByMobile
 };

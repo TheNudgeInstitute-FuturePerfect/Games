@@ -23,6 +23,29 @@ const userRegisterValidator = async (req, res, next) => {
   }
 };
 
+/* check user mobile number validator */
+const userMobileNumberObj = {
+  mobileNumber: Joi.string()
+    .length(10)
+    .pattern(/^[0-9]+$/)
+    .required(),
+};
+
+const userMobileNumberSchema = Joi.object(userMobileNumberObj);
+userMobileNumberSchema.validate({});
+
+const userMobileNumberValidator = async (req, res, next) => {
+  try {
+    let payload = req.body;
+    await userMobileNumberSchema.validateAsync(payload);
+    next();
+  } catch (error) {
+    const errMsg = error["details"][0]?.message || "";
+    errorHandler.handle(httpStatusCodes.BAD_REQUEST, errMsg, false, req, res);
+  }
+};
+
 module.exports = {
   userRegisterValidator,
+  userMobileNumberValidator,
 };
