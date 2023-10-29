@@ -1,33 +1,27 @@
 import React, { useEffect, useState } from "react";
 import "../../../sass/styles.scss";
-import spaceship from "../../../assets/images/spaceship.svg";
 import { useNavigate } from "react-router-dom";
 import TourGuideIndex from "../common/TourGuide";
 
 import rocketLeft from "../../../assets/images/rocket-left-panel.svg";
 import rocketRight from "../../../assets/images/rocket-right-panel.svg";
 import rocketHead from "../../../assets/images/rocket-head.svg";
-// import rocketBody from "../../../assets/images/rocket-body-panel.svg";
 import rocketBody from "../../../assets/images/rocket-body-with-line.svg";
 import dotedRocketHead from "../../../assets/images/doted-rocket-head.svg";
 import dotedRocketLeft from "../../../assets/images/doted-rocket-left-panel.svg";
 import dotedRocketRight from "../../../assets/images/doted-rocket-right-panel.svg";
-// import dotedRocketBody from "../../../assets/images/doted-rocket-body.svg";
 import dotedRocketBody from "../../../assets/images/doted-rocket-body-with-line.svg";
 import moonHalf from "../../../assets/images/moon-half.png";
 import rightLine from "../../../assets/images/line1.svg";
 import headLine from "../../../assets/images/line3.svg";
 import bodyLine from "../../../assets/images/line2.svg";
-import { ProgressBar } from "react-bootstrap";
 import { tourGuideSteps, userIds } from "../../../utils/constants";
 import { userTourStatus } from "../../../services/userAPI";
 import { removeTourGuideStep } from "../common/TourGuide/UpdateTourGuideSteps";
 import { API_END_POINT } from "../../../utils/endpoints";
-import validator from 'validator' 
 
 let userTourData;
 function LandingPage(props) {
-
   tourGuideSteps.steps = 1;
   // const navigate = useNavigate();
   const [show, setShow] = useState({
@@ -54,6 +48,13 @@ function LandingPage(props) {
   const [allPartsOpacity, setAllPartsOpacity] = useState();
   // const [, setAllPartsOpacity] = useState();
   const [tourStatusData, setTourStatusData] = useState();
+  let userId;
+  if(userIds?.userId){
+    userId = userIds?.userId;
+  }else {
+    userId = props['storageData']?.userId;
+  }
+
 
   const navigateChooseEra = () => {
     setShowStartBtn({
@@ -125,7 +126,7 @@ function LandingPage(props) {
       `${process.env.REACT_APP_API_URL}/${API_END_POINT.TENSE_ERA_PERCENTAGE}`,
       {
         method: "POST",
-        body: JSON.stringify({ userId: userIds.userId }),
+        body: JSON.stringify({ userId: userId }),
         headers: { "Content-Type": "application/json" },
       }
     );
@@ -149,7 +150,7 @@ function LandingPage(props) {
   };
 
   const userTourStaus = async () => {
-    const userId = userIds.userId;
+    // const userId = userIds.userId;
     userTourData = await userTourStatus(userId);
     setTourStatusData(userTourData);
 

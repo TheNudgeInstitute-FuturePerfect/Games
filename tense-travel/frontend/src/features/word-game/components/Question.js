@@ -13,6 +13,7 @@ import {
   setTimeOutFn,
   tourGuideSteps,
   userIds,
+  userInfo,
 } from "../../../utils/constants";
 import {
   buyLives,

@@ -66,51 +66,46 @@ exports.login = async (req, res) => {
 exports.checkUserByMobile = async (req, res, next) => {
   try {
     const { mobileNumber } = req.body;
-    let checkUser = await userModel.findOne(
+    let existsUser = await userModel.findOne(
       {
         mobile: mobileNumber,
       },
-      { uuid: 1, mobile: 1, email: 1, firstName: 1, lastName: 1 }
+      {
+        firstName: 1,
+        lastName: 1,
+        email: 1,
+        mobile: 1,
+      }
     );
 
-    if (!isEmpty(checkUser)) {
+    if (!isEmpty(existsUser)) {
       handleSuccess(
         reponseModel(
           httpStatusCodes.OK,
           "User already registered",
           true,
-          checkUser
+          existsUser
         ),
         req,
         res
       );
     } else {
-      const response = await this.registerUserByMobile(req, res, next);
+      const user = new userModel({ ...req.body, mobile: mobileNumber });
+      await user.save({ mobileNumber });
+      const result = {
+        _id: user["_id"],
+        firstName: user["firstName"],
+        lastName: user["lastName"],
+        email: user["email"],
+        mobile: user["mobile"],
+      };
 
       handleSuccess(
-        reponseModel(
-          httpStatusCodes.OK,
-          !isEmpty(response)
-            ? "User registered success"
-            : "User registered not success",
-          !isEmpty(response) ? true : false,
-          response
-        ),
+        reponseModel(httpStatusCodes.OK, "User registered", true, result),
         req,
         res
       );
     }
-  } catch (err) {
-    next(err);
-  }
-};
-
-exports.registerUserByMobile = async (req, res, next) => {
-  try {
-    const { mobileNumber } = req.body;
-    const user = new userModel({ ...req.body, mobile: mobileNumber });
-    await user.save({ mobile: mobileNumber });
-    return user;
   } catch (err) {
     next(err);
   }

@@ -40,4 +40,24 @@ const updateUserTourStatus = async (payload) => {
   }
 };
 
-export { userTourStatus, updateUserTourStatus };
+const checkUserByMobile = async (payload) => {
+  try {
+    let checkUser = await fetch(
+      `${process.env.REACT_APP_API_URL}/${API_END_POINT.CHECK_USER_BY_MOBILE}`,
+      {
+        method: "POST",
+        body: JSON.stringify(payload),
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+
+    checkUser = await checkUser.json();
+    return checkUser;
+  } catch (error) {
+    API_ERROR_ESPONSE.message = error.message || error;
+    API_ERROR_ESPONSE.success = false;
+    return API_ERROR_ESPONSE;
+  }
+};
+
+export { userTourStatus, updateUserTourStatus, checkUserByMobile };

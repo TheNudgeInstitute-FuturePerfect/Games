@@ -1,8 +1,21 @@
 const { getStorage } = require("./payload");
 
 const userIds = {
-  userId: "6512d743574d4522062e3f87",
-  sessionId: getStorage()["sessionId"],
+  // userId: "6512d743574d4522062e3f87",
+  // userId: getStorage()["userId"],
+  // mobile: getStorage()["mobile"],
+  // sessionId: getStorage()["sessionId"],
+  userId: "",
+  mobile: "",
+  sessionId: "",
+};
+
+const userInfo = () => {
+  const userDetail = getStorage();
+  userIds.userId = userDetail?.userId;
+  userIds.mobile = userDetail?.mobile;
+  userIds.sessionId = userDetail?.sessionId;
+  return userDetail;
 };
 
 const coins = {
@@ -41,4 +54,5 @@ module.exports = {
   gameOverModalConfig,
   tourGuideSteps,
   setTimeOutFn,
+  userInfo,
 };
