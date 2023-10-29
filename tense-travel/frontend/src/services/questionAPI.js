@@ -32,7 +32,7 @@ const reTryStage = async (requestPayload) => {
 };
 
 const resetUserRecentStage = async (requestPayload) => {
-  delete requestPayload['sessionId'];
+  delete requestPayload["sessionId"];
   let resetStage = await fetch(
     `${process.env.REACT_APP_API_URL}/${API_END_POINT.RESET_USER_RECENT_STAGE}`,
     {
@@ -41,9 +41,23 @@ const resetUserRecentStage = async (requestPayload) => {
       headers: { "Content-Type": "application/json" },
     }
   );
-  
+
   resetStage = await resetStage.json();
   return resetStage;
 };
 
-export { buyLives, reTryStage, resetUserRecentStage };
+const shareGameSessionDetail = async (requestPayload) => {
+  let resetStage = await fetch(
+    `${process.env.REACT_APP_API_URL}/${API_END_POINT.SHARE_GAME_SESSION_DETAIL}/${requestPayload["Mobile"]}`,
+    {
+      method: "PATCH",
+      body: JSON.stringify(requestPayload),
+      headers: { "Content-Type": "application/json" },
+    }
+  );
+
+  resetStage = await resetStage.json();
+  return resetStage;
+};
+
+export { buyLives, reTryStage, resetUserRecentStage, shareGameSessionDetail };

@@ -12,6 +12,7 @@ const API_END_POINT = {
   HIGHEST_STARS_STAGE_OF_ERA: "userEra/user-high-stars-stages-of-era",
   RESET_USER_RECENT_STAGE: "era/reset-user-recent-stage",
   CHECK_USER_BY_MOBILE: "auth/check-user-bymobile",
+  SHARE_GAME_SESSION_DETAIL:"user/share-game-session-detail"
 };
 
 export { API_END_POINT };

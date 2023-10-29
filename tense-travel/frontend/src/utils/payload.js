@@ -75,6 +75,16 @@ const removeStorage = () => {
   sessionStorage.removeItem("tesne-travel");
 };
 
+const shareGameSessionDetailPayload = {
+  Mobile: "",
+  Type: "",
+  SessionID: "",
+  SessionStartTime: "",
+  SessionEndTime: "",
+  SessionComplete: "",
+  TimeSpent: "",
+};
+
 module.exports = {
   getUserCurrentEra,
   getStageQuestion,
@@ -86,5 +96,6 @@ module.exports = {
   updateUserTourStatusPayload,
   setStorage,
   getStorage,
-  removeStorage
+  removeStorage,
+  shareGameSessionDetailPayload
 };

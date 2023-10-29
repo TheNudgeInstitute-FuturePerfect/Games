@@ -165,7 +165,7 @@ exports.resetUserRecentStage = async (req, res, next) => {
   try {
     const requestBody = req.body;
     let stageData = await checkStageIsAnswered(userAnswerEraModel, requestBody);
-    let sessionId;
+    let sessionId, startTime;
     let resetRecentStage = {};
     if (!isEmpty(stageData)) {
       if (stageData[0]["tenseEra"][0]["stage"][0]?.completedStage) {
@@ -186,8 +186,10 @@ exports.resetUserRecentStage = async (req, res, next) => {
           );
           //getting new session
           sessionId = await getStageSessionId(userAnswerEraModel, requestBody);
+          startTime = sessionId["startTime"];
           sessionId = sessionId["sessionId"];
           resetRecentStage["sessionId"] = sessionId;
+          resetRecentStage["startTime"] = startTime;
 
           return reponseModel(
             httpStatusCodes.OK,
@@ -200,8 +202,10 @@ exports.resetUserRecentStage = async (req, res, next) => {
         } else {
           //getting old session
           sessionId = await getStageSessionId(userAnswerEraModel, requestBody);
+          startTime = sessionId["startTime"];
           sessionId = sessionId["sessionId"];
           resetRecentStage["sessionId"] = sessionId;
+          resetRecentStage["startTime"] = startTime;
 
           return reponseModel(
             httpStatusCodes.INTERNAL_SERVER,
@@ -215,10 +219,12 @@ exports.resetUserRecentStage = async (req, res, next) => {
       } else {
         //fetching old session
         sessionId = await getStageSessionId(userAnswerEraModel, requestBody);
+        startTime = sessionId["startTime"];
         sessionId = sessionId["sessionId"];
 
         if (!isEmpty(sessionId)) {
           resetRecentStage["sessionId"] = sessionId;
+          resetRecentStage["startTime"] = startTime;
         } else {
           //generating new session
           await addNewStageSessionIdInUserAnswer(
@@ -227,8 +233,10 @@ exports.resetUserRecentStage = async (req, res, next) => {
           );
           //getting new session
           sessionId = await getStageSessionId(userAnswerEraModel, requestBody);
+          startTime = sessionId["startTime"];
           sessionId = sessionId["sessionId"];
           resetRecentStage["sessionId"] = sessionId;
+          resetRecentStage["startTime"] = startTime;
         }
 
         return reponseModel(

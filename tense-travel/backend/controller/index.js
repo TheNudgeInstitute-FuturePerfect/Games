@@ -37,6 +37,7 @@ const { getUserCoins, buyLives } = require("../controller/coin.controller");
 const {
   getTourStatus,
   updateTourStatus,
+  shareGameSessionDetail
 } = require("../controller/user.controller");
 
 module.exports = {
@@ -68,5 +69,6 @@ module.exports = {
   getAllEraItsPercentage,
   userHighStarsStagesOfEra,
   resetUserRecentStage,
-  checkUserByMobile
+  checkUserByMobile,
+  shareGameSessionDetail
 };
