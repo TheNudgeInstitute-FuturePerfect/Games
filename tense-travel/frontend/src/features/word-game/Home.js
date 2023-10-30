@@ -2,8 +2,12 @@ import React, { useEffect, useState } from "react";
 import LandingPage from "./components/LandingPage";
 import { useParams } from "react-router-dom";
 import { checkUserByMobile } from "../../services/userAPI";
-import { getStorage, removeStorage, setStorage } from "../../utils/payload";
 import { removeTourGuideStep } from "./common/TourGuide/UpdateTourGuideSteps";
+import {
+  getStorage,
+  removeStorage,
+  setStorage,
+} from "../../utils/manageStorage";
 
 function Home() {
   const params = useParams();
@@ -18,7 +22,7 @@ function Home() {
 
     if (userData["success"]) {
       removeStorage();
-      removeTourGuideStep()
+      removeTourGuideStep();
       let mobile = userData["data"]["mobile"];
       let userId = userData["data"]["_id"];
       setStorage({ mobile, userId });

@@ -1,4 +1,4 @@
-const { getStorage } = require("./payload");
+import { getStorage } from "./manageStorage";
 
 const userIds = {
   // userId: "6512d743574d4522062e3f87",
@@ -48,7 +48,7 @@ const setTimeOutFn = {
   status: false,
 };
 
-module.exports = {
+export {
   userIds,
   coins,
   gameOverModalConfig,

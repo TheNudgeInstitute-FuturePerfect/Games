@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import "../../../sass/styles.scss";
 import { Link, useNavigate } from "react-router-dom";
 import { useParams } from "react-router";
-import { getStorage, getUserCurrentEra } from "../../../utils/payload";
+import { getUserCurrentEra } from "../../../utils/payload";
 import { userIds, userInfo } from "../../../utils/constants";
 import { coins } from "../../../utils/constants";
 import TourGuideIndex from "../common/TourGuide";
@@ -10,6 +10,7 @@ import { tourGuideSteps } from "../../../utils/constants";
 import { updateTourGuideStep } from "../common/TourGuide/UpdateTourGuideSteps";
 import CommingSoonToolTip from "../common/popups/CommingSoonToolTip";
 import { API_END_POINT } from "../../../utils/endpoints";
+import { getStorage } from "../../../utils/manageStorage";
 
 function ChooseStage() {
   const navigate = useNavigate();
