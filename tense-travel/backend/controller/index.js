@@ -1,4 +1,4 @@
-const { login, register } = require("../controller/auth.controller");
+const { login, register, checkUserByMobile } = require("../controller/auth.controller");
 
 const {
   getAllEra: findAllEra,
@@ -37,6 +37,7 @@ const { getUserCoins, buyLives } = require("../controller/coin.controller");
 const {
   getTourStatus,
   updateTourStatus,
+  shareGameSessionDetail
 } = require("../controller/user.controller");
 
 module.exports = {
@@ -67,5 +68,7 @@ module.exports = {
   updateTourStatus,
   getAllEraItsPercentage,
   userHighStarsStagesOfEra,
-  resetUserRecentStage
+  resetUserRecentStage,
+  checkUserByMobile,
+  shareGameSessionDetail
 };

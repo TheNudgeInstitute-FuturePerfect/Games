@@ -295,6 +295,7 @@ const getStageSessionId = async (model, requestBody) => {
     },
     {
       sessionId: 1,
+      startTime: 1,
     }
   );
 
@@ -312,6 +313,7 @@ const addNewStageSessionIdInUserAnswer = async (model, requestBody) => {
     {
       $set: {
         sessionId: sessionId,
+        startTime: new Date(Date.now()).toISOString(),
       },
     }
   );
@@ -327,5 +329,5 @@ module.exports = {
   resetStageInUserAnswer,
   unlockStageWithoutSessionId,
   getStageSessionId,
-  addNewStageSessionIdInUserAnswer
+  addNewStageSessionIdInUserAnswer,
 };

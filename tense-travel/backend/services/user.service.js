@@ -61,11 +61,7 @@ exports.updateTourStatus = async (req, res, next) => {
       },
     };
     const options = { upsert: true };
-    let updateTourInfo = await userModel.updateOne(
-      filter,
-      update,
-      options
-    );
+    let updateTourInfo = await userModel.updateOne(filter, update, options);
 
     return reponseModel(
       httpStatusCodes.OK,
@@ -91,17 +87,30 @@ exports.getUserCompletedLevels = async (req, res, next) => {
       },
     };
     const options = { upsert: true };
-    let updateTourInfo = await userModel.updateOne(
-      filter,
-      update,
-      options
-    );
+    let updateTourInfo = await userModel.updateOne(filter, update, options);
 
     return reponseModel(
       httpStatusCodes.OK,
       !isEmpty(updateTourInfo) ? "State updated" : "State not updated",
       !isEmpty(updateTourInfo) ? true : false,
       updateTourInfo,
+      req,
+      res
+    );
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.shareGameSessionDetail = async (req, res, next) => {
+  try {
+    const requestBody = req.body;
+
+    return reponseModel(
+      httpStatusCodes.OK,
+      "Game session details",
+      true,
+      requestBody,
       req,
       res
     );

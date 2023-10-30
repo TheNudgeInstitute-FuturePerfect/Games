@@ -4,6 +4,8 @@ const {
   validatePassword,
 } = require("../utils/PasswordGenerate");
 const { userModel } = require("../models/index");
+const { reponseModel, handleSuccess } = require("../utils/responseHandler");
+const httpStatusCodes = require("../utils/httpStatusCodes");
 
 exports.register = async (req, res) => {
   try {
@@ -58,5 +60,53 @@ exports.login = async (req, res) => {
     });
   } catch (err) {
     res.status(400).json(err);
+  }
+};
+
+exports.checkUserByMobile = async (req, res, next) => {
+  try {
+    const { mobileNumber } = req.body;
+    let existsUser = await userModel.findOne(
+      {
+        mobile: mobileNumber,
+      },
+      {
+        firstName: 1,
+        lastName: 1,
+        email: 1,
+        mobile: 1,
+      }
+    );
+
+    if (!isEmpty(existsUser)) {
+      handleSuccess(
+        reponseModel(
+          httpStatusCodes.OK,
+          "User already registered",
+          true,
+          existsUser
+        ),
+        req,
+        res
+      );
+    } else {
+      const user = new userModel({ ...req.body, mobile: mobileNumber });
+      await user.save({ mobileNumber });
+      const result = {
+        _id: user["_id"],
+        firstName: user["firstName"],
+        lastName: user["lastName"],
+        email: user["email"],
+        mobile: user["mobile"],
+      };
+
+      handleSuccess(
+        reponseModel(httpStatusCodes.OK, "User registered", true, result),
+        req,
+        res
+      );
+    }
+  } catch (err) {
+    next(err);
   }
 };

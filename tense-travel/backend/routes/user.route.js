@@ -1,7 +1,12 @@
 const express = require("express");
-const { getTourStatus, updateTourStatus } = require("../controller");
+const {
+  getTourStatus,
+  updateTourStatus,
+  shareGameSessionDetail,
+} = require("../controller");
 const {
   userTourGuideValidator,
+  shareGameSessionDetailValidator,
 } = require("../modules/validators/userValidator");
 
 const router = express.Router();
@@ -11,5 +16,9 @@ router.patch(
   [userTourGuideValidator],
   updateTourStatus
 );
-
+router.patch(
+  "/share-game-session-detail/:mobileNumber",
+  [shareGameSessionDetailValidator],
+  shareGameSessionDetail
+);
 exports.router = router;

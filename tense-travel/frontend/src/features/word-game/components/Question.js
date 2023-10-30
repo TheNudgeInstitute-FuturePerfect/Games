@@ -6,6 +6,7 @@ import {
   getStageQuestion,
   reTryStagePaylod,
   setStorage,
+  shareGameSessionDetailPayload,
   userAnswerSubmitPayload,
   userSubmitAnswerResponse,
 } from "../../../utils/payload";
@@ -13,11 +14,13 @@ import {
   setTimeOutFn,
   tourGuideSteps,
   userIds,
+  userInfo,
 } from "../../../utils/constants";
 import {
   buyLives,
   reTryStage,
   resetUserRecentStage,
+  shareGameSessionDetail,
 } from "../../../services/questionAPI";
 import CommonModal from "../common/CommonModal";
 import { actionType, popupTypes } from "../../../utils/commonFunction";
@@ -29,6 +32,7 @@ import {
   updateTourGuideStep,
 } from "../common/TourGuide/UpdateTourGuideSteps";
 import { userTourStatus } from "../../../services/userAPI";
+import { shareGameSessionDetailPayloadReset } from "../../../utils/resetPaload";
 
 let questionsParsed, questionsData, currentQuestionIndex, userTourData;
 function Question() {
@@ -57,6 +61,7 @@ function Question() {
   const [progressBarZIndex, setProgressBarZIndex] = useState();
   const [showTourGuide, setShowTourGuide] = useState(false);
   const [tourStatusData, setTourStatusData] = useState();
+  let recentStageData;
 
   /*fill in the blank input style*/
   const [inputStyle, setInputStyle] = useState({
@@ -106,6 +111,7 @@ function Question() {
 
     const resetRecentStage = await resetUserRecentStage(getStageQuestion);
     if (resetRecentStage["success"] === true) {
+      recentStageData = resetRecentStage["data"];
       getStageQuestion["sessionId"] = resetRecentStage["data"]?.sessionId;
     }
     return getStageQuestion["sessionId"];
@@ -125,6 +131,7 @@ function Question() {
     }
     const session = { sessionId };
     setStorage(session);
+    shareGameSessionInfo();
 
     setPurchaseDialogShow(false);
     setRetryMsg("Something went wrong");
@@ -400,8 +407,28 @@ function Question() {
     if (userTourData) getStageQuestions();
   };
 
+  //share game session detail
+  const shareGameSessionInfo = async () => {
+    shareGameSessionDetailPayloadReset();
+    const userStorageDetail = userInfo();
+    shareGameSessionDetailPayload.Mobile = userStorageDetail["mobile"];
+    shareGameSessionDetailPayload.Type = "Game";
+    shareGameSessionDetailPayload.SessionID = userStorageDetail["sessionId"];
+    shareGameSessionDetailPayload.SessionStartTime =
+      recentStageData["startTime"];
+    shareGameSessionDetailPayload.SessionEndTime = "";
+    shareGameSessionDetailPayload.SessionComplete = "";
+    shareGameSessionDetailPayload.TimeSpent = "";
+
+    const gameSessionDetail = await shareGameSessionDetail(
+      shareGameSessionDetailPayload
+    );
+    console.log(gameSessionDetail);
+  };
+
   useEffect(() => {
     // getStageQuestions();
+    userInfo()
     userTourStaus();
   }, []);
 

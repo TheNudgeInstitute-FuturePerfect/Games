@@ -19,9 +19,9 @@ const userSchema = new Schema(
       type: String, // Use a string type for UUID
       default: uuidv4, // Generate a UUID using uuidv4 as the default value
     },
-    firstName: { type: String, required: true },
+    firstName: { type: String, default: null },
     lastName: { type: String, default: null },
-    email: { type: String, required: true, unique: true },
+    email: { type: String, default: null },
     mobile: { type: String, default: null },
     earnGerms: {
       type: Number,

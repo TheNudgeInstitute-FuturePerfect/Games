@@ -59,13 +59,30 @@ const updateUserTourStatusPayload = {
 };
 
 const setStorage = (data) => {
-  data = JSON.stringify(data);
+  const storageData = getStorage();
+  const updatedData = { ...storageData, ...data };
+  data = JSON.stringify(updatedData);
   sessionStorage.setItem("tesne-travel", data);
 };
 
 const getStorage = () => {
   const storageData = sessionStorage.getItem("tesne-travel");
-  return JSON.parse(storageData);
+  if (!storageData) {
+    return "";
+  } else return JSON.parse(storageData);
+};
+const removeStorage = () => {
+  sessionStorage.removeItem("tesne-travel");
+};
+
+const shareGameSessionDetailPayload = {
+  Mobile: "",
+  Type: "",
+  SessionID: "",
+  SessionStartTime: "",
+  SessionEndTime: "",
+  SessionComplete: "",
+  TimeSpent: "",
 };
 
 module.exports = {
@@ -78,5 +95,7 @@ module.exports = {
   API_ERROR_ESPONSE,
   updateUserTourStatusPayload,
   setStorage,
-  getStorage
+  getStorage,
+  removeStorage,
+  shareGameSessionDetailPayload
 };

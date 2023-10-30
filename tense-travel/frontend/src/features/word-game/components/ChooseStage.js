@@ -2,15 +2,11 @@ import React, { useEffect, useState } from "react";
 import "../../../sass/styles.scss";
 import { Link, useNavigate } from "react-router-dom";
 import { useParams } from "react-router";
-import { getUserCurrentEra } from "../../../utils/payload";
-import { userIds } from "../../../utils/constants";
+import { getStorage, getUserCurrentEra } from "../../../utils/payload";
+import { userIds, userInfo } from "../../../utils/constants";
 import { coins } from "../../../utils/constants";
 import TourGuideIndex from "../common/TourGuide";
 import { tourGuideSteps } from "../../../utils/constants";
-import line1 from "../../../assets/images/line1.png";
-import line2 from "../../../assets/images/line2.png";
-import line3 from "../../../assets/images/line3.png";
-import line4 from "../../../assets/images/line4.png";
 import { updateTourGuideStep } from "../common/TourGuide/UpdateTourGuideSteps";
 import CommingSoonToolTip from "../common/popups/CommingSoonToolTip";
 import { API_END_POINT } from "../../../utils/endpoints";
@@ -19,6 +15,8 @@ function ChooseStage() {
   const navigate = useNavigate();
   const [stage, setStage] = useState([]);
   const [showSimpleTense, setShowSimpleTense] = useState();
+  const sessionMobile = getStorage()["mobile"];
+  const userDetail = userInfo();
 
   const navigateQuestion = (params) => {
     tourGuideSteps.steps++;
@@ -34,7 +32,7 @@ function ChooseStage() {
     getUserCurrentEra.tenseEraId = "";
     // getUserCurrentEra["sessionId"] = userIds.sessionId;
     delete getUserCurrentEra["sessionId"];
-    getUserCurrentEra.userId = userIds.userId;
+    getUserCurrentEra.userId = userDetail['userId'];
     getUserCurrentEra.tenseEraId = eraId;
 
     const tenseStageData = await fetch(
@@ -66,7 +64,7 @@ function ChooseStage() {
   }, []);
 
   const tourGuideCallback = (params) => {
-    console.log("params", params);
+    // console.log("params", params);
   };
 
   return (
@@ -78,7 +76,7 @@ function ChooseStage() {
         />
         <div className="moon-bg">
           <div className="third-step">
-            <Link to={"/"} className="back-arr">
+            <Link to={"/" + sessionMobile} className="back-arr">
               Change Era
             </Link>
             <ul className="step-list">

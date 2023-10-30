@@ -3,14 +3,14 @@ import "./tourGuide.scss";
 import { Button } from "react-bootstrap";
 import { stepsFilter } from "../../../../utils/tourGuideConfig";
 import { useNavigate } from "react-router-dom";
-import { tourGuideSteps } from "../../../../utils/constants";
+import { tourGuideSteps, userInfo } from "../../../../utils/constants";
 import { showTourGuidePopup } from "./UpdateTourGuideSteps";
 import { userIds } from "../../../../utils/constants";
 import {
   updateUserTourStatus,
   userTourStatus,
 } from "../../../../services/userAPI";
-import { updateUserTourStatusPayload } from "../../../../utils/payload";
+import { getStorage, updateUserTourStatusPayload } from "../../../../utils/payload";
 
 let userTourData;
 function TourGuideIndex(props) {
@@ -42,6 +42,7 @@ function TourGuideIndex(props) {
     useState("tourGuideContainer");
   const navigate = useNavigate();
   const [tourStatusData, setTourStatusData] = useState();
+  const userDetail = userInfo();
 
   const handleNowWhats = () => {
     //fade out settimeout
@@ -107,7 +108,13 @@ function TourGuideIndex(props) {
   };
 
   const userTourStaus = async () => {
-    const userId = userIds.userId;
+    let userId = userIds.userId;
+    if(userId){
+      userTourData = await userTourStatus(userId);
+    }else {
+      userId = userDetail['userId'];
+      userTourData = await userTourStatus(userId);
+    }
     userTourData = await userTourStatus(userId);
     setTourStatusData(userTourData);
     getSteps(Number(currentStepNo));
