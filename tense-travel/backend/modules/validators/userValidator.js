@@ -35,7 +35,7 @@ const gameSessionObj = {
   SessionStartTime: Joi.string().required(),
   SessionEndTime: Joi.string().optional().allow(""),
   SessionComplete: Joi.string().optional().allow(""),
-  TimeSpent: Joi.string().optional().allow(""),
+  TimeSpent: Joi.number().optional().allow(""),
 };
 
 const gameSessionSchema = Joi.object(gameSessionObj);
