@@ -5,7 +5,6 @@ import {
   buyLivesPaylod,
   getStageQuestion,
   reTryStagePaylod,
-  setStorage,
   shareGameSessionDetailPayload,
   userAnswerSubmitPayload,
   userSubmitAnswerResponse,
@@ -33,6 +32,7 @@ import {
 } from "../common/TourGuide/UpdateTourGuideSteps";
 import { userTourStatus } from "../../../services/userAPI";
 import { shareGameSessionDetailPayloadReset } from "../../../utils/resetPaload";
+import { setStorage } from "../../../utils/manageStorage";
 
 let questionsParsed, questionsData, currentQuestionIndex, userTourData;
 function Question() {
