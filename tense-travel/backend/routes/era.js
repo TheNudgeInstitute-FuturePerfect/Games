@@ -3,9 +3,11 @@ const {
   findAllEra,
   getAllEraItsPercentage,
   resetUserRecentStage,
+  updateSessionEndTimeInUserAnswer,
 } = require("../controller/index");
 const {
   userRecentStageCompletedValidator,
+  updateSessionEndTimeInUserAnswerValidator,
 } = require("../modules/validators/tenseEraValidator");
 
 const router = express.Router();
@@ -16,4 +18,10 @@ router.post(
   [userRecentStageCompletedValidator],
   resetUserRecentStage
 );
+router.post(
+  "/reset-user-recent-stage",
+  [updateSessionEndTimeInUserAnswerValidator],
+  updateSessionEndTimeInUserAnswer
+);
+
 exports.router = router;

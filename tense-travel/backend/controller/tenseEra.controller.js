@@ -7,6 +7,7 @@ const {
   getAllEraItsPercentage,
   resetRecentUserStage,
   resetUserRecentStage,
+  updateSessionEndTimeInUserAnswer,
 } = require("../services/tenseEra.service");
 const { handleSuccess } = require("../utils/responseHandler");
 
@@ -37,5 +38,10 @@ exports.getAllEraItsPercentage = async (req, res, next) => {
 
 exports.resetUserRecentStage = async (req, res, next) => {
   const response = await resetUserRecentStage(req, res, next);
+  handleSuccess(response, req, res);
+};
+
+exports.updateSessionEndTimeInUserAnswer = async (req, res, next) => {
+  const response = await updateSessionEndTimeInUserAnswer(req, res, next);
   handleSuccess(response, req, res);
 };

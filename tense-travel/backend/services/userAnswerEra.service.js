@@ -29,6 +29,7 @@ const {
   unlockStage,
   createUserEraAnswerHistory,
   unlockStageWithoutSessionId,
+  updateSessionEndTimeInUserAnswer,
 } = require("./answer/retryAttempt");
 const {
   filterStage,
@@ -123,6 +124,8 @@ exports.userAttendingQuestion = async (req, res, next) => {
     answerResponseFormat.completedStage = false;
     answerResponseFormat.nextQuestion = false;
     answerResponseFormat.isGameOver = false;
+    answerResponseFormat.sessionEndTime = "";
+    answerResponseFormat.sessionStartTime = "";
 
     req.params["id"] = req.body["questionId"];
     let questionDetail = await getQuestionDetails(req, res, next);
@@ -346,6 +349,16 @@ exports.userAttendingQuestion = async (req, res, next) => {
             res
           );
         }
+
+        /* update game endtime into userAnswerModel */
+        answerResponseFormat.sessionEndTime = new Date(
+          Date.now()
+        ).toISOString();
+        answerResponseFormat.sessionStartTime = answerCount[0]["startTime"];
+        requestBody["endTime"] = answerResponseFormat.sessionEndTime;
+        await updateSessionEndTimeInUserAnswer(userAnswerEraModel, requestBody);
+        /* update game endtime into userAnswerModel end */
+
         /* germs calculation start */
         answerCount = answerCount[0];
         //getting era earngerms

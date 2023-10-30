@@ -289,8 +289,11 @@ function Question() {
       setIsCorrectAns(null);
     }
 
+    //checking stage is completed
     if (userSubmitAnswerResponse["completedStage"] === true) {
       inputRef.current.blur();
+
+      shareGameSessionInfo(userSubmitAnswerResponse);
       // setPurchaseDialogShow(true);
       // setRetryMsg(userSubmitAnswerResponse["message"]);
       stageCompleteContext.setStageInfo({
@@ -408,27 +411,36 @@ function Question() {
   };
 
   //share game session detail
-  const shareGameSessionInfo = async () => {
+  const shareGameSessionInfo = async (stageSessionTime = "") => {
     shareGameSessionDetailPayloadReset();
     const userStorageDetail = userInfo();
     shareGameSessionDetailPayload.Mobile = userStorageDetail["mobile"];
     shareGameSessionDetailPayload.Type = "Game";
     shareGameSessionDetailPayload.SessionID = userStorageDetail["sessionId"];
-    shareGameSessionDetailPayload.SessionStartTime =
-      recentStageData["startTime"];
-    shareGameSessionDetailPayload.SessionEndTime = "";
+
     shareGameSessionDetailPayload.SessionComplete = "";
     shareGameSessionDetailPayload.TimeSpent = "";
+
+    if (stageSessionTime) {
+      shareGameSessionDetailPayload.SessionEndTime =
+        stageSessionTime["sessionEndTime"];
+
+      shareGameSessionDetailPayload.SessionStartTime =
+        stageSessionTime["sessionStartTime"];
+    } else {
+      shareGameSessionDetailPayload.SessionEndTime = "";
+      shareGameSessionDetailPayload.SessionStartTime =
+        recentStageData["startTime"];
+    }
 
     const gameSessionDetail = await shareGameSessionDetail(
       shareGameSessionDetailPayload
     );
-    console.log(gameSessionDetail);
   };
 
   useEffect(() => {
     // getStageQuestions();
-    userInfo()
+    userInfo();
     userTourStaus();
   }, []);
 

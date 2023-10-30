@@ -21,6 +21,8 @@ const answerResponseFormat = {
   isError: false,
   isGameOver: false,
   isLivePurchased: false,
+  sessionEndTime: "",
+  sessionStartTime: "",
 };
 
 const userAnswerEraHisotryPayload = {
@@ -36,8 +38,9 @@ const userAnswerEraHisotryPayload = {
   questions: [],
   startTime: "",
   endTime: "",
-  eraEarnGerms:0,
+  eraEarnGerms: 0,
   completedEra: false,
+  attempt: 0,
 };
 
 const heartLives = {

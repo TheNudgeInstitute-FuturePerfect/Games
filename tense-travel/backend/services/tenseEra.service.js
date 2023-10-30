@@ -9,7 +9,12 @@ const {
   resetStageInUserAnswer,
   getStageSessionId,
   addNewStageSessionIdInUserAnswer,
+  updateSessionEndTimeInUserAnswer,
+  updateSessionIdStartTimeInUserAnswer,
 } = require("./answer/retryAttempt");
+const {
+  stageQuestionSize,
+} = require("../utils/constants/payloadInterface/payload.interface");
 const ObjectID = require("mongodb").ObjectId;
 
 exports.getAllEra = async (req, res, next) => {
@@ -164,11 +169,20 @@ exports.getAllEraItsPercentage = async (req, res, next) => {
 exports.resetUserRecentStage = async (req, res, next) => {
   try {
     const requestBody = req.body;
+    let sessionStartTime;
     let stageData = await checkStageIsAnswered(userAnswerEraModel, requestBody);
+    let stageAttempt = 0;
+
     let sessionId, startTime;
     let resetRecentStage = {};
     if (!isEmpty(stageData)) {
-      if (stageData[0]["tenseEra"][0]["stage"][0]?.completedStage) {
+      stageAttempt = parseInt(stageData[0]["tenseEra"][0]["stage"][0]?.attempt);
+      requestBody["attempt"] = stageAttempt + 1;
+      if (
+        stageData[0]["tenseEra"][0]["stage"][0]?.completedStage &&
+        stageData[0]["tenseEra"][0]["stage"][0]?.attemptQuestions ===
+          stageQuestionSize.size
+      ) {
         resetRecentStage = await resetStageInUserAnswer(
           userAnswerEraModel,
           requestBody
@@ -180,14 +194,18 @@ exports.resetUserRecentStage = async (req, res, next) => {
           resetRecentStage?.modifiedCount === 1
         ) {
           //generating new session
+          
+          sessionStartTime = new Date(Date.now()).toISOString();
+          requestBody["startTime"] = sessionStartTime;
           await addNewStageSessionIdInUserAnswer(
             userAnswerEraModel,
             requestBody
           );
           //getting new session
+          sessionId = "";
           sessionId = await getStageSessionId(userAnswerEraModel, requestBody);
-          startTime = sessionId["startTime"];
-          sessionId = sessionId["sessionId"];
+          startTime = sessionId[0]["tenseEra"][0]["stage"][0]?.startTime;
+          sessionId = sessionId[0]["tenseEra"][0]["stage"][0]?.sessionId;
           resetRecentStage["sessionId"] = sessionId;
           resetRecentStage["startTime"] = startTime;
 
@@ -201,49 +219,118 @@ exports.resetUserRecentStage = async (req, res, next) => {
           );
         } else {
           //getting old session
+          sessionId = "";
           sessionId = await getStageSessionId(userAnswerEraModel, requestBody);
-          startTime = sessionId["startTime"];
-          sessionId = sessionId["sessionId"];
+          startTime = sessionId[0]["tenseEra"][0]["stage"][0]?.startTime;
+          sessionId = sessionId[0]["tenseEra"][0]["stage"][0]?.sessionId;
           resetRecentStage["sessionId"] = sessionId;
           resetRecentStage["startTime"] = startTime;
 
           return reponseModel(
             httpStatusCodes.INTERNAL_SERVER,
             "Stage reset not successfully. Please try again",
-            false,
+            true,
             resetRecentStage,
             req,
             res
           );
         }
-      } else {
-        //fetching old session
+      } else if (
+        !stageData[0]["tenseEra"][0]["stage"][0]?.completedStage &&
+        stageData[0]["tenseEra"][0]["stage"][0]?.attemptQuestions > 0 &&
+        stageData[0]["tenseEra"][0]["stage"][0]?.sessionId !== null
+      ) {
+        sessionId = "";
         sessionId = await getStageSessionId(userAnswerEraModel, requestBody);
-        startTime = sessionId["startTime"];
-        sessionId = sessionId["sessionId"];
+        startTime = sessionId[0]["tenseEra"][0]["stage"][0]?.startTime;
+        sessionId = sessionId[0]["tenseEra"][0]["stage"][0]?.sessionId;
+        resetRecentStage["sessionId"] = sessionId;
+        resetRecentStage["startTime"] = startTime;
 
-        if (!isEmpty(sessionId)) {
-          resetRecentStage["sessionId"] = sessionId;
-          resetRecentStage["startTime"] = startTime;
-        } else {
-          //generating new session
-          await addNewStageSessionIdInUserAnswer(
-            userAnswerEraModel,
-            requestBody
-          );
-          //getting new session
-          sessionId = await getStageSessionId(userAnswerEraModel, requestBody);
-          startTime = sessionId["startTime"];
-          sessionId = sessionId["sessionId"];
-          resetRecentStage["sessionId"] = sessionId;
-          resetRecentStage["startTime"] = startTime;
-        }
+        const updateSessionQuery = {
+          $set: {
+            startTime: resetRecentStage["startTime"],
+            sessionId: resetRecentStage["sessionId"],
+          },
+        };
+        requestBody["query"] = updateSessionQuery;
+        await updateSessionIdStartTimeInUserAnswer(
+          userAnswerEraModel,
+          requestBody
+        );
 
         return reponseModel(
           httpStatusCodes.OK,
-          "Stage is already reseted",
+          "This stage is already reseted",
           true,
           resetRecentStage,
+          req,
+          res
+        );
+      } else if (
+        !stageData[0]["tenseEra"][0]["stage"][0]?.completedStage &&
+        stageData[0]["tenseEra"][0]["stage"][0]?.attemptQuestions === 0 &&
+        stageData[0]["tenseEra"][0]["stage"][0]?.sessionId === null
+      ) {
+        sessionStartTime = new Date(Date.now()).toISOString();
+        requestBody["startTime"] = sessionStartTime;
+
+        await addNewStageSessionIdInUserAnswer(userAnswerEraModel, requestBody);
+        sessionId = "";
+        sessionId = await getStageSessionId(userAnswerEraModel, requestBody);
+        startTime = sessionId[0]["tenseEra"][0]["stage"][0]?.startTime;
+        sessionId = sessionId[0]["tenseEra"][0]["stage"][0]?.sessionId;
+        resetRecentStage["sessionId"] = sessionId;
+        resetRecentStage["startTime"] = startTime;
+
+        return reponseModel(
+          httpStatusCodes.OK,
+          "This stage is already reseted",
+          true,
+          resetRecentStage,
+          req,
+          res
+        );
+      } else if (
+        !stageData[0]["tenseEra"][0]["stage"][0]?.completedStage &&
+        stageData[0]["tenseEra"][0]["stage"][0]?.attemptQuestions === 0 &&
+        stageData[0]["tenseEra"][0]["stage"][0]?.sessionId
+      ) {
+        //getting old session
+        sessionId = "";
+        sessionId = await getStageSessionId(userAnswerEraModel, requestBody);
+
+        startTime = sessionId[0]["tenseEra"][0]["stage"][0]?.startTime;
+        sessionId = sessionId[0]["tenseEra"][0]["stage"][0]?.sessionId;
+        resetRecentStage["sessionId"] = sessionId;
+        resetRecentStage["startTime"] = startTime;
+
+        const updateSessionQuery = {
+          $set: {
+            startTime: resetRecentStage["startTime"],
+            sessionId: resetRecentStage["sessionId"],
+          },
+        };
+        requestBody["query"] = updateSessionQuery;
+        await updateSessionIdStartTimeInUserAnswer(
+          userAnswerEraModel,
+          requestBody
+        );
+
+        return reponseModel(
+          httpStatusCodes.OK,
+          "This stage is already reseted",
+          true,
+          resetRecentStage,
+          req,
+          res
+        );
+      } else {
+        return reponseModel(
+          httpStatusCodes.OK,
+          "Something went wrong! Please try again",
+          false,
+          "",
           req,
           res
         );
@@ -255,6 +342,46 @@ exports.resetUserRecentStage = async (req, res, next) => {
         "This stage is not answered",
         false,
         resetRecentStage,
+        req,
+        res
+      );
+    }
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.updateSessionEndTimeInUserAnswer = async (req, res, next) => {
+  try {
+    const requestBody = req.body;
+    let sesionUpdatedData = await updateSessionEndTimeInUserAnswer(
+      userAnswerEraModel,
+      requestBody
+    );
+
+    if (
+      !isEmpty(sesionUpdatedData) &&
+      sesionUpdatedData?.acknowledged &&
+      sesionUpdatedData?.modifiedCount === 1
+    ) {
+      let stageData = await checkStageIsAnswered(
+        userAnswerEraModel,
+        requestBody
+      );
+      return reponseModel(
+        httpStatusCodes.OK,
+        "",
+        false,
+        stageData,
+        req,
+        res
+      );
+    } else {
+      return reponseModel(
+        httpStatusCodes.OK,
+        "Something went wrong",
+        false,
+        "",
         req,
         res
       );

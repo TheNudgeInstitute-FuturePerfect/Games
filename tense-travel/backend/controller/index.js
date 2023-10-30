@@ -3,7 +3,8 @@ const { login, register, checkUserByMobile } = require("../controller/auth.contr
 const {
   getAllEra: findAllEra,
   getAllEraItsPercentage,
-  resetUserRecentStage
+  resetUserRecentStage,
+  updateSessionEndTimeInUserAnswer
 } = require("../controller/tenseEra.controller");
 
 const {
@@ -70,5 +71,6 @@ module.exports = {
   userHighStarsStagesOfEra,
   resetUserRecentStage,
   checkUserByMobile,
-  shareGameSessionDetail
+  shareGameSessionDetail,
+  updateSessionEndTimeInUserAnswer
 };
