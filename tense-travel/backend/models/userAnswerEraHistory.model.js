@@ -87,7 +87,15 @@ const TenseStageSchema = new Schema({
   isLocked: {
     type: Boolean,
     default: true,
-  }
+  },
+  sessionId: {
+    type: String,
+    default: null,
+  },
+  attempt: {
+    type: Number,
+    default: 0,
+  },
 });
 
 const questionSchema = new Schema({
@@ -166,6 +174,14 @@ const UserAnswerEraHistorySchema = new Schema(
     transactionNumber: {
       type: String, // Use a string type for UUID
       default: uuidv4, // Generate a UUID using uuidv4 as the default value
+    },
+    startTime: {
+      type: Date,
+      default: null,
+    },
+    endTime: {
+      type: Date,
+      default: null,
     },
   },
   {

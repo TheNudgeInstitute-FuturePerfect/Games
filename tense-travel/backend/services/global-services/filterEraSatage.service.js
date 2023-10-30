@@ -154,6 +154,8 @@ const getGermsDetails = async (model, requestBody) => {
           },
         },
         earnGerms: 1,
+        startTime: 1,
+        endTime: 1,
       },
     },
   ]);
@@ -258,7 +260,7 @@ const checkStageIsAnswered = async (model, requestBody) => {
         userId: new ObjectID(requestBody["userId"]),
         tenseEra: {
           $elemMatch: {
-            // tenseEraId: new ObjectID(requestBody["tenseEraId"]),
+            tenseEraId: new ObjectID(requestBody["tenseEraId"]),
             stage: {
               $elemMatch: {
                 stageId: new ObjectID(requestBody["stageId"]),

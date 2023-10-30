@@ -5,7 +5,7 @@ const {
 const ObjectID = require("mongodb").ObjectId;
 const { mongoose } = require("../../configs/dbConnection");
 const {
-  generateSessionId,
+  generateSessionId, checkStageIsAnswered,
 } = require("../global-services/filterEraSatage.service");
 
 const retryGame = async (model, historyPayload, requestBody) => {
@@ -271,7 +271,7 @@ const resetStageInUserAnswer = async (model, requestBody) => {
         "tenseEra.$[].stage.$[isCorrect].question": [],
         "tenseEra.$[].stage.$[isCorrect].histories": [],
         "tenseEra.$[].stage.$[isCorrect].isLivePurchased": false,
-        sessionId: await generateSessionId(),
+        "tenseEra.$[].stage.$[isCorrect].sessionId": null,
       },
     },
     {
@@ -287,17 +287,19 @@ const resetStageInUserAnswer = async (model, requestBody) => {
 };
 
 const getStageSessionId = async (model, requestBody) => {
-  const sessionId = await model.findOne(
-    {
-      userId: requestBody["userId"],
-      "tenseEra.tenseEraId": requestBody["tenseEraId"],
-      "tenseEra.stage.stageId": requestBody["stageId"],
-    },
-    {
-      sessionId: 1,
-      startTime: 1,
-    }
-  );
+  // const sessionId = await model.findOne(
+  //   {
+  //     userId: requestBody["userId"],
+  //     "tenseEra.tenseEraId": requestBody["tenseEraId"],
+  //     "tenseEra.stage.stageId": requestBody["stageId"],
+  //   },
+  //   {
+  //     sessionId: 1,
+  //     startTime: 1,
+  //     tenseEra: 1,
+  //   }
+  // );
+  const sessionId = await checkStageIsAnswered(model, requestBody)
 
   return sessionId;
 };
@@ -306,19 +308,67 @@ const addNewStageSessionIdInUserAnswer = async (model, requestBody) => {
   const sessionId = await generateSessionId();
   const newSessionId = await model.updateOne(
     {
-      userId: requestBody["userId"],
-      "tenseEra.tenseEraId": requestBody["tenseEraId"],
-      "tenseEra.stage.stageId": requestBody["stageId"],
+      userId: new ObjectID(requestBody["userId"]),
+      "tenseEra.tenseEraId": new ObjectID(requestBody["tenseEraId"]),
+      "tenseEra.stage.stageId": new ObjectID(requestBody["stageId"]),
     },
     {
       $set: {
         sessionId: sessionId,
-        startTime: new Date(Date.now()).toISOString(),
+        startTime: requestBody["startTime"],
+        "tenseEra.$[].stage.$[stageData].sessionId": sessionId,
+        "tenseEra.$[].stage.$[stageData].startTime": requestBody["startTime"],
+        "tenseEra.$[].stage.$[stageData].attempt": requestBody["attempt"],
       },
+    },
+    {
+      arrayFilters: [
+        {
+          "stageData.stageId": new ObjectID(requestBody["stageId"]),
+        },
+      ],
     }
   );
 
   return newSessionId;
+};
+
+const updateSessionEndTimeInUserAnswer = async (model, requestBody) => {
+  const updatedData = await model.updateOne(
+    {
+      userId: new ObjectID(requestBody["userId"]),
+      "tenseEra.tenseEraId": new ObjectID(requestBody["tenseEraId"]),
+      "tenseEra.stage.stageId": new ObjectID(requestBody["stageId"]),
+    },
+    {
+      $set: {
+        endTime: requestBody["endTime"],
+        "tenseEra.$[].stage.$[stageData].endTime": requestBody["endTime"],
+      },
+    },
+    {
+      arrayFilters: [
+        {
+          "stageData.stageId": new ObjectID(requestBody["stageId"]),
+        },
+      ],
+    }
+  );
+
+  return updatedData;
+};
+
+const updateSessionIdStartTimeInUserAnswer = async (model, requestBody) => {
+  const updatedData = await model.updateOne(
+    {
+      userId: new ObjectID(requestBody["userId"]),
+      "tenseEra.tenseEraId": new ObjectID(requestBody["tenseEraId"]),
+      "tenseEra.stage.stageId": new ObjectID(requestBody["stageId"]),
+    },
+    requestBody['query']
+  );
+
+  return updatedData;
 };
 
 module.exports = {
@@ -330,4 +380,6 @@ module.exports = {
   unlockStageWithoutSessionId,
   getStageSessionId,
   addNewStageSessionIdInUserAnswer,
+  updateSessionEndTimeInUserAnswer,
+  updateSessionIdStartTimeInUserAnswer
 };

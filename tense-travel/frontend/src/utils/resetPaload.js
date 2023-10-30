@@ -1,4 +1,7 @@
-const { shareGameSessionDetailPayload } = require("./payload");
+const {
+  shareGameSessionDetailPayload,
+  stageSessionEndTimeDetail,
+} = require("./payload");
 
 const shareGameSessionDetailPayloadReset = () => {
   shareGameSessionDetailPayload.Mobile = "";
@@ -10,4 +13,13 @@ const shareGameSessionDetailPayloadReset = () => {
   shareGameSessionDetailPayload.TimeSpent = "";
 };
 
-module.exports = { shareGameSessionDetailPayloadReset };
+const stageSessionEndTimeDetailReset = () => {
+  stageSessionEndTimeDetail.SessionEndTime = "";
+  stageSessionEndTimeDetail.SessionComplete = "";
+  stageSessionEndTimeDetail.TimeSpent = "";
+};
+
+module.exports = {
+  shareGameSessionDetailPayloadReset,
+  stageSessionEndTimeDetailReset,
+};

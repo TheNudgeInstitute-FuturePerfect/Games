@@ -114,6 +114,10 @@ const TenseEraSchema = new Schema({
           type: Boolean,
           default: true,
         },
+        sessionId: {
+          type: String,
+          default: null,
+        },
         question: {
           type: [
             {

@@ -71,6 +71,7 @@ const getStorage = () => {
     return "";
   } else return JSON.parse(storageData);
 };
+
 const removeStorage = () => {
   sessionStorage.removeItem("tesne-travel");
 };
@@ -80,6 +81,12 @@ const shareGameSessionDetailPayload = {
   Type: "",
   SessionID: "",
   SessionStartTime: "",
+  SessionEndTime: "",
+  SessionComplete: "",
+  TimeSpent: "",
+};
+
+const stageSessionEndTimeDetail = {
   SessionEndTime: "",
   SessionComplete: "",
   TimeSpent: "",
@@ -97,5 +104,6 @@ module.exports = {
   setStorage,
   getStorage,
   removeStorage,
-  shareGameSessionDetailPayload
+  shareGameSessionDetailPayload,
+  stageSessionEndTimeDetail
 };
