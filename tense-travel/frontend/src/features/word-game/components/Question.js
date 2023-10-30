@@ -427,6 +427,17 @@ function Question() {
 
       shareGameSessionDetailPayload.SessionStartTime =
         stageSessionTime["sessionStartTime"];
+      shareGameSessionDetailPayload.SessionComplete = "Yes";
+
+      //calculate session spent time
+      const timeDifferenceInMilliseconds =
+        new Date(stageSessionTime["sessionEndTime"]) -
+        new Date(stageSessionTime["sessionStartTime"]);
+
+      const spentTime = Math.floor(
+        (timeDifferenceInMilliseconds % (1000 * 60)) / 1000
+      );
+      shareGameSessionDetailPayload.TimeSpent = spentTime;
     } else {
       shareGameSessionDetailPayload.SessionEndTime = "";
       shareGameSessionDetailPayload.SessionStartTime =
