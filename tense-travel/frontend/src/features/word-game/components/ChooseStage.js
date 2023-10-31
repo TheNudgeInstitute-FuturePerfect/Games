@@ -33,7 +33,7 @@ function ChooseStage() {
     getUserCurrentEra.tenseEraId = "";
     // getUserCurrentEra["sessionId"] = userIds.sessionId;
     delete getUserCurrentEra["sessionId"];
-    getUserCurrentEra.userId = userDetail['userId'];
+    getUserCurrentEra.userId = userDetail["userId"];
     getUserCurrentEra.tenseEraId = eraId;
 
     const tenseStageData = await fetch(
@@ -77,7 +77,7 @@ function ChooseStage() {
         />
         <div className="moon-bg">
           <div className="third-step">
-            <Link to={"/" + sessionMobile} className="back-arr">
+            <Link to={"/?mobile=" + sessionMobile} className="back-arr">
               Change Era
             </Link>
             <ul className="step-list">
