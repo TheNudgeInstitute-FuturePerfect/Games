@@ -4,7 +4,8 @@ const {
   getAllEra: findAllEra,
   getAllEraItsPercentage,
   resetUserRecentStage,
-  updateSessionEndTimeInUserAnswer
+  updateSessionEndTimeInUserAnswer,
+  resetStage
 } = require("../controller/tenseEra.controller");
 
 const {
@@ -72,5 +73,6 @@ module.exports = {
   resetUserRecentStage,
   checkUserByMobile,
   shareGameSessionDetail,
-  updateSessionEndTimeInUserAnswer
+  updateSessionEndTimeInUserAnswer,
+  resetStage
 };

@@ -46,7 +46,30 @@ const updateSessionEndTimeInUserAnswerValidator = async (req, res, next) => {
   }
 };
 
+/* reset stage */
+const resetStageObj = {
+  userId: Joi.string().required(),
+  sessionId: Joi.string().required(),
+  tenseEraId: Joi.string().required(),
+  stageId: Joi.string().required(),
+};
+
+const resetStageObjSchema = Joi.object(resetStageObj);
+resetStageObjSchema.validate({});
+
+const resetStageValidator = async (req, res, next) => {
+  try {
+    let payload = req.body;
+    await resetStageObjSchema.validateAsync(payload);
+    next();
+  } catch (error) {
+    const errMsg = error["details"][0]?.message || "";
+    errorHandler.handle(httpStatusCodes.BAD_REQUEST, errMsg, false, req, res);
+  }
+};
+
 module.exports = {
   userRecentStageCompletedValidator,
-  updateSessionEndTimeInUserAnswerValidator
+  updateSessionEndTimeInUserAnswerValidator,
+  resetStageValidator,
 };

@@ -4,6 +4,7 @@ const httpStatusCodes = require("../utils/httpStatusCodes");
 const { isEmpty, result } = require("lodash");
 const {
   checkStageIsAnswered,
+  getLivesOfUnlockStage,
 } = require("./global-services/filterEraSatage.service");
 const {
   resetStageInUserAnswer,
@@ -11,10 +12,20 @@ const {
   addNewStageSessionIdInUserAnswer,
   updateSessionEndTimeInUserAnswer,
   updateSessionIdStartTimeInUserAnswer,
+  createUserEraAnswerHistory,
+  resetStage,
 } = require("./answer/retryAttempt");
 const {
   stageQuestionSize,
+  userAnswerEraHisotryPayload,
 } = require("../utils/constants/payloadInterface/payload.interface");
+const {
+  userAnswerEraHisotryPayloadReset,
+  userAnswerEraHisotryPayloadPrepare,
+} = require("../utils/resetPayload");
+const {
+  userAnswerEraHistoryModel,
+} = require("../models/userAnswerEraHistory.model");
 const ObjectID = require("mongodb").ObjectId;
 
 exports.getAllEra = async (req, res, next) => {
@@ -194,7 +205,7 @@ exports.resetUserRecentStage = async (req, res, next) => {
           resetRecentStage?.modifiedCount === 1
         ) {
           //generating new session
-          
+
           sessionStartTime = new Date(Date.now()).toISOString();
           requestBody["startTime"] = sessionStartTime;
           await addNewStageSessionIdInUserAnswer(
@@ -368,14 +379,7 @@ exports.updateSessionEndTimeInUserAnswer = async (req, res, next) => {
         userAnswerEraModel,
         requestBody
       );
-      return reponseModel(
-        httpStatusCodes.OK,
-        "",
-        false,
-        stageData,
-        req,
-        res
-      );
+      return reponseModel(httpStatusCodes.OK, "", false, stageData, req, res);
     } else {
       return reponseModel(
         httpStatusCodes.OK,
@@ -385,6 +389,77 @@ exports.updateSessionEndTimeInUserAnswer = async (req, res, next) => {
         req,
         res
       );
+    }
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.resetStage = async (req, res, next) => {
+  try {
+    const requestBody = req.body;
+
+    let sessionStartTime;
+    let stageData = await checkStageIsAnswered(userAnswerEraModel, requestBody);
+    let stageAttempt = 0;
+
+    let sessionId, startTime;
+    let resetRecentStage = {};
+    if (!isEmpty(stageData)) {
+      if (
+        Array.isArray(stageData[0]["tenseEra"][0]["stage"]) &&
+        stageData[0]["tenseEra"][0]["stage"][0]?.attemptQuestions === 0
+      ) {
+        return reponseModel(
+          httpStatusCodes.OK,
+          "Stage is already reseted",
+          true,
+          "",
+          req,
+          res
+        );
+      } else if (
+        Array.isArray(stageData[0]["tenseEra"][0]["stage"]) &&
+        stageData[0]["tenseEra"][0]["stage"][0]?.attemptQuestions > 0
+      ) {
+        /* preparig and creating user answer history */
+        userAnswerEraHisotryPayloadReset(); //reset history payload
+        const hisotryPayload = await userAnswerEraHisotryPayloadPrepare(
+          stageData,
+          requestBody
+        );
+
+        //creating history
+        await createUserEraAnswerHistory(
+          userAnswerEraHistoryModel,
+          userAnswerEraHisotryPayload
+        );
+
+        //reseting stage
+        const resetStageData = await resetStage(
+          userAnswerEraModel,
+          requestBody
+        );
+        /* preparig and creating user answer history end */
+
+        return reponseModel(
+          httpStatusCodes.OK,
+          "Stage reset successfully",
+          true,
+          resetStageData,
+          req,
+          res
+        );
+      } else {
+        return reponseModel(
+          httpStatusCodes.OK,
+          "Something went wrong",
+          false,
+          "",
+          req,
+          res
+        );
+      }
     }
   } catch (err) {
     next(err);

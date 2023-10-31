@@ -183,6 +183,10 @@ const UserAnswerEraHistorySchema = new Schema(
       type: Date,
       default: null,
     },
+    historyReason: {
+      type: String,
+      default: null,
+    },
   },
   {
     timestamps: true,
