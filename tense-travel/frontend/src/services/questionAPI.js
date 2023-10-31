@@ -60,4 +60,24 @@ const shareGameSessionDetail = async (requestPayload) => {
   return resetStage;
 };
 
-export { buyLives, reTryStage, resetUserRecentStage, shareGameSessionDetail };
+const exitGoBackResetStage = async (requestPayload) => {
+  let resetStage = await fetch(
+    `${process.env.REACT_APP_API_URL}/${API_END_POINT.RESET_STAGE}`,
+    {
+      method: "POST",
+      body: JSON.stringify(requestPayload),
+      headers: { "Content-Type": "application/json" },
+    }
+  );
+
+  resetStage = await resetStage.json();
+  return resetStage;
+};
+
+export {
+  buyLives,
+  reTryStage,
+  resetUserRecentStage,
+  shareGameSessionDetail,
+  exitGoBackResetStage,
+};

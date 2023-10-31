@@ -53,7 +53,6 @@ function ChooseStage() {
       sessionStorage.getItem("step") &&
       parseInt(sessionStorage.getItem("step")) === 4
     ) {
-      console.log('---------------------')
       setShowSimpleTense({
         position: "relative",
         zIndex: 2,

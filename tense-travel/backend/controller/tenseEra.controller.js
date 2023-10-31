@@ -8,6 +8,7 @@ const {
   resetRecentUserStage,
   resetUserRecentStage,
   updateSessionEndTimeInUserAnswer,
+  resetStage,
 } = require("../services/tenseEra.service");
 const { handleSuccess } = require("../utils/responseHandler");
 
@@ -43,5 +44,10 @@ exports.resetUserRecentStage = async (req, res, next) => {
 
 exports.updateSessionEndTimeInUserAnswer = async (req, res, next) => {
   const response = await updateSessionEndTimeInUserAnswer(req, res, next);
+  handleSuccess(response, req, res);
+};
+
+exports.resetStage = async (req, res, next) => {
+  const response = await resetStage(req, res, next);
   handleSuccess(response, req, res);
 };

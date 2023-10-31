@@ -5,7 +5,8 @@ const {
 const ObjectID = require("mongodb").ObjectId;
 const { mongoose } = require("../../configs/dbConnection");
 const {
-  generateSessionId, checkStageIsAnswered,
+  generateSessionId,
+  checkStageIsAnswered,
 } = require("../global-services/filterEraSatage.service");
 
 const retryGame = async (model, historyPayload, requestBody) => {
@@ -286,6 +287,42 @@ const resetStageInUserAnswer = async (model, requestBody) => {
   return resetData;
 };
 
+const resetStage = async (model, requestBody) => {
+  const resetData = await model.updateOne(
+    {
+      userId: requestBody["userId"],
+      "tenseEra.tenseEraId": requestBody["tenseEraId"],
+      "tenseEra.stage.stageId": requestBody["stageId"],
+    },
+    {
+      $set: {
+        sessionId: null,
+        "tenseEra.$[].stage.$[isCorrect].earnStars": 0,
+        "tenseEra.$[].stage.$[isCorrect].defaultGerms": 0,
+        "tenseEra.$[].stage.$[isCorrect].earnGerms": 0,
+        "tenseEra.$[].stage.$[isCorrect].completedStage": false,
+        "tenseEra.$[].stage.$[isCorrect].numberOfCorrect": 0,
+        "tenseEra.$[].stage.$[isCorrect].numberOfInCorrect": 0,
+        "tenseEra.$[].stage.$[isCorrect].attemptQuestions": 0,
+        "tenseEra.$[].stage.$[isCorrect].lives": heartLives.live,
+        "tenseEra.$[].stage.$[isCorrect].question": [],
+        "tenseEra.$[].stage.$[isCorrect].histories": [],
+        "tenseEra.$[].stage.$[isCorrect].isLivePurchased": false,
+        "tenseEra.$[].stage.$[isCorrect].sessionId": null,
+      },
+    },
+    {
+      arrayFilters: [
+        {
+          "isCorrect.stageId": requestBody["stageId"],
+        },
+      ],
+    }
+  );
+
+  return resetData;
+};
+
 const getStageSessionId = async (model, requestBody) => {
   // const sessionId = await model.findOne(
   //   {
@@ -299,7 +336,7 @@ const getStageSessionId = async (model, requestBody) => {
   //     tenseEra: 1,
   //   }
   // );
-  const sessionId = await checkStageIsAnswered(model, requestBody)
+  const sessionId = await checkStageIsAnswered(model, requestBody);
 
   return sessionId;
 };
@@ -365,7 +402,7 @@ const updateSessionIdStartTimeInUserAnswer = async (model, requestBody) => {
       "tenseEra.tenseEraId": new ObjectID(requestBody["tenseEraId"]),
       "tenseEra.stage.stageId": new ObjectID(requestBody["stageId"]),
     },
-    requestBody['query']
+    requestBody["query"]
   );
 
   return updatedData;
@@ -381,5 +418,6 @@ module.exports = {
   getStageSessionId,
   addNewStageSessionIdInUserAnswer,
   updateSessionEndTimeInUserAnswer,
-  updateSessionIdStartTimeInUserAnswer
+  updateSessionIdStartTimeInUserAnswer,
+  resetStage,
 };
