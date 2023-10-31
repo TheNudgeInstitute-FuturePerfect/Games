@@ -57,7 +57,7 @@ const stepsJson = [
   },
   {
     step: 2,
-    text: `We have to go to and collect all the 3 pieces-`,
+    text: `We have to go and collect all the 3 pieces-`,
     img: astronautThink,
     imgDimension: {
       height: "281px",

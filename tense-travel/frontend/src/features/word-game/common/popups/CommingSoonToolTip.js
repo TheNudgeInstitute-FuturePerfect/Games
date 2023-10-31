@@ -6,7 +6,7 @@ function CommingSoonToolTip() {
   return (
     <>
       <div className="comming-soon">
-        <span className="text-wrapper">Comming soon!</span>
+        <span className="text-wrapper">Coming soon!</span>
         <img
           src={commingSoonTooltip}
           alt=""
