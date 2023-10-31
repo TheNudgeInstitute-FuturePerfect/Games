@@ -17,6 +17,7 @@ import {
 } from "../../../utils/constants";
 import {
   buyLives,
+  exitGoBackResetStage,
   reTryStage,
   resetUserRecentStage,
   shareGameSessionDetail,
@@ -30,7 +31,10 @@ import {
   showTourGuidePopup,
   updateTourGuideStep,
 } from "../common/TourGuide/UpdateTourGuideSteps";
-import { userTourStatus } from "../../../services/userAPI";
+import {
+  updateUserTourStatus,
+  userTourStatus,
+} from "../../../services/userAPI";
 import { shareGameSessionDetailPayloadReset } from "../../../utils/resetPaload";
 import { setStorage } from "../../../utils/manageStorage";
 
@@ -62,6 +66,7 @@ function Question() {
   const [showTourGuide, setShowTourGuide] = useState(false);
   const [tourStatusData, setTourStatusData] = useState();
   let recentStageData;
+  let storageData = userInfo();
 
   /*fill in the blank input style*/
   const [inputStyle, setInputStyle] = useState({
@@ -75,7 +80,26 @@ function Question() {
     width: "20%",
   });
 
+  //reset stage data when user clicks go back in purchase popup
+  const resetStage = async () => {
+    const requestPayload = {
+      userId: storageData["userId"],
+      tenseEraId: eraId,
+      stageId: stageId,
+      sessionId: storageData["sessionId"],
+    };
+    const resetResult = await exitGoBackResetStage(requestPayload);
+    const payload = {
+      userId: requestPayload["userId"],
+      sessionId: requestPayload["sessionId"],
+      tourGuideStep: 5,
+      tourGuide: true,
+    };
+    await updateUserTourStatus(payload);
+  };
+
   const handleBuyCoinPopupClose = () => {
+    resetStage();
     setShow(false);
     navigate(`/choose-stage/${eraId}`);
   };
@@ -623,7 +647,7 @@ function Question() {
                   </strong>
                 )}
                 <strong>
-                  Explanation: {currentQuestion && currentQuestion?.explanation}
+                  {/* Explanation: {currentQuestion && currentQuestion?.explanation} */}
                 </strong>
               </div>
             </div>
