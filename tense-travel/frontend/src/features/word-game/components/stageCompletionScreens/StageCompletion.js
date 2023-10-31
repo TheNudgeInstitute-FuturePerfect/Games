@@ -332,7 +332,7 @@ function StageCompletion() {
           {showCoins && (
             <div className="score-section">
               <div className="coins-section">
-                <div className="coin-txt">Coin</div>
+                <div className="coin-txt">Coins</div>
                 <div className="coin-count">
                   <div className="coin-logo">
                     <img src={coinImage} alt="coinImage" />

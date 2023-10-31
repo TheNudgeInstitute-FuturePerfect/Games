@@ -503,8 +503,10 @@ function Question() {
         tourGuideSteps.steps++;
         showTourGuidePopup(true);
       } else if (!userSubmitAnswerResponse["isCorrect"]) {
-        tourGuideSteps.steps = tourGuideSteps.steps + 1;
+        tourGuideSteps.steps = tourGuideSteps.steps + 2;
         showTourGuidePopup(true);
+        tourGuideSteps.steps = tourGuideSteps.steps - 1;
+        updateTourGuideStep(tourGuideSteps.steps);
       }
       setProgressBarZIndex({
         zIndex: 2,
