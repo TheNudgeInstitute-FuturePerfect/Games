@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import LandingPage from "./components/LandingPage";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { checkUserByMobile } from "../../services/userAPI";
 import { removeTourGuideStep } from "./common/TourGuide/UpdateTourGuideSteps";
 import {
@@ -11,8 +11,11 @@ import {
 
 function Home() {
   const params = useParams();
-  const mobile = params["mobileNumber"];
+  let mobile = params["mobileNumber"];
   const [storageData, setStorageData] = useState();
+  const [searchParams] = useSearchParams();
+
+  mobile = searchParams.get("mobile");
 
   const checkUserByMobileRegister = async () => {
     const userPayload = {
