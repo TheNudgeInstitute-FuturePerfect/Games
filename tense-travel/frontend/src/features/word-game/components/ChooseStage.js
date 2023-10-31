@@ -51,7 +51,7 @@ function ChooseStage() {
 
     if (
       Number(sessionStorage.getItem("step")) &&
-      Number(sessionStorage.getItem("step")) === 4
+      parseInt(sessionStorage.getItem("step")) == 4
     ) {
       setShowSimpleTense({
         position: "relative",
