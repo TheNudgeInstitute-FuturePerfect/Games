@@ -122,7 +122,13 @@ function ChooseStage() {
                 <div className="flex">
                   <div className="text-block">
                     <strong>
-                      {stage.length > 0 && stage[2]?.stageTitle.split(" ")[1]}{" "}
+                      {/* {stage.length > 0 && stage[2]?.stageTitle.split(" ")[1]}{" "} */}
+                      {stage.length > 0 &&
+                        stage[2]?.stageTitle
+                          .split(" ")[1]
+                          .charAt(0)
+                          .toUpperCase() +
+                          stage[2]?.stageTitle.split(" ")[1].slice(1)}
                       <br /> Tense
                     </strong>
                     <div className="star-block">
@@ -170,7 +176,13 @@ function ChooseStage() {
                   )}
                   <div className="text-block">
                     <strong>
-                      {stage.length > 0 && stage[1]?.stageTitle.split(" ")[1]}{" "}
+                      {/* {stage.length > 0 && stage[1]?.stageTitle.split(" ")[1]}{" "} */}
+                      {stage.length > 0 &&
+                        stage[1]?.stageTitle
+                          .split(" ")[1]
+                          .charAt(0)
+                          .toUpperCase() +
+                          stage[1]?.stageTitle.split(" ")[1].slice(1)}
                       <br />
                       Tense
                     </strong>
@@ -199,7 +211,12 @@ function ChooseStage() {
                 <div className="flex">
                   <div className="text-block">
                     <strong>
-                      {stage.length > 0 && stage[0]?.stageTitle.split(" ")[1]}{" "}
+                      {stage.length > 0 &&
+                        stage[0]?.stageTitle
+                          .split(" ")[1]
+                          .charAt(0)
+                          .toUpperCase() +
+                          stage[0]?.stageTitle.split(" ")[1].slice(1)}{" "}
                       <br />
                       Tense
                     </strong>
