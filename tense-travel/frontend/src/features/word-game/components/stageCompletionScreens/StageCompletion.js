@@ -284,7 +284,9 @@ function StageCompletion() {
           </div>
           {showEmptyStar && (
             <p>
-              {stageData["stageTitle"]} <br /> Completed!
+              {stageData["stageTitle"].charAt(0).toUpperCase() +
+                stageData["stageTitle"].slice(1)}{" "}
+              <br /> Completed!
             </p>
           )}
 
