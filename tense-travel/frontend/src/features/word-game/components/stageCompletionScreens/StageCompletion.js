@@ -48,6 +48,7 @@ function StageCompletion() {
   const completedStageData = stageCompleteContext.completeStage;
   let celebrateGif = null;
   let userTourData;
+  let isLivePurchased = false;
 
   setTimeout(() => {
     // setCheckImg(true);
@@ -69,6 +70,8 @@ function StageCompletion() {
       setTenseEraData(scoreData["data"][0]["tenseEra"]);
       setStageData(scoreData["data"][0]["tenseEra"][0]["stage"][0]);
       heartCount = scoreData["data"][0]["tenseEra"][0]["stage"][0]["lives"];
+      isLivePurchased =
+        scoreData["data"][0]["tenseEra"][0]["stage"][0]?.isLivePurchased;
       setHearts(heartCount);
       setHeartCounter(heartCount);
       setTotalEarnGerms(
@@ -107,11 +110,12 @@ function StageCompletion() {
     const animateHeartInterval = setInterval(0.5);
     const animateHeartInterval1 = setInterval(() => {
       if (heartCount > 0) {
-        // console.log(heartCount);
-        heartCount--;
-        setHeartCounter(heartCount);
-        defaultCoins = defaultCoins + 5;
-        setTotalEarnGerms(defaultCoins);
+        if (heartCount > 0 && !isLivePurchased) {
+          heartCount--;
+          setHeartCounter(heartCount);
+          defaultCoins = defaultCoins + 5;
+          setTotalEarnGerms(defaultCoins);
+        }
       }
       if (heartCount === 0) clearInterval(animateHeartInterval1);
     }, 1000);
