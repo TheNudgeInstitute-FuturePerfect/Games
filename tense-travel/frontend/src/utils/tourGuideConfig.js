@@ -95,7 +95,7 @@ const stepsJson = [
         fontStyle: "normal",
         fontWeight: 400,
         lineHeight: "normal",
-        marginTop: "120px",
+        marginTop: "15px",
       },
     },
     buttonText: "",
@@ -206,7 +206,7 @@ const stepsJson = [
       arrowImg: answerBoxPopupUpArrow,
       style: {
         position: "absolute",
-        top: "34%",
+        top: "33.5%",
         right: "48%",
       },
     },
