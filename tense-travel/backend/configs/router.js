@@ -7,6 +7,7 @@ const userAnswerEraRouter = require("../routes/userAnswerEra.route");
 const scoreRouter = require("../routes/socre.route");
 const coinRouter = require("../routes/coin.route");
 const userRouter = require("../routes/user.route");
+const userAnswerEraHistoryRouter = require("../routes/userAnswerEraHistory.route");
 
 const apiBaseURL = `${config.api?.API_BASE_URL}/${config.api?.API_VERSION}`;
 
@@ -18,6 +19,7 @@ exports.routeConfig = async (application) => {
   application.use(`/${apiBaseURL}/score`, scoreRouter.router);
   application.use(`/${apiBaseURL}/coin`, coinRouter.router);
   application.use(`/${apiBaseURL}/user`, userRouter.router);
+  application.use(`/${apiBaseURL}/userAnswerEraHistory`, userAnswerEraHistoryRouter.router);
 
   return application;
 };

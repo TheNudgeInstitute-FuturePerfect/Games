@@ -3,6 +3,7 @@ const {
   getTourStatus,
   updateTourStatus,
   shareGameSessionDetail,
+  getAllUsers,
 } = require("../controller");
 const {
   userTourGuideValidator,
@@ -21,4 +22,10 @@ router.patch(
   [shareGameSessionDetailValidator],
   shareGameSessionDetail
 );
+
+router.get(
+  "/get-all-users",
+  getAllUsers
+);
+
 exports.router = router;

@@ -1,11 +1,15 @@
-const { login, register, checkUserByMobile } = require("../controller/auth.controller");
+const {
+  login,
+  register,
+  checkUserByMobile,
+} = require("../controller/auth.controller");
 
 const {
   getAllEra: findAllEra,
   getAllEraItsPercentage,
   resetUserRecentStage,
   updateSessionEndTimeInUserAnswer,
-  resetStage
+  resetStage,
 } = require("../controller/tenseEra.controller");
 
 const {
@@ -28,7 +32,7 @@ const {
   getUserCurrentEra,
   getCurrentUserAndSessionId,
   eraseUserStageAttempts,
-  userHighStarsStagesOfEra
+  userHighStarsStagesOfEra,
 } = require("../controller/userAnswerEra.controller");
 
 const {
@@ -39,8 +43,13 @@ const { getUserCoins, buyLives } = require("../controller/coin.controller");
 const {
   getTourStatus,
   updateTourStatus,
-  shareGameSessionDetail
+  shareGameSessionDetail,
+  getAllUsers,
 } = require("../controller/user.controller");
+const {
+  getEraAnswerAllHistory,
+  getEraAnswerHistoryByUserId,
+} = require("../controller/userAnswerEraHistory.controller");
 
 module.exports = {
   login,
@@ -74,5 +83,8 @@ module.exports = {
   checkUserByMobile,
   shareGameSessionDetail,
   updateSessionEndTimeInUserAnswer,
-  resetStage
+  resetStage,
+  getAllUsers,
+  getEraAnswerAllHistory,
+  getEraAnswerHistoryByUserId,
 };
