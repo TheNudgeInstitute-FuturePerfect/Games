@@ -118,3 +118,31 @@ exports.shareGameSessionDetail = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.getAllUsers = async (req, res, next) => {
+  try {
+    const usersData = await userModel.find(
+      {},
+      {
+        _id: 1,
+        mobile: 1,
+        earnGerms: 1,
+        bonusGerms: 1,
+        totalEarnGerms: 1,
+        firstName: 1,
+        lastName: 1,
+      }
+    );
+
+    return reponseModel(
+      httpStatusCodes.OK,
+      !isEmpty(usersData) ? "All users" : "No users",
+      !isEmpty(usersData) ? true : false,
+      usersData,
+      req,
+      res
+    );
+  } catch (err) {
+    next(err);
+  }
+};

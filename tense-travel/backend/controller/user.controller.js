@@ -3,6 +3,7 @@ const {
   updateTourStatus,
   getUserCompletedLevels,
   shareGameSessionDetail,
+  getAllUsers,
 } = require("../services/user.service");
 const { handleSuccess } = require("../utils/responseHandler");
 
@@ -23,5 +24,10 @@ exports.getUserCompletedLevels = async (req, res, next) => {
 
 exports.shareGameSessionDetail = async (req, res, next) => {
   const response = await shareGameSessionDetail(req, res, next);
+  handleSuccess(response, req, res);
+};
+
+exports.getAllUsers = async (req, res, next) => {
+  const response = await getAllUsers(req, res, next);
   handleSuccess(response, req, res);
 };
