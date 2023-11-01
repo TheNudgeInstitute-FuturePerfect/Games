@@ -620,7 +620,7 @@ function Question() {
             </div>
           </div>
           <button
-            className={`blue-btn ${userAnswer.length > 0 ? "" : "disbaled"}`}
+            className={`blue-btn fixedBtn ${userAnswer.length > 0 ? "" : "disbaled"}`}
             onClick={handleSubmitAnswer}
           >
             Check
