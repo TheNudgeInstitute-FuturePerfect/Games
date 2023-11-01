@@ -248,6 +248,7 @@ function Question() {
   };
 
   const checkAnswer = async () => {
+    setUserAnswer("")
     const currentQues = questionsParsed["data"][currentQuestionIndex];
 
     // userAnswerSubmitPayload.sessionId = userIds.sessionId;
@@ -481,6 +482,9 @@ function Question() {
 
   //tour guide popup settings
   const tourGuideCallback = (params) => {
+    if(tourGuideSteps.steps===5)
+    inputRef.current.blur();
+
     if (params["showAnswerBox"] === true) {
       const setShowAnswerBoxTimeOut = setTimeout(() => {
         setShowAnswerBox(true);
@@ -500,7 +504,7 @@ function Question() {
     if (tourGuideSteps.steps === 9) {
       navigate("/complete-stage");
     }
-    inputRef.current.focus();
+    // inputRef.current.focus();
   };
 
   const showTourPopup = () => {
