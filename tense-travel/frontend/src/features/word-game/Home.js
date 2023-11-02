@@ -16,6 +16,7 @@ function Home() {
   const [searchParams] = useSearchParams();
 
   mobile = searchParams.get("mobile");
+  mobile = mobile.replace(/\D/g, '').slice(-10);
 
   const checkUserByMobileRegister = async () => {
     const userPayload = {
