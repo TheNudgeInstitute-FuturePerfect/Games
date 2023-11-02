@@ -50,23 +50,23 @@
   },
   "prod": {
     "server": {
-      "port": 3004
+      "port": 3002
     },
     "environment": {
       "APPLICATION_ENV": "prod"
     },
     "databaseSettings": {
       "dialect": "mongodb://",
-      "username": "admin:",
+      "username": "",
       "password": "",
-      "host": "localhost:27017/game-tense-travel",
+      "host": "localhost:27017/tense-travel-game",
       "params": ""
     },
     "log": {
       "logOption": "info"
     },
     "jwtToken": {
-      "JWT_SECRET_STRING": "game-tense-travel",
+      "JWT_SECRET_STRING": "tense-travel-game",
       "JWT_ACCESS_EXPIRY": "1d",
       "JWT_REFRESH_EXPIRY": "8d"
     }
