@@ -69,10 +69,10 @@
       "JWT_SECRET_STRING": "tense-travel-game",
       "JWT_ACCESS_EXPIRY": "1d",
       "JWT_REFRESH_EXPIRY": "8d"
-    }
+    },
+    "api": { "API_BASE_URL": "tense-travel-game-api", "API_VERSION": "v1" }
   },
   "winiston": {
     "logpath": "/nodeJS-postgresql-with-swagger/logs/"
-  },
-  "api": { "API_BASE_URL": "tense-travel-game-api", "API_VERSION": "v1" }
+  }
 }
