@@ -51,7 +51,7 @@ const stepsJson = [
       imgStyle: { position: "absolute", bottom: 0, right: "0px" },
       // "z-index": 2,
     },
-    buttonText: "Now whats?",
+    buttonText: "Now what?",
     routePath: "",
     screenName: "",
   },
