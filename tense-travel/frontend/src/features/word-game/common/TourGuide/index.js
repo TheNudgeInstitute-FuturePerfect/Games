@@ -4,13 +4,12 @@ import { Button } from "react-bootstrap";
 import { stepsFilter } from "../../../../utils/tourGuideConfig";
 import { useNavigate } from "react-router-dom";
 import { tourGuideSteps, userInfo } from "../../../../utils/constants";
-import { showTourGuidePopup } from "./UpdateTourGuideSteps";
 import { userIds } from "../../../../utils/constants";
 import {
   updateUserTourStatus,
   userTourStatus,
 } from "../../../../services/userAPI";
-import { getStorage, updateUserTourStatusPayload } from "../../../../utils/payload";
+import { updateUserTourStatusPayload } from "../../../../utils/payload";
 
 let userTourData;
 function TourGuideIndex(props) {
@@ -43,6 +42,7 @@ function TourGuideIndex(props) {
   const navigate = useNavigate();
   const [tourStatusData, setTourStatusData] = useState();
   const userDetail = userInfo();
+  const [tourCurrentStep, setTourCurrentStep] = useState();
 
   const handleNowWhats = () => {
     //fade out settimeout
@@ -50,9 +50,23 @@ function TourGuideIndex(props) {
       // setFade("now-whats fade-out-popup");
       setFade("fade-out-popup");
 
-      setCstep(Number(cstep) + 1);
-      sessionStorage.setItem("step", Number(cstep) + 1);
-      tourGuideSteps.steps = Number(cstep) + 1;
+      if (parseInt(tourGuideSteps.steps) === 7) {
+        tourGuideSteps.steps = 7;
+        setCstep(tourGuideSteps.steps);
+        sessionStorage.setItem("step", tourGuideSteps.steps);
+      } else if (parseInt(tourGuideSteps.steps) === 8) {
+        tourGuideSteps.steps = 8;
+        setCstep(tourGuideSteps.steps);
+        sessionStorage.setItem("step", tourGuideSteps.steps);
+      } else if (parseInt(tourGuideSteps.steps) === 9) {
+        tourGuideSteps.steps = 9;
+        setCstep(tourGuideSteps.steps);
+        sessionStorage.setItem("step", tourGuideSteps.steps);
+      } else {
+        setCstep(Number(cstep) + 1);
+        sessionStorage.setItem("step", Number(cstep) + 1);
+        tourGuideSteps.steps = Number(cstep) + 1;
+      }
       clearTimeout(fadeOutSetTime);
     }, fadeOutTime);
 
@@ -64,7 +78,6 @@ function TourGuideIndex(props) {
 
       getSteps(Number(cstep) + 1);
 
-      // getSteps(Number(cstep) + 1);
       // fadeOutTime = 10000;
       if (tourGuideSteps.steps === 3) {
         setFadeInTiming("3s");
@@ -90,29 +103,18 @@ function TourGuideIndex(props) {
         }
       }
 
-      // updateUserTour();
+      if (tourGuideSteps.steps < 9) updateUserTour();
     } else if (userTourData["data"]?.tourGuide === true) {
       sessionStorage.removeItem("step");
     }
-    // let stepResult = stepsFilter(stp);
-
-    // setStepsResult(stepResult);
-    // if (stepResult) {
-    //   setText(stepResult["text"]);
-    //   setButtonText(stepResult["buttonText"]);
-
-    //   if (stepResult["routePath"]) {
-    //     navigate(stepResult["routePath"]);
-    //   }
-    // }
   };
 
   const userTourStaus = async () => {
     let userId = userIds.userId;
-    if(userId){
+    if (userId) {
       userTourData = await userTourStatus(userId);
-    }else {
-      userId = userDetail['userId'];
+    } else {
+      userId = userDetail["userId"];
       userTourData = await userTourStatus(userId);
     }
     userTourData = await userTourStatus(userId);
@@ -121,14 +123,7 @@ function TourGuideIndex(props) {
   };
 
   useEffect(() => {
-    // const currentStepNo =
-    //   sessionStorage.getItem("step") !== null
-    //     ? sessionStorage.getItem("step")
-    //     : 1;
-
-    // getSteps(Number(props["step"]));
     userTourStaus();
-    // getSteps(Number(currentStepNo));
 
     tourGuideSteps.steps = currentStepNo;
   }, []);

@@ -42,6 +42,7 @@ const gameOverModalConfig = {
 const tourGuideSteps = {
   steps: 1,
   show: false,
+  completed: false,
 };
 
 const setTimeOutFn = {
