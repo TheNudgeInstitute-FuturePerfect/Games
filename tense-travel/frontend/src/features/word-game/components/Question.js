@@ -9,12 +9,7 @@ import {
   userAnswerSubmitPayload,
   userSubmitAnswerResponse,
 } from "../../../utils/payload";
-import {
-  setTimeOutFn,
-  tourGuideSteps,
-  userIds,
-  userInfo,
-} from "../../../utils/constants";
+import { tourGuideSteps, userIds, userInfo } from "../../../utils/constants";
 import {
   buyLives,
   exitGoBackResetStage,
@@ -248,7 +243,7 @@ function Question() {
   };
 
   const checkAnswer = async () => {
-    setUserAnswer("")
+    setUserAnswer("");
     const currentQues = questionsParsed["data"][currentQuestionIndex];
 
     // userAnswerSubmitPayload.sessionId = userIds.sessionId;
@@ -330,18 +325,17 @@ function Question() {
       });
 
       if (!userTourData["data"]?.tourGuide) {
+        if (parseInt(tourGuideSteps.steps) === 7) {
+          tourGuideSteps.steps++;
+        }
         tourGuideSteps.steps++;
         // updateTourGuideStep(tourGuideSteps.steps);
         showTourGuidePopup(true);
         setShowTourGuide(tourGuideSteps.show);
+        showTourPopup();
       } else {
         navigate("/complete-stage");
       }
-      // tourGuideSteps.steps++;
-      // // updateTourGuideStep(tourGuideSteps.steps);
-      // showTourGuidePopup(true);
-      // setShowTourGuide(tourGuideSteps.show);
-      // navigate("/complete-stage");
     }
 
     //checking user tour guide completed
@@ -482,8 +476,7 @@ function Question() {
 
   //tour guide popup settings
   const tourGuideCallback = (params) => {
-    if(tourGuideSteps.steps===5)
-    inputRef.current.blur();
+    if (tourGuideSteps.steps === 5) inputRef.current.blur();
 
     if (params["showAnswerBox"] === true) {
       const setShowAnswerBoxTimeOut = setTimeout(() => {
@@ -502,7 +495,9 @@ function Question() {
     }
 
     if (tourGuideSteps.steps === 9) {
+      tourGuideSteps.steps = 9;
       navigate("/complete-stage");
+      return;
     }
     // inputRef.current.focus();
   };
@@ -533,8 +528,8 @@ function Question() {
       } else if (!userSubmitAnswerResponse["isCorrect"]) {
         tourGuideSteps.steps = tourGuideSteps.steps + 2;
         showTourGuidePopup(true);
-        tourGuideSteps.steps = tourGuideSteps.steps - 1;
-        updateTourGuideStep(tourGuideSteps.steps);
+        // tourGuideSteps.steps = tourGuideSteps.steps - 1;
+        // updateTourGuideStep(tourGuideSteps.steps);
       }
       setProgressBarZIndex({
         zIndex: 2,
@@ -624,7 +619,9 @@ function Question() {
             </div>
           </div>
           <button
-            className={`blue-btn fixedBtn ${userAnswer.length > 0 ? "" : "disbaled"}`}
+            className={`blue-btn fixedBtn ${
+              userAnswer.length > 0 ? "" : "disbaled"
+            }`}
             onClick={handleSubmitAnswer}
           >
             Check
