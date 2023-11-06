@@ -338,7 +338,7 @@ const checkCurrentStageIsInUserAnswerModel = async (req, res, next) => {
       {
         _id: 1,
         userId: 1,
-        'tenseEra.$': 1,
+        "tenseEra.$": 1,
       }
     );
 
@@ -476,6 +476,49 @@ const generateSessionId = async () => {
   return sessionId;
 };
 
+const getInCompletedStages = async (model, requestBody) => {
+  const inCompletedStagesData = await model.aggregate([
+    {
+      $unwind: "$tenseEra", // Unwind the tenseEra array
+    },
+    {
+      $unwind: "$tenseEra.stage", // Unwind the stage array within tenseEra
+    },
+    {
+      $match: {
+        $and: [
+          {
+            "tenseEra.stage.question": {
+              $exists: true,
+              // $not: { $size: 0 }, // Check if the question array exists and is not empty
+            },
+          },
+          {
+            "tenseEra.stage.sessionId": { $nin: [null, "null", ""] }, // Check if sessionId is not null
+            "tenseEra.stage.sessionId": { $ne: null }, // Check if sessionId is not null
+          },
+          {
+            $expr: {
+              $lt: [{ $size: "$tenseEra.stage.question.question" }, 10], // Check if question length is less than 10
+            },
+          },
+        ],
+      },
+    },
+    {
+      $project: {
+        "tenseEra.stage.question": 0,
+        "tenseEra.stage.histories": 0,
+        sessionId: 0,
+        createdAt:0,
+        updatedAt: 0,
+        __v:0
+      },
+    },
+  ]);
+  return inCompletedStagesData;
+};
+
 module.exports = {
   getLivesOfUnlockStage,
   filterStage,
@@ -490,5 +533,6 @@ module.exports = {
   preparingHighestStarsResponse,
   checkCurrentStageIsInUserAnswerModel,
   filterStageWithoutSession,
-  generateSessionId
+  generateSessionId,
+  getInCompletedStages,
 };
