@@ -72,8 +72,8 @@ function ChooseStage() {
     <>
       <div className="container">
         <TourGuideIndex
-          step={tourGuideSteps.steps}
-          tourGuideCallback={tourGuideCallback}
+            step={tourGuideSteps.steps}
+            tourGuideCallback={tourGuideCallback}
         />
         <div className="moon-bg">
           <div className="third-step">
