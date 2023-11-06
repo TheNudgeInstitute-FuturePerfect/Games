@@ -4,6 +4,7 @@ const httpStatusCodes = require("../utils/httpStatusCodes");
 const { isEmpty } = require("lodash");
 const {
   getLivesOfUnlockStage,
+  getInCompletedStages,
 } = require("./global-services/filterEraSatage.service");
 const ObjectID = require("mongodb").ObjectId;
 
@@ -67,12 +68,15 @@ exports.recentStageCompletedScore = async (req, res, next) => {
   try {
     const requestBody = req.body;
 
-    let scoreData = await getLivesOfUnlockStage(userAnswerEraModel, requestBody);
+    let scoreData = await getLivesOfUnlockStage(
+      userAnswerEraModel,
+      requestBody
+    );
 
     if (!isEmpty(scoreData)) {
-      delete scoreData[0]['tenseEra'][0]['stage'][0]['question'];
-      delete scoreData[0]['tenseEra'][0]['stage'][0]['histories'];
-      
+      delete scoreData[0]["tenseEra"][0]["stage"][0]["question"];
+      delete scoreData[0]["tenseEra"][0]["stage"][0]["histories"];
+
       return reponseModel(
         httpStatusCodes.OK,
         "User score found",
@@ -87,6 +91,39 @@ exports.recentStageCompletedScore = async (req, res, next) => {
         "User score not found",
         false,
         "",
+        req,
+        res
+      );
+    }
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getInCompletedStages = async (req, res, next) => {
+  try {
+    const requestBody = req.body;
+
+    let stagesData = await getInCompletedStages(
+      userAnswerEraModel,
+      requestBody
+    );
+
+    if (!isEmpty(stagesData)) {
+      return reponseModel(
+        httpStatusCodes.OK,
+        "Record found",
+        true,
+        stagesData,
+        req,
+        res
+      );
+    } else {
+      return reponseModel(
+        httpStatusCodes.OK,
+        "Record not found",
+        false,
+        stagesData,
         req,
         res
       );
