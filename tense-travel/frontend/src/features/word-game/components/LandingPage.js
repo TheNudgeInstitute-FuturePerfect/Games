@@ -181,6 +181,7 @@ function LandingPage(props) {
       setShowShowHalfMoon("active");
 
       removeTourGuideStep();
+      tourGuideSteps.steps = 0;
       setTimeout(() => {
         setShowTenseBtn({
           opacity: 1,
