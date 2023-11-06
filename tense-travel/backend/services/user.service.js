@@ -131,6 +131,8 @@ exports.getAllUsers = async (req, res, next) => {
         totalEarnGerms: 1,
         firstName: 1,
         lastName: 1,
+        tourGuideStep:1,
+        tourGuide:1
       }
     );
 
