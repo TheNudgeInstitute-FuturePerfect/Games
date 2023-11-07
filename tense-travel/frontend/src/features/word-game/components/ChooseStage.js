@@ -11,6 +11,7 @@ import { updateTourGuideStep } from "../common/TourGuide/UpdateTourGuideSteps";
 import CommingSoonToolTip from "../common/popups/CommingSoonToolTip";
 import { API_END_POINT } from "../../../utils/endpoints";
 import { getStorage } from "../../../utils/manageStorage";
+import { hotjar } from "../../../hotjar/HotjarIntegration";
 
 function ChooseStage() {
   const navigate = useNavigate();
@@ -62,6 +63,9 @@ function ChooseStage() {
 
   useEffect(() => {
     getStageOfEra();
+
+    hotjar.initialize();
+    hotjar.initialized();
   }, []);
 
   const tourGuideCallback = (params) => {

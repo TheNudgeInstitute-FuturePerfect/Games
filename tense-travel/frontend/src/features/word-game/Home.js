@@ -8,7 +8,7 @@ import {
   removeStorage,
   setStorage,
 } from "../../utils/manageStorage";
-import { hotjar } from "react-hotjar";
+import { hotjar } from "../../hotjar/HotjarIntegration";
 
 function Home() {
   const params = useParams();
@@ -38,10 +38,8 @@ function Home() {
   useEffect(() => {
     checkUserByMobileRegister();
 
-    hotjar.initialize(
-      process.env.REACT_APP_SITE_ID,
-      process.env.REACT_APP_HOTJAR_VERSION
-    );
+    hotjar.initialize();
+    hotjar.initialized();
   }, []);
 
   return <div>{storageData && <LandingPage storageData={storageData} />}</div>;

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import "../../../sass/styles.scss"
 import { useNavigate } from "react-router-dom";
 import TourGuideIndex from "../common/TourGuide";
+import { hotjar } from "../../../hotjar/HotjarIntegration";
 
 function ChooseEra() {
   const navigate = useNavigate();
@@ -23,6 +24,8 @@ function ChooseEra() {
 
   useEffect(() => {
     getTenseEra();
+    hotjar.initialize();
+    hotjar.initialized();
   }, []);
 
   return (

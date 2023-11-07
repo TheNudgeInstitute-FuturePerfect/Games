@@ -32,6 +32,7 @@ import {
 } from "../../../services/userAPI";
 import { shareGameSessionDetailPayloadReset } from "../../../utils/resetPaload";
 import { setStorage } from "../../../utils/manageStorage";
+import { hotjar } from "../../../hotjar/HotjarIntegration";
 
 let questionsParsed, questionsData, currentQuestionIndex, userTourData;
 function Question() {
@@ -472,6 +473,9 @@ function Question() {
     // getStageQuestions();
     userInfo();
     userTourStaus();
+
+    hotjar.initialize();
+    hotjar.initialized();
   }, []);
 
   //tour guide popup settings
