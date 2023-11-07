@@ -48,7 +48,21 @@ const resetUserRecentStage = async (requestPayload) => {
 
 const shareGameSessionDetail = async (requestPayload) => {
   let resetStage = await fetch(
-    `${process.env.REACT_APP_API_URL}/${API_END_POINT.SHARE_GAME_SESSION_DETAIL}/${requestPayload["Mobile"]}`,
+    `${API_END_POINT.SHARE_GAME_SESSION_DETAIL_WITH_OTHER}`,
+    {
+      method: "POST",
+      body: JSON.stringify(requestPayload),
+      headers: { "Content-Type": "application/json" },
+    }
+  );
+
+  resetStage = await resetStage.json();
+  return resetStage;
+};
+
+const shareGameSessionUpdateDetail = async (requestPayload) => {
+  let resetStage = await fetch(
+    `${API_END_POINT.SHARE_GAME_SESSION_DETAIL_WITH_OTHER_UPDATE}/${requestPayload["SessionID"]}`,
     {
       method: "PATCH",
       body: JSON.stringify(requestPayload),
@@ -80,4 +94,5 @@ export {
   resetUserRecentStage,
   shareGameSessionDetail,
   exitGoBackResetStage,
+  shareGameSessionUpdateDetail,
 };
