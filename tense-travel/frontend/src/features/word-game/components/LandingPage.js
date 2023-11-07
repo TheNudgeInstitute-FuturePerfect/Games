@@ -19,6 +19,7 @@ import { tourGuideSteps, userIds } from "../../../utils/constants";
 import { userTourStatus } from "../../../services/userAPI";
 import { removeTourGuideStep } from "../common/TourGuide/UpdateTourGuideSteps";
 import { API_END_POINT } from "../../../utils/endpoints";
+import { hotjar } from "react-hotjar";
 
 let userTourData;
 function LandingPage(props) {
@@ -197,6 +198,11 @@ function LandingPage(props) {
   useEffect(() => {
     getTenseEra();
     userTourStaus();
+
+    hotjar.initialize(
+      process.env.REACT_APP_SITE_ID,
+      process.env.REACT_APP_HOTJAR_VERSION
+    );
   }, []);
 
   return (
