@@ -169,7 +169,7 @@ const UserAnswerEraSchema = new Schema(
     sessionId: {
       type: String,
       default: null,
-      unique: true,
+      // unique: true,
     },
     earnGerms: {
       type: Number,

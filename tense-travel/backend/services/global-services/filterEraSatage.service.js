@@ -472,7 +472,8 @@ const filterStageWithoutSession = async (model, requestBody) => {
 };
 
 const generateSessionId = async () => {
-  const sessionId = await uuidv4();
+  currentTime = new Date().getTime();
+  const sessionId = (await uuidv4()) + currentTime;
   return sessionId;
 };
 
@@ -510,9 +511,9 @@ const getInCompletedStages = async (model, requestBody) => {
         "tenseEra.stage.question": 0,
         "tenseEra.stage.histories": 0,
         sessionId: 0,
-        createdAt:0,
+        createdAt: 0,
         updatedAt: 0,
-        __v:0
+        __v: 0,
       },
     },
   ]);

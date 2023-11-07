@@ -16,6 +16,7 @@ import {
   reTryStage,
   resetUserRecentStage,
   shareGameSessionDetail,
+  shareGameSessionUpdateDetail,
 } from "../../../services/questionAPI";
 import CommonModal from "../common/CommonModal";
 import { actionType, popupTypes } from "../../../utils/commonFunction";
@@ -438,7 +439,7 @@ function Question() {
     shareGameSessionDetailPayload.Type = "Game";
     shareGameSessionDetailPayload.SessionID = userStorageDetail["sessionId"];
 
-    shareGameSessionDetailPayload.SessionComplete = "";
+    shareGameSessionDetailPayload.SessionComplete = "No";
     shareGameSessionDetailPayload.TimeSpent = "";
 
     if (stageSessionTime) {
@@ -458,15 +459,24 @@ function Question() {
         (timeDifferenceInMilliseconds % (1000 * 60)) / 1000
       );
       shareGameSessionDetailPayload.TimeSpent = spentTime;
+
+      const gameSessionDetail = await shareGameSessionUpdateDetail(
+        shareGameSessionDetailPayload
+      );
     } else {
       shareGameSessionDetailPayload.SessionEndTime = "";
       shareGameSessionDetailPayload.SessionStartTime =
         recentStageData["startTime"];
+      shareGameSessionDetailPayload.TimeSpent = 0;
+
+      const gameSessionDetail = await shareGameSessionDetail(
+        shareGameSessionDetailPayload
+      );
     }
 
-    const gameSessionDetail = await shareGameSessionDetail(
-      shareGameSessionDetailPayload
-    );
+    // const gameSessionDetail = await shareGameSessionDetail(
+    //   shareGameSessionDetailPayload
+    // );
   };
 
   useEffect(() => {
