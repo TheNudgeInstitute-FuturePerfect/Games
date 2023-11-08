@@ -5,6 +5,7 @@ import { getUserCoins } from "../../../../services/coinAPI";
 import { userIds } from "../../../../utils/constants";
 import { useState } from "react";
 import { coins } from "../../../../utils/constants";
+import questionExplanationIcon from "../../../../assets/images/question-explanation-icon.svg";
 
 function CommonModal(props) {
   const [totalEarnGerms, setTotalEarnGerms] = useState(null);
@@ -532,6 +533,48 @@ function CommonModal(props) {
                 <div className="descriptionText finalScreenDesc">
                   Remember the explanations and try again!
                 </div>
+              </div>
+            </div>
+          </div>
+        </>
+      );
+      break;
+    case "questionExplanationPopup":
+      return (
+        <>
+          <div className="d-flex align-items-center justify-content-center modalContainer">
+            <div
+              className="modalBody"
+              style={{ height: "70%", width: "330px" }}
+            >
+              <div className="modalHeading" style={{ marginBottom: "8px" }}>
+                <div>
+                  <img
+                    src={questionExplanationIcon}
+                    alt="questionExplanationIcon"
+                  />
+                </div>
+              </div>
+              <div className="questionExplanationModalSubHeading">
+                <p>Simple Present Tense</p>
+                <div className="questionExplanationTenseLine"></div>
+              </div>
+              <div className="questionExplanationContent">
+                <p>
+                  {props?.questionExplanation}
+                </p>
+              </div>
+              <div
+                className="d-flex justify-content-center"
+                style={{ marginTop: "5px" }}
+              >
+                <Button
+                  variant="primary"
+                  className="explanationNextBtn"
+                  onClick={() => props.handleNextQuestion('hideExplanationPopup')}
+                >
+                  Next
+                </Button>
               </div>
             </div>
           </div>

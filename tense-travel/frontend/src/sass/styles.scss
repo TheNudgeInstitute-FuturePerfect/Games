@@ -423,7 +423,7 @@
   border: 4px solid #39e53d;
   border-bottom: none;
   background: #333;
-  padding: 45px 17px 35px;
+  padding: 30px 17px 35px;
   display: none;
   .icon {
     background: url(../../src/assets/images/green-icon.svg) left top no-repeat;
@@ -672,4 +672,17 @@
 
 .progress-bar-font-weight {
   font-weight: 600;
+}
+.give-explanation-btn {
+  background: #4f35a0;
+  font-size: 16px;
+  color: #fff;
+  font-weight: 700;
+  border: none;
+  border-radius: 12px;
+  padding: 8px 15px;
+  width: 241px;
+  border-bottom: 7px solid #242469;
+  margin-bottom: 3px;
+
 }
