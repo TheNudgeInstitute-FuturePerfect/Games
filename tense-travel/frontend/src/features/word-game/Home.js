@@ -8,6 +8,7 @@ import {
   removeStorage,
   setStorage,
 } from "../../utils/manageStorage";
+import { hotjar } from "../../hotjar/HotjarIntegration";
 
 function Home() {
   const params = useParams();
@@ -16,7 +17,7 @@ function Home() {
   const [searchParams] = useSearchParams();
 
   mobile = searchParams.get("mobile");
-  mobile = mobile.replace(/\D/g, '').slice(-10);
+  mobile = mobile.replace(/\D/g, "").slice(-10);
 
   const checkUserByMobileRegister = async () => {
     const userPayload = {
@@ -36,6 +37,9 @@ function Home() {
 
   useEffect(() => {
     checkUserByMobileRegister();
+
+    hotjar.initialize();
+    hotjar.initialized();
   }, []);
 
   return <div>{storageData && <LandingPage storageData={storageData} />}</div>;

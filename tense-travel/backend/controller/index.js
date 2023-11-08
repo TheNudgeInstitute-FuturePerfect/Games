@@ -38,6 +38,7 @@ const {
 const {
   getUserScore,
   recentStageCompletedScore,
+  getInCompletedStages
 } = require("../controller/score.controller");
 const { getUserCoins, buyLives } = require("../controller/coin.controller");
 const {
@@ -87,4 +88,5 @@ module.exports = {
   getAllUsers,
   getEraAnswerAllHistory,
   getEraAnswerHistoryByUserId,
+  getInCompletedStages
 };

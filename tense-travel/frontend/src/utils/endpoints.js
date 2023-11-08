@@ -14,6 +14,10 @@ const API_END_POINT = {
   CHECK_USER_BY_MOBILE: "auth/check-user-bymobile",
   SHARE_GAME_SESSION_DETAIL: "user/share-game-session-detail",
   RESET_STAGE: "era/reset-stage",
+  SHARE_GAME_SESSION_DETAIL_WITH_OTHER:
+    "https://uat.futureperfect.tech/whatsapp/probabilistic/games",
+  SHARE_GAME_SESSION_DETAIL_WITH_OTHER_UPDATE:
+    "https://uat.futureperfect.tech/whatsapp/probabilistic/games",
 };
 
 export { API_END_POINT };

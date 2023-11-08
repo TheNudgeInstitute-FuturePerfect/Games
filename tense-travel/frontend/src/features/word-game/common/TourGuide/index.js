@@ -10,6 +10,7 @@ import {
   userTourStatus,
 } from "../../../../services/userAPI";
 import { updateUserTourStatusPayload } from "../../../../utils/payload";
+import { hotjar } from "../../../../hotjar/HotjarIntegration";
 
 let userTourData;
 function TourGuideIndex(props) {
@@ -126,6 +127,9 @@ function TourGuideIndex(props) {
     userTourStaus();
 
     tourGuideSteps.steps = currentStepNo;
+
+    hotjar.initialize();
+    hotjar.initialized();
   }, []);
 
   const tourGuideCallback = () => {

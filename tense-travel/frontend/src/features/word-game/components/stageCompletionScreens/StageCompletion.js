@@ -23,6 +23,7 @@ import {
   userTourStatus,
 } from "../../../../services/userAPI";
 import { removeTourGuideStep } from "../../common/TourGuide/UpdateTourGuideSteps";
+import { hotjar } from "../../../../hotjar/HotjarIntegration";
 
 let heartCount = 0;
 let defaultCoins = 0;
@@ -180,6 +181,9 @@ function StageCompletion() {
       navigate("/");
     }
     userTourStaus();
+
+    hotjar.initialize();
+    hotjar.initialized();
   }, []);
 
   function setVisibility(functionName, value, timing) {
