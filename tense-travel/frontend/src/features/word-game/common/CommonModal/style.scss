@@ -256,15 +256,17 @@
       // margin-top: 25%;
       width: 245px;
       height: 35px;
+      margin-left: 38px;
     }
     .questionExplanationContent {
-      height: 390px;
-      overflow-y: scroll;
+      height: 100%;
       margin-top: 8px;
       p {
         font-size: 18px;
         font-weight: 400;
         padding: 0px 16px 4px 16px;
+        height: calc(100% - 190px);
+        overflow-y: scroll;
       }
     }
   }

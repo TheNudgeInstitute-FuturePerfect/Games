@@ -563,18 +563,17 @@ function CommonModal(props) {
                 <p>
                   {props?.questionExplanation}
                 </p>
-              </div>
-              <div
-                className="d-flex justify-content-center"
-                style={{ marginTop: "5px" }}
-              >
-                <Button
-                  variant="primary"
-                  className="explanationNextBtn"
-                  onClick={() => props.handleNextQuestion('hideExplanationPopup')}
-                >
-                  Next
-                </Button>
+                <div>
+                  <Button
+                    variant="primary"
+                    className="explanationNextBtn"
+                    onClick={() =>
+                      props.handleNextQuestion("hideExplanationPopup")
+                    }
+                  >
+                    Next
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
