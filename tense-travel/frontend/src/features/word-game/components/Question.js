@@ -249,7 +249,7 @@ function Question() {
 
   /*--------------------------------check answer----------------------------*/
   const checkAnswer = async () => {
-    setUserAnswer("");
+    // setUserAnswer("");
     const currentQues = questionsParsed["data"][currentQuestionIndex];
 
     // userAnswerSubmitPayload.sessionId = userIds.sessionId;
@@ -566,6 +566,10 @@ function Question() {
     setShowWord();
     showTourGuidePopup(false);
     setShowTourGuide(tourGuideSteps.show);
+    if (isCorrectAns !== null) {
+      //If the user has submitted an answer and the answer popup is opened, the answer box is not editable.
+      inputRef.current.blur();
+    }
   };
 
   const handleGiveExplanation = () => {
@@ -652,7 +656,7 @@ function Question() {
           </div>
           <button
             className={`blue-btn fixedBtn ${
-              userAnswer.length > 0 ? "" : "disbaled"
+              isCorrectAns === null ? "" : "disbaled"
             }`}
             onClick={handleSubmitAnswer}
           >
