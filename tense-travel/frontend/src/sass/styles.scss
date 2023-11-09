@@ -691,3 +691,13 @@
   font-style: normal;
   line-height: normal;
 }
+
+.question-exit-overlay {
+  position: fixed;
+  height: 100%;
+  left: 0;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.78);
+  z-index: 99;
+  top: 0;
+}
