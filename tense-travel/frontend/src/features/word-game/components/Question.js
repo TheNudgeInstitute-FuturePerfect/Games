@@ -629,7 +629,12 @@ function Question() {
             </div>
             <div style={showWord}>
               <h1>{questions && questions[queSequence]?.stageTitle}</h1>
-              <strong>Word: {questions && questions[queSequence]?.word}</strong>
+              <strong>
+                Word:{" "}
+                <label className="tense-word">
+                  {questions && questions[queSequence]?.word}
+                </label>
+              </strong>
             </div>
             {/* <h1>{questions && questions[queSequence]?.stageTitle}</h1>
             <strong>Word: {questions && questions[queSequence]?.word}</strong> */}
