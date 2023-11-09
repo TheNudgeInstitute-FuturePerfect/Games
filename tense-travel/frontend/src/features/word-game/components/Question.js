@@ -714,7 +714,7 @@ function Question() {
 
         {/* ExitStageConfirmPopup */}
         {exitPopupShow && (
-          <div>
+          <div className="question-exit-overlay">
             <ExitStageConfirmPopup
               exitPopup={exitPopupShow}
               remainingQuestions={remainingQuestions}
