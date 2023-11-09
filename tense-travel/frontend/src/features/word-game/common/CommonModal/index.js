@@ -560,9 +560,11 @@ function CommonModal(props) {
                 <div className="questionExplanationTenseLine"></div>
               </div>
               <div className="questionExplanationContent">
-                <p>
-                  {props?.questionExplanation}
-                </p>
+                <p
+                  dangerouslySetInnerHTML={{
+                    __html: props?.questionExplanation,
+                  }}
+                />
                 <div>
                   <Button
                     variant="primary"
