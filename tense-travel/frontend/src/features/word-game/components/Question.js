@@ -103,6 +103,10 @@ function Question() {
     navigate(`/choose-stage/${eraId}`);
   };
 
+  const handleExplanationPopupClose = () => {
+    setShow(false);
+  };
+
   /*-------------------------purchase popup show---------------------*/
   const handleBuyCoinPopupShow = (popupType, action = "") => {
     const popup = actionType(popupType);
@@ -591,6 +595,7 @@ function Question() {
             handleBuyCoinPopupShow={handleBuyCoinPopupShow}
             handleNextQuestion={handleNextQuestion}
             questionExplanation={questionExplanation}
+            handleExplanationPopupClose={handleExplanationPopupClose}
           />
         )}
         {showTourGuide && (
