@@ -63,6 +63,7 @@ function Question() {
   const [showTourGuide, setShowTourGuide] = useState(false);
   const [tourStatusData, setTourStatusData] = useState();
   const [questionExplanation, setQuestionExplanation] = useState("");
+  const [showCheckButton, setShowCheckButton] = useState(false);
   let recentStageData;
   let storageData = userInfo();
 
@@ -221,6 +222,7 @@ function Question() {
   };
 
   const onChange = (event, index) => {
+    setShowCheckButton(event.target.value.length>0?true:false);
     setUserAnswer(event.target.value);
 
     event.preventDefault();
@@ -250,6 +252,7 @@ function Question() {
   /*--------------------------------check answer----------------------------*/
   const checkAnswer = async () => {
     // setUserAnswer("");
+    setShowCheckButton(false)
     const currentQues = questionsParsed["data"][currentQuestionIndex];
 
     // userAnswerSubmitPayload.sessionId = userIds.sessionId;
@@ -661,7 +664,7 @@ function Question() {
           </div>
           <button
             className={`blue-btn fixedBtn ${
-              isCorrectAns === null ? "" : "disbaled"
+              showCheckButton ? "" : "disbaled"
             }`}
             onClick={handleSubmitAnswer}
           >
