@@ -1,6 +1,7 @@
 const Joi = require("joi");
 const errorHandler = require("../../utils/responseHandler");
 const httpStatusCodes = require("../../utils/httpStatusCodes");
+const ObjectId = require("mongoose").Types.ObjectId;
 
 const questions = Joi.object().keys({
   tenseEraId: Joi.string().required(),
@@ -145,9 +146,58 @@ const updateOneQuestionValidator = async (req, res, next) => {
 };
 /* update one question end */
 
+/* update multiple questions */
+const updateQuestions = Joi.object().keys({
+  _id: Joi.string()
+    .custom((value, helper) => {
+      if (ObjectId.isValid(value)) {
+        if (String(new ObjectId(value)) === value) {
+          return true;
+        }
+        return helper.message(`\"_id\" is not a valid MongodbID`);
+      }
+      return helper.message(`\"_id\" is not a valid MongodbID`);
+    })
+    .required(),
+  answer: Joi.string().optional().allow("", null),
+  explanation: Joi.string().optional().allow("", null),
+  status: Joi.string().valid("active", "inactive", "deleted"),
+  question: Joi.string().custom((value, helper) => {
+    if (!value.includes(" __ ")) {
+      return helper.message(
+        `\"question\" is not in valid format! Question must be contained __`
+      );
+    }
+  }),
+});
+const updateQuestionsObj = {
+  questions: Joi.array().items(updateQuestions).max(10),
+};
+
+const updateQuestionsSchema = Joi.object(updateQuestionsObj);
+updateQuestionsSchema.validate({});
+
+const updateQuestionsValidator = async (req, res, next) => {
+  try {
+    let payload = req.body;
+    await updateQuestionsSchema.validateAsync(
+      {
+        questions: payload,
+      },
+      { abortEarly: false }
+    );
+    next();
+  } catch (error) {
+    const errMsg = error["details"][0]?.message || "";
+    errorHandler.handle(httpStatusCodes.BAD_REQUEST, errMsg, false, req, res);
+  }
+};
+/* update multiple questions end */
+
 module.exports = {
   addQuestionValidator,
   updateQuestionValidator,
   updateQuestionStatusValidator,
   updateOneQuestionValidator,
+  updateQuestionsValidator,
 };

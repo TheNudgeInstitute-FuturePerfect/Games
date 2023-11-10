@@ -418,3 +418,29 @@ exports.updateOneQuestion = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.updateQuestions = async (req, res, next) => {
+  try {
+    const payload = req.body;
+    const questionPayload = payload.map(async (question, index) => {
+      const id = question["_id"];
+      delete question["_id"];
+      const updated = await questoinBankModel.findOneAndUpdate(
+        { _id: id },
+        question,
+        { upsert: true }
+      );
+    });
+
+    return reponseModel(
+      httpStatusCodes.OK,
+      "Status updated",
+      true,
+      "",
+      req,
+      res
+    );
+  } catch (err) {
+    next(err);
+  }
+};

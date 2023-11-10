@@ -23,6 +23,7 @@ const {
   getRandomQuestionByUnlockStage,
   updateQuestionStatus,
   updateOneQuestion,
+  updateQuestions
 } = require("../controller/questionBank.controller");
 
 const {
@@ -88,5 +89,6 @@ module.exports = {
   getAllUsers,
   getEraAnswerAllHistory,
   getEraAnswerHistoryByUserId,
-  getInCompletedStages
+  getInCompletedStages,
+  updateQuestions
 };
