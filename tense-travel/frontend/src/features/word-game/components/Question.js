@@ -62,6 +62,7 @@ function Question() {
   const [progressBarZIndex, setProgressBarZIndex] = useState();
   const [showTourGuide, setShowTourGuide] = useState(false);
   const [tourStatusData, setTourStatusData] = useState();
+  const [questionExplanation, setQuestionExplanation] = useState("");
   let recentStageData;
   let storageData = userInfo();
 
@@ -97,15 +98,16 @@ function Question() {
 
   const handleBuyCoinPopupClose = () => {
     resetStage();
-    setShow(false);
+    setShow(false); //purchase modal
     navigate(`/choose-stage/${eraId}`);
   };
 
+  /*-------------------------purchase popup show---------------------*/
   const handleBuyCoinPopupShow = (popupType, action = "") => {
     const popup = actionType(popupType);
     const modalParams = { modalName: popup };
     setModalParams(modalParams);
-    setShow(true);
+    setShow(true); //sshow purchase modal
     if (popupType === "PURCHASE_LIVES") {
       buyHeart();
     }
@@ -113,7 +115,7 @@ function Question() {
       retryGame();
     }
     return;
-  };
+  }; /*-------------------------purchase popup show end---------------------*/
 
   const handleExitStage = (status) => {
     // navigate(`/choose-stage/${eraId}`);
@@ -138,6 +140,7 @@ function Question() {
     return getStageQuestion["sessionId"];
   };
 
+  /*------------------------get stage questions-------------------------------*/
   const getStageQuestions = async () => {
     // getStageQuestion["sessionId"] = userIds.sessionId;
     getStageQuestion.userId = userIds.userId;
@@ -191,7 +194,7 @@ function Question() {
       //checking user tour guide completed
       if (!userTourData["data"]?.tourGuide) showTourPopup();
     }
-  };
+  }; /*------------------------get stage questions end---------------------------*/
 
   const filterCurrentQuestion = (index) => {
     if (index !== null && index !== undefined && index !== "") {
@@ -244,8 +247,9 @@ function Question() {
     await checkAnswer();
   };
 
+  /*--------------------------------check answer----------------------------*/
   const checkAnswer = async () => {
-    setUserAnswer("");
+    // setUserAnswer("");
     const currentQues = questionsParsed["data"][currentQuestionIndex];
 
     // userAnswerSubmitPayload.sessionId = userIds.sessionId;
@@ -295,9 +299,12 @@ function Question() {
     }
 
     setQuestions(updatedQues);
-  };
+  }; /*--------------------------------check answer end-----------------------*/
 
-  const handleNextQuestion = () => {
+  /*-------------------------handle next question----------------------------*/
+  const handleNextQuestion = (explanation = "") => {
+    if (explanation === "hideExplanationPopup") setShow(false);
+
     setIsCorrectAns(null);
     setUserAnswer("");
     inputRef.current.focus();
@@ -343,8 +350,9 @@ function Question() {
     //checking user tour guide completed
     if (!userTourData["data"]?.tourGuide) showTourPopup();
     // else navigate("/complete-stage");
-  };
+  }; /*----------------------handle next question end-------------------*/
 
+  /*----------------------Right, wrong answer popup--------------*/
   const answerRWPopup = (userSubmitAnswerResponse) => {
     //answerRWPopup=answerRightWrongPopup
     if (
@@ -384,8 +392,9 @@ function Question() {
       return;
     }
     setIsCorrectAns(userSubmitAnswerResponse["isCorrect"]);
-  };
+  }; /*----------------------Right, wrong answer popup end--------------*/
 
+  /*-------------------retry game------------------------------*/
   const retryGame = async () => {
     setPurchaseDialogShow(false);
     setUserAnswer("");
@@ -398,11 +407,12 @@ function Question() {
     const reTryStageRes = await reTryStage(reTryStagePaylod);
 
     if (reTryStageRes["success"] === true) {
-      setShow(false);
+      setShow(false); //show purchase modal
       await getStageQuestions();
     }
-  };
+  }; /*-------------------retry game end------------------------------*/
 
+  /*----------------------buy heart---------------------------------*/
   const buyHeart = async () => {
     setUserAnswer("");
     // buyLivesPaylod.sessionId = userIds.sessionId;
@@ -413,25 +423,25 @@ function Question() {
     const buyLiveRes = await buyLives(buyLivesPaylod);
 
     if (buyLiveRes["success"] === true) {
-      setShow(false);
+      setShow(false); //show purchase modal
       await getStageQuestions();
       setGoldenHeart(true);
     }
-  };
+  }; /*----------------------buy heart end---------------------------------*/
 
   const gameCompleted = () => {
     navigate(`/choose-stage/${eraId}`);
   };
 
-  //getting user tour detail
+  /*---------------------getting user tour detail----------------*/
   const userTourStaus = async () => {
     const userId = userIds.userId;
     userTourData = await userTourStatus(userId);
     setTourStatusData(userTourData);
     if (userTourData) getStageQuestions();
-  };
+  }; /*---------------------getting user tour detail end----------------*/
 
-  //share game session detail
+  /*-------------------------share game session detail--------------------------- */
   const shareGameSessionInfo = async (stageSessionTime = "") => {
     shareGameSessionDetailPayloadReset();
     const userStorageDetail = userInfo();
@@ -477,7 +487,7 @@ function Question() {
     // const gameSessionDetail = await shareGameSessionDetail(
     //   shareGameSessionDetailPayload
     // );
-  };
+  }; /*-------------------------share game session detail end--------------------------- */
 
   useEffect(() => {
     // getStageQuestions();
@@ -556,6 +566,16 @@ function Question() {
     setShowWord();
     showTourGuidePopup(false);
     setShowTourGuide(tourGuideSteps.show);
+    if (isCorrectAns !== null) {
+      //If the user has submitted an answer and the answer popup is opened, the answer box is not editable.
+      inputRef.current.blur();
+    }
+  };
+
+  const handleGiveExplanation = () => {
+    setShow(true);
+    handleBuyCoinPopupShow(popupTypes[4]);
+    setQuestionExplanation(questions[queSequence]?.explanation);
   };
 
   return (
@@ -566,6 +586,8 @@ function Question() {
             modalParams={modalParams}
             handleBuyCoinPopupClose={handleBuyCoinPopupClose}
             handleBuyCoinPopupShow={handleBuyCoinPopupShow}
+            handleNextQuestion={handleNextQuestion}
+            questionExplanation={questionExplanation}
           />
         )}
         {showTourGuide && (
@@ -607,7 +629,12 @@ function Question() {
             </div>
             <div style={showWord}>
               <h1>{questions && questions[queSequence]?.stageTitle}</h1>
-              <strong>Word: {questions && questions[queSequence]?.word}</strong>
+              <strong>
+                Word:{" "}
+                <label className="tense-word">
+                  {questions && questions[queSequence]?.word}
+                </label>
+              </strong>
             </div>
             {/* <h1>{questions && questions[queSequence]?.stageTitle}</h1>
             <strong>Word: {questions && questions[queSequence]?.word}</strong> */}
@@ -634,7 +661,7 @@ function Question() {
           </div>
           <button
             className={`blue-btn fixedBtn ${
-              userAnswer.length > 0 ? "" : "disbaled"
+              isCorrectAns === null ? "" : "disbaled"
             }`}
             onClick={handleSubmitAnswer}
           >
@@ -666,6 +693,14 @@ function Question() {
                 </strong>
               </div>
             </div>
+            <div className="align-center" style={{ marginBottom: "3px" }}>
+              <button
+                className="give-explanation-btn"
+                onClick={handleGiveExplanation}
+              >
+                Give explanation
+              </button>
+            </div>
             <div className="align-center">
               <button
                 className="blue-btn green-btn"
@@ -679,7 +714,7 @@ function Question() {
 
         {/* ExitStageConfirmPopup */}
         {exitPopupShow && (
-          <div>
+          <div className="question-exit-overlay">
             <ExitStageConfirmPopup
               exitPopup={exitPopupShow}
               remainingQuestions={remainingQuestions}

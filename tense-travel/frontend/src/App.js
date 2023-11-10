@@ -5,6 +5,7 @@ import ChooseEra from "./features/word-game/components/ChooseEra";
 import ChooseStage from "./features/word-game/components/ChooseStage";
 import Question from "./features/word-game/components/Question";
 import { StageCompletion } from "./features/word-game";
+import NotFoundPage from "./pages/404Page";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/choose-stage/:eraId" element={<ChooseStage />} />
         <Route path="/question/:eraId/:stageId" element={<Question />} />
         <Route path="/complete-stage" element={<StageCompletion />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </div>
   );

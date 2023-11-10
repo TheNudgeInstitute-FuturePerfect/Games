@@ -11,6 +11,7 @@ const popupTypes = [
   "PURCHASE_LIVES_POPUP",
   "PURCHASE_LIVES",
   "RETRY_GAME_POPUP",
+  "QUESTION_EXPLANATION_POPUP",
 ];
 
 const actions = ["PURCHASE_LIVES"];

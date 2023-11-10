@@ -32,6 +32,7 @@ const gameOverModalConfig = {
     PURCHASE_POPUP: "gameOverMainScreen",
     PURCHASE_LIVES_POPUP: "gameOverBuyLives",
     RETRY_GAME_POPUP: "gameOverFinalScreen",
+    QUESTION_EXPLANATION_POPUP: "questionExplanationPopup",
   },
   PURCHASE_TYPES: {
     PURCHASE_LIVES: "gameOverBuyLives",
