@@ -8,7 +8,8 @@ const {
   getRandomQuestionByUnlockStage,
   updateQuestionStatus,
   updateOneQuestion,
-  find
+  find,
+  updateQuestions,
 } = require("../services/questionBank.service");
 const { handleSuccess } = require("../utils/responseHandler");
 
@@ -90,5 +91,20 @@ exports.updateQuestionStatus = async (req, res, next) => {
  */
 exports.updateOneQuestion = async (req, res, next) => {
   const response = await updateOneQuestion(req, res, next);
+  handleSuccess(response, req, res);
+};
+
+/**
+ * @Method POST
+ * @Payload [{
+ * status: 'active
+ * },{
+  *      "_id": "650151c18b6fe48b7f6415da",
+  *      "explanation": "explanations",
+  *      "question":"he __ at nightt"
+  *  }]
+ */
+exports.updateQuestions = async (req, res, next) => {
+  const response = await updateQuestions(req, res, next);
   handleSuccess(response, req, res);
 };
