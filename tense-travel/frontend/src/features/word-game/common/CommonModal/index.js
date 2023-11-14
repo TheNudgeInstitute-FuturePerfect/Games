@@ -16,12 +16,14 @@ function CommonModal(props) {
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      let className = event.target.className.split(" ");
-      if (
-        className.includes("questionExplanationContent") ||
-        className.includes("modalContainer")
-      ) {
-        props.handleExplanationPopupClose();
+      if (event.target.classList.contains("questionExplanationContent")) {
+        let className = event.target.className.split(" ");
+        if (
+          className.includes("questionExplanationContent") ||
+          className.includes("modalContainer")
+        ) {
+          props.handleExplanationPopupClose();
+        }
       }
     };
     document.addEventListener("click", handleClickOutside, true);
