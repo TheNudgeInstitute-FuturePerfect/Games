@@ -6,6 +6,11 @@ const {
 const { userModel } = require("../models/index");
 const { reponseModel, handleSuccess } = require("../utils/responseHandler");
 const httpStatusCodes = require("../utils/httpStatusCodes");
+const {
+  checkUserCompletedFirstStage,
+  updateTourStatus,
+  getTourStatus,
+} = require("../services/user.service");
 
 exports.register = async (req, res) => {
   try {
@@ -79,6 +84,23 @@ exports.checkUserByMobile = async (req, res, next) => {
     );
 
     if (!isEmpty(existsUser)) {
+      req.params["userId"] = existsUser["_id"].toString();
+      const getTourStatusData = await getTourStatus(req, res, next);
+
+      if (!getTourStatusData["data"]?.tourGuide) {
+        const getUserFirstStageHistoryData = await checkUserCompletedFirstStage(
+          req,
+          res,
+          next
+        );
+        if (!isEmpty(getUserFirstStageHistoryData)) {
+          req.body["userId"] = existsUser["_id"].toString();
+          req.body["tourGuideStep"] = 9;
+          req.body["tourGuide"] = true;
+          await updateTourStatus(req, res, next);
+        }
+      }
+
       handleSuccess(
         reponseModel(
           httpStatusCodes.OK,
