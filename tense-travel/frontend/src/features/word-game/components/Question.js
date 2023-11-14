@@ -226,7 +226,7 @@ function Question() {
   };
 
   const onChange = (event, index) => {
-    setShowCheckButton(event.target.value.length>0?true:false);
+    setShowCheckButton(event.target.value.length > 0 ? true : false);
     setUserAnswer(event.target.value);
 
     event.preventDefault();
@@ -668,9 +668,7 @@ function Question() {
             </div>
           </div>
           <button
-            className={`blue-btn fixedBtn ${
-              showCheckButton ? "" : "disbaled"
-            }`}
+            className={`blue-btn fixedBtn ${showCheckButton ? "" : "disbaled"}`}
             onClick={handleSubmitAnswer}
           >
             Check
