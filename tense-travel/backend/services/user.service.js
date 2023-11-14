@@ -2,6 +2,10 @@ const { eraTenseModel, userModel } = require("../models/index");
 const { reponseModel } = require("../utils/responseHandler");
 const httpStatusCodes = require("../utils/httpStatusCodes");
 const isEmpty = require("lodash.isempty");
+const {
+  userAnswerEraHistoryModel,
+} = require("../models/userAnswerEraHistory.model");
+const ObjectID = require("mongodb").ObjectId;
 
 exports.findEra = async (req, res, next) => {
   try {
@@ -131,8 +135,8 @@ exports.getAllUsers = async (req, res, next) => {
         totalEarnGerms: 1,
         firstName: 1,
         lastName: 1,
-        tourGuideStep:1,
-        tourGuide:1
+        tourGuideStep: 1,
+        tourGuide: 1,
       }
     );
 
@@ -141,6 +145,45 @@ exports.getAllUsers = async (req, res, next) => {
       !isEmpty(usersData) ? "All users" : "No users",
       !isEmpty(usersData) ? true : false,
       usersData,
+      req,
+      res
+    );
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.checkUserCompletedFirstStage = async (req, res, next) => {
+  try {
+    const userId = req.params["userId"];
+
+    let answerHistoriesData = await userAnswerEraHistoryModel.findOne(
+      { userId: new ObjectID(userId) },
+      {
+        _id: 1,
+        userAnswerEraId: 1,
+        userId: 1,
+        sessionId: 1,
+        tenseEraId: 1,
+        stageId: 1,
+        earnStars: 1,
+        earnGerms: 1,
+        eraEarnGerms: 1,
+        stage: 1,
+        // questions: 0,
+        completedEra: 1,
+        startTime: 1,
+        endTime: 1,
+        createdAt: 1,
+        updatedAt: 1,
+      }
+    );
+
+    return reponseModel(
+      httpStatusCodes.OK,
+      !isEmpty(answerHistoriesData) ? "History founds" : "No history found",
+      !isEmpty(answerHistoriesData) ? true : false,
+      answerHistoriesData,
       req,
       res
     );
