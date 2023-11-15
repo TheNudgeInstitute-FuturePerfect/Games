@@ -137,6 +137,8 @@ exports.getAllUsers = async (req, res, next) => {
         lastName: 1,
         tourGuideStep: 1,
         tourGuide: 1,
+        createdAt: 1,
+        updatedAt: 1,
       }
     );
 
