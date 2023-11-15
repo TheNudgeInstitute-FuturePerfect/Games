@@ -54,6 +54,7 @@ const {
   userAnswerEraHisotryPayloadReset,
   userAnswerEraHisotryPayloadPrepare,
 } = require("../utils/resetPayload");
+const { getTourStatus, checkUserCompletedFirstStage, updateTourStatus } = require("./user.service");
 
 exports.findUserEra = async (req, res, next) => {
   try {
@@ -1024,6 +1025,24 @@ exports.userHighStarsStagesOfEra = async (req, res, next) => {
       next
     );
 
+    /* check user tour guide steps status, if user completed first stage  */
+    req.params["userId"] = requestBody["userId"];
+    const getTourStatusData = await getTourStatus(req, res, next);
+
+    if (!getTourStatusData["data"]?.tourGuide) {
+      const getUserFirstStageHistoryData = await checkUserCompletedFirstStage(
+        req,
+        res,
+        next
+      );
+      if (!isEmpty(getUserFirstStageHistoryData)) {
+        req.body["userId"] = requestBody["userId"];;
+        req.body["tourGuideStep"] = 9;
+        req.body["tourGuide"] = true;
+        await updateTourStatus(req, res, next);
+      }
+    } /* check user tour guide steps status, if user completed first stage end  */
+    
     let getHighestStarStage;
 
     //check if user and session are already
