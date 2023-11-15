@@ -3,7 +3,7 @@ import "./style.scss";
 import { actions, popupTypes } from "../../../../utils/commonFunction";
 import { getUserCoins } from "../../../../services/coinAPI";
 import { userIds } from "../../../../utils/constants";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { coins } from "../../../../utils/constants";
 import questionExplanationIcon from "../../../../assets/images/question-explanation-icon.svg";
 
@@ -13,6 +13,21 @@ function CommonModal(props) {
   const {
     modalParams: { modalName },
   } = props;
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (event.target.classList.contains("questionExplanationContent")) {
+        let className = event.target.className.split(" ");
+        if (
+          className.includes("questionExplanationContent") ||
+          className.includes("modalContainer")
+        ) {
+          props.handleExplanationPopupClose();
+        }
+      }
+    };
+    document.addEventListener("click", handleClickOutside, true);
+  });
 
   const handleNoMoreCoin = () => {
     setTipPopup(true);

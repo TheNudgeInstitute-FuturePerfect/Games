@@ -171,7 +171,7 @@ const updateQuestions = Joi.object().keys({
   }),
 });
 const updateQuestionsObj = {
-  questions: Joi.array().items(updateQuestions).max(10),
+  questions: Joi.array().items(updateQuestions).max(100),
 };
 
 const updateQuestionsSchema = Joi.object(updateQuestionsObj);
