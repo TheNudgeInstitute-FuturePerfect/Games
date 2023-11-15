@@ -1035,7 +1035,7 @@ exports.userHighStarsStagesOfEra = async (req, res, next) => {
         res,
         next
       );
-      if (!isEmpty(getUserFirstStageHistoryData)) {
+      if (!isEmpty(getUserFirstStageHistoryData['success'])) {
         req.body["userId"] = requestBody["userId"];;
         req.body["tourGuideStep"] = 9;
         req.body["tourGuide"] = true;

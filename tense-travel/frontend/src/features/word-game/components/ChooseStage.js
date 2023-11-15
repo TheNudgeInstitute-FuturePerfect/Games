@@ -48,6 +48,10 @@ function ChooseStage() {
     );
 
     const tenseStageDataParsed = await tenseStageData.json();
+    if (tenseStageDataParsed["status"] === 400) {
+      navigate(`/?mobile=${userDetail['mobile']}`);
+      return  
+    }
     setStage(tenseStageDataParsed["data"]["stage"]);
 
     if (
@@ -76,8 +80,8 @@ function ChooseStage() {
     <>
       <div className="container">
         <TourGuideIndex
-            step={tourGuideSteps.steps}
-            tourGuideCallback={tourGuideCallback}
+          step={tourGuideSteps.steps}
+          tourGuideCallback={tourGuideCallback}
         />
         <div className="moon-bg">
           <div className="third-step">
