@@ -582,7 +582,7 @@ function Question() {
   const handleGiveExplanation = () => {
     setShow(true);
     handleBuyCoinPopupShow(popupTypes[4]);
-    setQuestionExplanation(questions[queSequence]?.explanation);
+    setQuestionExplanation(questions[queSequence]);
   };
 
   return (
