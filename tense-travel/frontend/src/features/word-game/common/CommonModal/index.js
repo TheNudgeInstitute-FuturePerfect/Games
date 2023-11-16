@@ -571,13 +571,19 @@ function CommonModal(props) {
                 </div>
               </div>
               <div className="questionExplanationModalSubHeading">
-                <p>Simple Present Tense</p>
+                <p>
+                  {props?.questionExplanation?.stageTitle.length > 0 &&
+                    props?.questionExplanation?.stageTitle
+                      .charAt(0)
+                      .toUpperCase() +
+                      props?.questionExplanation?.stageTitle.slice(1)}
+                </p>
                 <div className="questionExplanationTenseLine"></div>
               </div>
               <div className="questionExplanationContent">
                 <p
                   dangerouslySetInnerHTML={{
-                    __html: props?.questionExplanation,
+                    __html: props?.questionExplanation?.explanation,
                   }}
                 />
                 <div>
