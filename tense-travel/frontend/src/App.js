@@ -6,6 +6,8 @@ import ChooseStage from "./features/word-game/components/ChooseStage";
 import Question from "./features/word-game/components/Question";
 import { StageCompletion } from "./features/word-game";
 import NotFoundPage from "./pages/404Page";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   return (
@@ -19,6 +21,7 @@ function App() {
         <Route path="/complete-stage" element={<StageCompletion />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
+      <ToastContainer />
     </div>
   );
 }
