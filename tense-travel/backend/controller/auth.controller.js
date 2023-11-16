@@ -93,9 +93,9 @@ exports.checkUserByMobile = async (req, res, next) => {
           res,
           next
         );
-        if (!isEmpty(getUserFirstStageHistoryData)) {
+        if (getUserFirstStageHistoryData['success']) {
           req.body["userId"] = existsUser["_id"].toString();
-          req.body["tourGuideStep"] = 9;
+          // req.body["tourGuideStep"] = 9;
           req.body["tourGuide"] = true;
           await updateTourStatus(req, res, next);
         }
