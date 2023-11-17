@@ -408,6 +408,31 @@ const updateSessionIdStartTimeInUserAnswer = async (model, requestBody) => {
   return updatedData;
 };
 
+const updateExplanationStatusInUserAnsweredQuestion = async (model, requestBody) => {
+  const updateAnswerExplanation = await model.updateOne(
+    {
+      userId: new ObjectID(requestBody["userId"]),
+      "tenseEra.tenseEraId": new ObjectID(requestBody["tenseEraId"]),
+      "tenseEra.stage.stageId": new ObjectID(requestBody["stageId"]),
+    },
+    {
+      $set: {
+        "tenseEra.$[].stage.$[].question.$[inner].isExplanation":
+          requestBody["isExplanation"],
+      },
+    },
+    {
+      arrayFilters: [
+        {
+          "inner.questionBankId": new ObjectID(requestBody["questionId"]),
+        },
+      ],
+    }
+  );
+
+  return updateAnswerExplanation;
+};
+
 module.exports = {
   retryGame,
   unlockStage,
@@ -420,4 +445,5 @@ module.exports = {
   updateSessionEndTimeInUserAnswer,
   updateSessionIdStartTimeInUserAnswer,
   resetStage,
+  updateExplanationStatusInUserAnsweredQuestion
 };

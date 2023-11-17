@@ -8,6 +8,7 @@ const {
   getCurrentUserAndSessionId,
   eraseUserStageAttempts,
   userHighStarsStagesOfEra,
+  updateExplanationStatusInUserAnsweredQuestion,
 } = require("../services/userAnswerEra.service");
 const { handleSuccess } = require("../utils/responseHandler");
 
@@ -124,3 +125,8 @@ exports.userHighStarsStagesOfEra = async (req, res, next) => {
   const response = await userHighStarsStagesOfEra(req, res, next);
   handleSuccess(response, req, res);
 };
+
+ exports.updateExplanationStatusInUserAnsweredQuestion = async (req, res, next) => {
+  const response = await updateExplanationStatusInUserAnsweredQuestion(req, res, next);
+  handleSuccess(response, req, res);
+ };

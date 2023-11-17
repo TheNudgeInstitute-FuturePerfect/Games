@@ -30,6 +30,7 @@ const {
   createUserEraAnswerHistory,
   unlockStageWithoutSessionId,
   updateSessionEndTimeInUserAnswer,
+  updateExplanationStatusInUserAnsweredQuestion,
 } = require("./answer/retryAttempt");
 const {
   filterStage,
@@ -54,7 +55,11 @@ const {
   userAnswerEraHisotryPayloadReset,
   userAnswerEraHisotryPayloadPrepare,
 } = require("../utils/resetPayload");
-const { getTourStatus, checkUserCompletedFirstStage, updateTourStatus } = require("./user.service");
+const {
+  getTourStatus,
+  checkUserCompletedFirstStage,
+  updateTourStatus,
+} = require("./user.service");
 
 exports.findUserEra = async (req, res, next) => {
   try {
@@ -1035,14 +1040,14 @@ exports.userHighStarsStagesOfEra = async (req, res, next) => {
         res,
         next
       );
-      if (getUserFirstStageHistoryData['success']) {
-        req.body["userId"] = requestBody["userId"];;
+      if (getUserFirstStageHistoryData["success"]) {
+        req.body["userId"] = requestBody["userId"];
         // req.body["tourGuideStep"] = 9;
         req.body["tourGuide"] = true;
         await updateTourStatus(req, res, next);
       }
     } /* check user tour guide steps status, if user completed first stage end  */
-    
+
     let getHighestStarStage;
 
     //check if user and session are already
@@ -1242,6 +1247,48 @@ exports.userHighStarsStagesOfEra = async (req, res, next) => {
         "User era found",
         true,
         !isEmpty(getHighestStarStage) ? getHighestStarStage : currentEra,
+        req,
+        res
+      );
+    }
+  } catch (err) {
+    next(err);
+  }
+};
+
+//update explanation status in user attended question in userAnswerEraModel
+exports.updateExplanationStatusInUserAnsweredQuestion = async (
+  req,
+  res,
+  next
+) => {
+  try {
+    const requestBody = req.body;
+    const updateAnswerExplanation =
+      await updateExplanationStatusInUserAnsweredQuestion(
+        userAnswerEraModel,
+        requestBody
+      );
+
+    if (
+      updateAnswerExplanation["acknowledged"] &&
+      updateAnswerExplanation["modifiedCount"] === 1 &&
+      updateAnswerExplanation["matchedCount"] === 1
+    ) {
+      return reponseModel(
+        httpStatusCodes.OK,
+        "Explanation updated successfully",
+        true,
+        "",
+        req,
+        res
+      );
+    } else {
+      return reponseModel(
+        httpStatusCodes.OK,
+        "Something went wrong",
+        false,
+        "",
         req,
         res
       );

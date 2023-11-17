@@ -18,6 +18,8 @@ const API_END_POINT = {
     "https://uat.futureperfect.tech/whatsapp/probabilistic/games",
   SHARE_GAME_SESSION_DETAIL_WITH_OTHER_UPDATE:
     "https://uat.futureperfect.tech/whatsapp/probabilistic/games",
+  UPDATE_EXPLANATION_IN_ANSWERED_QUESTION:
+    "userEra/update-explanation-in-answered-question",
 };
 
 export { API_END_POINT };

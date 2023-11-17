@@ -34,6 +34,7 @@ const {
   getCurrentUserAndSessionId,
   eraseUserStageAttempts,
   userHighStarsStagesOfEra,
+  updateExplanationStatusInUserAnsweredQuestion
 } = require("../controller/userAnswerEra.controller");
 
 const {
@@ -90,5 +91,6 @@ module.exports = {
   getEraAnswerAllHistory,
   getEraAnswerHistoryByUserId,
   getInCompletedStages,
-  updateQuestions
+  updateQuestions,
+  updateExplanationStatusInUserAnsweredQuestion
 };

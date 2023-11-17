@@ -88,6 +88,26 @@ const exitGoBackResetStage = async (requestPayload) => {
   return resetStage;
 };
 
+const updateExplanationInAnsweredQuestion = async (requestPayload) => {
+  try {
+    let resetStage = await fetch(
+      `${process.env.REACT_APP_API_URL}/${API_END_POINT.UPDATE_EXPLANATION_IN_ANSWERED_QUESTION}/${requestPayload["questionId"]}`,
+      {
+        method: "PATCH",
+        body: JSON.stringify(requestPayload),
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+
+    resetStage = await resetStage.json();
+    return resetStage;
+  } catch (error) {
+    API_ERROR_ESPONSE.message = error.message || error;
+    API_ERROR_ESPONSE.success = false;
+    return API_ERROR_ESPONSE;
+  }
+};
+
 export {
   buyLives,
   reTryStage,
@@ -95,4 +115,5 @@ export {
   shareGameSessionDetail,
   exitGoBackResetStage,
   shareGameSessionUpdateDetail,
+  updateExplanationInAnsweredQuestion,
 };

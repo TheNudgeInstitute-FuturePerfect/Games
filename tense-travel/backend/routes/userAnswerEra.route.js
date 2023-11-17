@@ -7,11 +7,13 @@ const {
   getCurrentUserAndSessionId,
   eraseUserStageAttempts,
   userHighStarsStagesOfEra,
+  updateExplanationStatusInUserAnsweredQuestion,
 } = require("../controller/index");
 const {
   userRetryStageValidator,
   getUserCurrentEraValidator,
   userHighStarsStageOfEraValidator,
+  updateAnswerExplanationValidator,
 } = require("../modules/validators/userAnswerEraValidator");
 
 const router = express.Router();
@@ -29,6 +31,12 @@ router.post(
   "/user-high-stars-stages-of-era",
   [userHighStarsStageOfEraValidator],
   userHighStarsStagesOfEra
+);
+
+router.patch(
+  "/update-explanation-in-answered-question/:id",
+  [updateAnswerExplanationValidator],
+  updateExplanationStatusInUserAnsweredQuestion
 );
 
 exports.router = router;
