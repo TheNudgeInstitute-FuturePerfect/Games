@@ -17,6 +17,7 @@ import {
   resetUserRecentStage,
   shareGameSessionDetail,
   shareGameSessionUpdateDetail,
+  updateExplanationInAnsweredQuestion,
 } from "../../../services/questionAPI";
 import CommonModal from "../common/CommonModal";
 import { actionType, popupTypes } from "../../../utils/commonFunction";
@@ -66,6 +67,7 @@ function Question() {
   const [showCheckButton, setShowCheckButton] = useState(false);
   let recentStageData;
   let storageData = userInfo();
+  const [previousQuestion, setPreviousQuestion] = useState();
 
   /*fill in the blank input style*/
   const [inputStyle, setInputStyle] = useState({
@@ -256,7 +258,7 @@ function Question() {
   /*--------------------------------check answer----------------------------*/
   const checkAnswer = async () => {
     // setUserAnswer("");
-    setShowCheckButton(false)
+    setShowCheckButton(false);
     const currentQues = questionsParsed["data"][currentQuestionIndex];
 
     // userAnswerSubmitPayload.sessionId = userIds.sessionId;
@@ -267,6 +269,7 @@ function Question() {
     userAnswerSubmitPayload.stageId = currentQues?.stageId;
     userAnswerSubmitPayload.question = currentQues?.question;
     userAnswerSubmitPayload.userAnswer = userAnswer;
+    setPreviousQuestion(userAnswerSubmitPayload);
     inputRef.current.focus();
 
     inputRef.current.blur();
@@ -579,10 +582,15 @@ function Question() {
     }
   };
 
-  const handleGiveExplanation = () => {
+  const handleGiveExplanation = async () => {
     setShow(true);
     handleBuyCoinPopupShow(popupTypes[4]);
     setQuestionExplanation(questions[queSequence]);
+    let explanationPayload = previousQuestion;
+    explanationPayload["isExplanation"] = true;
+    delete explanationPayload["question"];
+    delete explanationPayload["userAnswer"];
+    await updateExplanationInAnsweredQuestion(explanationPayload);
   };
 
   return (

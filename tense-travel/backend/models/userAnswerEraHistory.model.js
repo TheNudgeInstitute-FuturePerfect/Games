@@ -125,6 +125,7 @@ const questionSchema = new Schema({
     type: Date,
     default: null,
   },
+  isExplanation: { type: Boolean, default: false },
 });
 
 const UserAnswerEraHistorySchema = new Schema(
