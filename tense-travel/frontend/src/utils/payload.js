@@ -19,6 +19,7 @@ const userAnswerSubmitPayload = {
   stageId: "",
   question: " ",
   userAnswer: "",
+  isExplanation: false,
 };
 
 const reTryStagePaylod = {

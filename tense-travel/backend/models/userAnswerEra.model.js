@@ -147,6 +147,7 @@ const TenseEraSchema = new Schema({
                 type: Date,
                 default: null,
               },
+              isExplanation: { type: Boolean, default: false },
             },
           ],
         },
